@@ -1,0 +1,6 @@
+pandas
+PyQt5
+selenium
+qt_material
+webdriver_manager
+openpyxl

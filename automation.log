@@ -1,0 +1,636 @@
+2025-01-07 08:04:01,233 - INFO - Processo iniciado.
+2025-01-07 08:04:01,233 - ERROR - Erro ao carregar página
+NoneType: None
+2025-01-07 08:04:01,236 - INFO - ====== WebDriver manager ======
+2025-01-07 08:04:02,675 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 08:04:02,776 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 08:04:02,849 - INFO - Driver [C:\Users\LUANVITOR\.wdm\drivers\chromedriver\win64\131.0.6778.204\chromedriver-win32/chromedriver.exe] found in cache
+2025-01-07 08:04:34,592 - ERROR - Erro durante o processo de automação
+Traceback (most recent call last):
+  File "c:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\src\__pycache__\TelaPrincipal.py", line 219, in automate_login
+    mini_menu_button = wait.until(EC.element_to_be_clickable((By.ID, "btn_imprimir_mini_menu")))
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\support\wait.py", line 105, in until
+    raise TimeoutException(message, screen, stacktrace)
+selenium.common.exceptions.TimeoutException: Message: 
+Stacktrace:
+	GetHandleVerifier [0x00F2EC13+23731]
+	(No symbol) [0x00EBC394]
+	(No symbol) [0x00D9BE63]
+	(No symbol) [0x00DDFCE6]
+	(No symbol) [0x00DDFF2B]
+	(No symbol) [0x00E1D892]
+	(No symbol) [0x00E01EA4]
+	(No symbol) [0x00E1B46E]
+	(No symbol) [0x00E01BF6]
+	(No symbol) [0x00DD3F35]
+	(No symbol) [0x00DD4EBD]
+	GetHandleVerifier [0x0120F0D3+3039603]
+	GetHandleVerifier [0x01222DEA+3120778]
+	GetHandleVerifier [0x0121B592+3089970]
+	GetHandleVerifier [0x00FC43B0+635984]
+	(No symbol) [0x00EC4DCD]
+	(No symbol) [0x00EC2068]
+	(No symbol) [0x00EC2205]
+	(No symbol) [0x00EB4FD0]
+	BaseThreadInitThunk [0x75955D49+25]
+	RtlInitializeExceptionChain [0x76F2CEBB+107]
+	RtlGetAppContainerNamedObjectPath [0x76F2CE41+561]
+
+2025-01-07 08:05:31,079 - INFO - Processo iniciado.
+2025-01-07 08:05:31,080 - ERROR - Erro ao carregar página
+NoneType: None
+2025-01-07 08:05:31,082 - INFO - ====== WebDriver manager ======
+2025-01-07 08:05:33,091 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 08:05:33,173 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 08:05:33,244 - INFO - Driver [C:\Users\LUANVITOR\.wdm\drivers\chromedriver\win64\131.0.6778.204\chromedriver-win32/chromedriver.exe] found in cache
+2025-01-07 08:05:50,304 - ERROR - Erro durante o processo de automação
+Traceback (most recent call last):
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 3805, in get_loc
+    return self._engine.get_loc(casted_key)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7081, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\\_libs\\hashtable_class_helper.pxi", line 7089, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'NOMENCLATURA'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "c:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\src\__pycache__\TelaPrincipal.py", line 222, in automate_login
+    nomenclature = excel_row['NOMENCLATURA']
+                   ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\pandas\core\series.py", line 1121, in __getitem__
+    return self._get_value(key)
+           ~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\pandas\core\series.py", line 1237, in _get_value
+    loc = self.index.get_loc(label)
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\pandas\core\indexes\base.py", line 3812, in get_loc
+    raise KeyError(key) from err
+KeyError: 'NOMENCLATURA'
+2025-01-07 08:10:34,325 - INFO - Processo iniciado.
+2025-01-07 08:10:34,326 - ERROR - Erro ao carregar página
+NoneType: None
+2025-01-07 08:10:34,328 - INFO - ====== WebDriver manager ======
+2025-01-07 08:10:35,825 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 08:10:35,906 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 08:10:35,982 - INFO - Driver [C:\Users\LUANVITOR\.wdm\drivers\chromedriver\win64\131.0.6778.204\chromedriver-win32/chromedriver.exe] found in cache
+2025-01-07 08:11:07,598 - ERROR - Erro durante o processo de automação
+Traceback (most recent call last):
+  File "c:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\src\__pycache__\TelaPrincipal.py", line 219, in automate_login
+    save_button = wait.until(EC.element_to_be_clickable((By.ID, "save")))
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\support\wait.py", line 105, in until
+    raise TimeoutException(message, screen, stacktrace)
+selenium.common.exceptions.TimeoutException: Message: 
+Stacktrace:
+	GetHandleVerifier [0x00F2EC13+23731]
+	(No symbol) [0x00EBC394]
+	(No symbol) [0x00D9BE63]
+	(No symbol) [0x00DDFCE6]
+	(No symbol) [0x00DDFF2B]
+	(No symbol) [0x00E1D892]
+	(No symbol) [0x00E01EA4]
+	(No symbol) [0x00E1B46E]
+	(No symbol) [0x00E01BF6]
+	(No symbol) [0x00DD3F35]
+	(No symbol) [0x00DD4EBD]
+	GetHandleVerifier [0x0120F0D3+3039603]
+	GetHandleVerifier [0x01222DEA+3120778]
+	GetHandleVerifier [0x0121B592+3089970]
+	GetHandleVerifier [0x00FC43B0+635984]
+	(No symbol) [0x00EC4DCD]
+	(No symbol) [0x00EC2068]
+	(No symbol) [0x00EC2205]
+	(No symbol) [0x00EB4FD0]
+	BaseThreadInitThunk [0x75955D49+25]
+	RtlInitializeExceptionChain [0x76F2CEBB+107]
+	RtlGetAppContainerNamedObjectPath [0x76F2CE41+561]
+
+2025-01-07 08:14:05,048 - INFO - Processo iniciado.
+2025-01-07 08:14:05,049 - ERROR - Erro ao carregar página
+NoneType: None
+2025-01-07 08:14:05,050 - INFO - ====== WebDriver manager ======
+2025-01-07 08:14:07,393 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 08:14:07,497 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 08:14:07,570 - INFO - Driver [C:\Users\LUANVITOR\.wdm\drivers\chromedriver\win64\131.0.6778.204\chromedriver-win32/chromedriver.exe] found in cache
+2025-01-07 08:45:12,809 - INFO - Processo iniciado.
+2025-01-07 08:45:12,809 - ERROR - Erro ao carregar página
+NoneType: None
+2025-01-07 08:45:12,811 - INFO - ====== WebDriver manager ======
+2025-01-07 08:45:14,383 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 08:45:14,461 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 08:45:14,536 - INFO - Driver [C:\Users\LUANVITOR\.wdm\drivers\chromedriver\win64\131.0.6778.204\chromedriver-win32/chromedriver.exe] found in cache
+2025-01-07 08:45:45,314 - ERROR - Erro durante o processo de automação
+Traceback (most recent call last):
+  File "c:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\src\__pycache__\TelaPrincipal.py", line 225, in automate_login
+    save_button = wait.until(EC.element_to_be_clickable((By.ID, "save")))
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\support\wait.py", line 105, in until
+    raise TimeoutException(message, screen, stacktrace)
+selenium.common.exceptions.TimeoutException: Message: 
+Stacktrace:
+	GetHandleVerifier [0x00F2EC13+23731]
+	(No symbol) [0x00EBC394]
+	(No symbol) [0x00D9BE63]
+	(No symbol) [0x00DDFCE6]
+	(No symbol) [0x00DDFF2B]
+	(No symbol) [0x00E1D892]
+	(No symbol) [0x00E01EA4]
+	(No symbol) [0x00E1B46E]
+	(No symbol) [0x00E01BF6]
+	(No symbol) [0x00DD3F35]
+	(No symbol) [0x00DD4EBD]
+	GetHandleVerifier [0x0120F0D3+3039603]
+	GetHandleVerifier [0x01222DEA+3120778]
+	GetHandleVerifier [0x0121B592+3089970]
+	GetHandleVerifier [0x00FC43B0+635984]
+	(No symbol) [0x00EC4DCD]
+	(No symbol) [0x00EC2068]
+	(No symbol) [0x00EC2205]
+	(No symbol) [0x00EB4FD0]
+	BaseThreadInitThunk [0x75955D49+25]
+	RtlInitializeExceptionChain [0x76F2CEBB+107]
+	RtlGetAppContainerNamedObjectPath [0x76F2CE41+561]
+
+2025-01-07 08:46:30,704 - INFO - Processo iniciado.
+2025-01-07 08:46:30,705 - ERROR - Erro ao carregar página
+NoneType: None
+2025-01-07 08:46:30,708 - INFO - ====== WebDriver manager ======
+2025-01-07 08:46:32,242 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 08:46:32,450 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 08:46:32,517 - INFO - Driver [C:\Users\LUANVITOR\.wdm\drivers\chromedriver\win64\131.0.6778.204\chromedriver-win32/chromedriver.exe] found in cache
+2025-01-07 08:47:05,034 - ERROR - Erro durante o processo de automação
+Traceback (most recent call last):
+  File "c:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\src\__pycache__\TelaPrincipal.py", line 225, in automate_login
+    save_button = wait.until(EC.element_to_be_clickable((By.ID, "download")))
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\support\wait.py", line 105, in until
+    raise TimeoutException(message, screen, stacktrace)
+selenium.common.exceptions.TimeoutException: Message: 
+Stacktrace:
+	GetHandleVerifier [0x00F2EC13+23731]
+	(No symbol) [0x00EBC394]
+	(No symbol) [0x00D9BE63]
+	(No symbol) [0x00DDFCE6]
+	(No symbol) [0x00DDFF2B]
+	(No symbol) [0x00E1D892]
+	(No symbol) [0x00E01EA4]
+	(No symbol) [0x00E1B46E]
+	(No symbol) [0x00E01BF6]
+	(No symbol) [0x00DD3F35]
+	(No symbol) [0x00DD4EBD]
+	GetHandleVerifier [0x0120F0D3+3039603]
+	GetHandleVerifier [0x01222DEA+3120778]
+	GetHandleVerifier [0x0121B592+3089970]
+	GetHandleVerifier [0x00FC43B0+635984]
+	(No symbol) [0x00EC4DCD]
+	(No symbol) [0x00EC2068]
+	(No symbol) [0x00EC2205]
+	(No symbol) [0x00EB4FD0]
+	BaseThreadInitThunk [0x75955D49+25]
+	RtlInitializeExceptionChain [0x76F2CEBB+107]
+	RtlGetAppContainerNamedObjectPath [0x76F2CE41+561]
+
+2025-01-07 09:01:29,711 - INFO - Processo iniciado.
+2025-01-07 09:01:29,712 - ERROR - Erro ao carregar página
+NoneType: None
+2025-01-07 09:01:29,714 - INFO - ====== WebDriver manager ======
+2025-01-07 09:01:31,135 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 09:01:31,356 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 09:01:31,425 - INFO - Driver [C:\Users\LUANVITOR\.wdm\drivers\chromedriver\win64\131.0.6778.204\chromedriver-win32/chromedriver.exe] found in cache
+2025-01-07 09:01:46,945 - ERROR - Erro durante o processo de automação
+Traceback (most recent call last):
+  File "c:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\src\__pycache__\TelaPrincipal.py", line 221, in automate_login
+    pdf_iframe = driver.find_element(By.CSS_SELECTOR, "iframe[src^='blob:https://portaloisolucoes.oi.com.br/']")
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 770, in find_element
+    return self.execute(Command.FIND_ELEMENT, {"using": by, "value": value})["value"]
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 384, in execute
+    self.error_handler.check_response(response)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\remote\errorhandler.py", line 232, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.NoSuchElementException: Message: no such element: Unable to locate element: {"method":"css selector","selector":"iframe[src^='blob:https://portaloisolucoes.oi.com.br/']"}
+  (Session info: chrome=131.0.6778.205); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
+Stacktrace:
+	GetHandleVerifier [0x00F2EC13+23731]
+	(No symbol) [0x00EBC394]
+	(No symbol) [0x00D9BE63]
+	(No symbol) [0x00DDFCE6]
+	(No symbol) [0x00DDFF2B]
+	(No symbol) [0x00E1D892]
+	(No symbol) [0x00E01EA4]
+	(No symbol) [0x00E1B46E]
+	(No symbol) [0x00E01BF6]
+	(No symbol) [0x00DD3F35]
+	(No symbol) [0x00DD4EBD]
+	GetHandleVerifier [0x0120F0D3+3039603]
+	GetHandleVerifier [0x01222DEA+3120778]
+	GetHandleVerifier [0x0121B592+3089970]
+	GetHandleVerifier [0x00FC43B0+635984]
+	(No symbol) [0x00EC4DCD]
+	(No symbol) [0x00EC2068]
+	(No symbol) [0x00EC2205]
+	(No symbol) [0x00EB4FD0]
+	BaseThreadInitThunk [0x75955D49+25]
+	RtlInitializeExceptionChain [0x76F2CEBB+107]
+	RtlGetAppContainerNamedObjectPath [0x76F2CE41+561]
+
+2025-01-07 09:08:08,326 - INFO - Processo iniciado.
+2025-01-07 09:08:08,327 - ERROR - Erro ao carregar página
+NoneType: None
+2025-01-07 09:08:08,329 - INFO - ====== WebDriver manager ======
+2025-01-07 09:08:09,769 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 09:08:09,900 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 09:08:09,965 - INFO - Driver [C:\Users\LUANVITOR\.wdm\drivers\chromedriver\win64\131.0.6778.204\chromedriver-win32/chromedriver.exe] found in cache
+2025-01-07 09:08:26,714 - ERROR - Erro durante o processo de automação
+Traceback (most recent call last):
+  File "c:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\src\__pycache__\TelaPrincipal.py", line 221, in automate_login
+    pdf_iframe = driver.find_element(By.CSS_SELECTOR, "iframe[src^='blob:https://portaloisolucoes.oi.com.br/']")
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 770, in find_element
+    return self.execute(Command.FIND_ELEMENT, {"using": by, "value": value})["value"]
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 384, in execute
+    self.error_handler.check_response(response)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\remote\errorhandler.py", line 232, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.NoSuchElementException: Message: no such element: Unable to locate element: {"method":"css selector","selector":"iframe[src^='blob:https://portaloisolucoes.oi.com.br/']"}
+  (Session info: chrome=131.0.6778.205); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
+Stacktrace:
+	GetHandleVerifier [0x00F2EC13+23731]
+	(No symbol) [0x00EBC394]
+	(No symbol) [0x00D9BE63]
+	(No symbol) [0x00DDFCE6]
+	(No symbol) [0x00DDFF2B]
+	(No symbol) [0x00E1D892]
+	(No symbol) [0x00E01EA4]
+	(No symbol) [0x00E1B46E]
+	(No symbol) [0x00E01BF6]
+	(No symbol) [0x00DD3F35]
+	(No symbol) [0x00DD4EBD]
+	GetHandleVerifier [0x0120F0D3+3039603]
+	GetHandleVerifier [0x01222DEA+3120778]
+	GetHandleVerifier [0x0121B592+3089970]
+	GetHandleVerifier [0x00FC43B0+635984]
+	(No symbol) [0x00EC4DCD]
+	(No symbol) [0x00EC2068]
+	(No symbol) [0x00EC2205]
+	(No symbol) [0x00EB4FD0]
+	BaseThreadInitThunk [0x75955D49+25]
+	RtlInitializeExceptionChain [0x76F2CEBB+107]
+	RtlGetAppContainerNamedObjectPath [0x76F2CE41+561]
+
+2025-01-07 09:12:00,610 - INFO - Processo iniciado.
+2025-01-07 09:12:00,611 - ERROR - Erro ao carregar página
+NoneType: None
+2025-01-07 09:12:00,612 - INFO - ====== WebDriver manager ======
+2025-01-07 09:12:02,013 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 09:12:02,107 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 09:12:02,175 - INFO - Driver [C:\Users\LUANVITOR\.wdm\drivers\chromedriver\win64\131.0.6778.204\chromedriver-win32/chromedriver.exe] found in cache
+2025-01-07 09:13:13,094 - INFO - Processo iniciado.
+2025-01-07 09:13:13,095 - ERROR - Erro ao carregar página
+NoneType: None
+2025-01-07 09:13:13,096 - INFO - ====== WebDriver manager ======
+2025-01-07 09:13:14,517 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 09:13:14,586 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 09:13:14,642 - INFO - Driver [C:\Users\LUANVITOR\.wdm\drivers\chromedriver\win64\131.0.6778.204\chromedriver-win32/chromedriver.exe] found in cache
+2025-01-07 09:13:52,865 - ERROR - Erro durante o processo de automação
+Traceback (most recent call last):
+  File "c:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\src\__pycache__\TelaPrincipal.py", line 225, in automate_login
+    save_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//cr-icon-button[@id='download' and @aria-label='Baixar']")))
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\support\wait.py", line 105, in until
+    raise TimeoutException(message, screen, stacktrace)
+selenium.common.exceptions.TimeoutException: Message: 
+Stacktrace:
+	GetHandleVerifier [0x00F2EC13+23731]
+	(No symbol) [0x00EBC394]
+	(No symbol) [0x00D9BE63]
+	(No symbol) [0x00DDFCE6]
+	(No symbol) [0x00DDFF2B]
+	(No symbol) [0x00E1D892]
+	(No symbol) [0x00E01EA4]
+	(No symbol) [0x00E1B46E]
+	(No symbol) [0x00E01BF6]
+	(No symbol) [0x00DD3F35]
+	(No symbol) [0x00DD4EBD]
+	GetHandleVerifier [0x0120F0D3+3039603]
+	GetHandleVerifier [0x01222DEA+3120778]
+	GetHandleVerifier [0x0121B592+3089970]
+	GetHandleVerifier [0x00FC43B0+635984]
+	(No symbol) [0x00EC4DCD]
+	(No symbol) [0x00EC2068]
+	(No symbol) [0x00EC2205]
+	(No symbol) [0x00EB4FD0]
+	BaseThreadInitThunk [0x75955D49+25]
+	RtlInitializeExceptionChain [0x76F2CEBB+107]
+	RtlGetAppContainerNamedObjectPath [0x76F2CE41+561]
+
+2025-01-07 09:18:13,166 - INFO - Processo iniciado.
+2025-01-07 09:18:13,167 - ERROR - Erro ao carregar página
+NoneType: None
+2025-01-07 09:18:13,169 - INFO - ====== WebDriver manager ======
+2025-01-07 09:18:14,796 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 09:18:14,876 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 09:18:15,072 - INFO - Driver [C:\Users\LUANVITOR\.wdm\drivers\chromedriver\win64\131.0.6778.204\chromedriver-win32/chromedriver.exe] found in cache
+2025-01-07 09:18:53,471 - ERROR - Erro durante o processo de automação
+Traceback (most recent call last):
+  File "c:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\src\__pycache__\TelaPrincipal.py", line 225, in automate_login
+    wait.until(EC.presence_of_element_located((By.XPATH, "//cr-icon-button[@id='download']")))
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\support\wait.py", line 105, in until
+    raise TimeoutException(message, screen, stacktrace)
+selenium.common.exceptions.TimeoutException: Message: 
+Stacktrace:
+	GetHandleVerifier [0x00F2EC13+23731]
+	(No symbol) [0x00EBC394]
+	(No symbol) [0x00D9BE63]
+	(No symbol) [0x00DDFCE6]
+	(No symbol) [0x00DDFF2B]
+	(No symbol) [0x00E1D892]
+	(No symbol) [0x00E01EA4]
+	(No symbol) [0x00E1B46E]
+	(No symbol) [0x00E01BF6]
+	(No symbol) [0x00DD3F35]
+	(No symbol) [0x00DD4EBD]
+	GetHandleVerifier [0x0120F0D3+3039603]
+	GetHandleVerifier [0x01222DEA+3120778]
+	GetHandleVerifier [0x0121B592+3089970]
+	GetHandleVerifier [0x00FC43B0+635984]
+	(No symbol) [0x00EC4DCD]
+	(No symbol) [0x00EC2068]
+	(No symbol) [0x00EC2205]
+	(No symbol) [0x00EB4FD0]
+	BaseThreadInitThunk [0x75955D49+25]
+	RtlInitializeExceptionChain [0x76F2CEBB+107]
+	RtlGetAppContainerNamedObjectPath [0x76F2CE41+561]
+
+2025-01-07 10:48:14,359 - INFO - Processo iniciado.
+2025-01-07 10:48:14,360 - ERROR - Erro ao carregar página
+NoneType: None
+2025-01-07 10:48:14,362 - INFO - ====== WebDriver manager ======
+2025-01-07 10:48:15,875 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 10:48:16,167 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 10:48:16,236 - INFO - Driver [C:\Users\LUANVITOR\.wdm\drivers\chromedriver\win64\131.0.6778.204\chromedriver-win32/chromedriver.exe] found in cache
+2025-01-07 10:48:54,016 - INFO - Processo iniciado.
+2025-01-07 10:48:54,017 - ERROR - Erro ao carregar página
+NoneType: None
+2025-01-07 10:48:54,020 - INFO - ====== WebDriver manager ======
+2025-01-07 10:48:55,406 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 10:48:55,488 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 10:48:55,565 - INFO - Driver [C:\Users\LUANVITOR\.wdm\drivers\chromedriver\win64\131.0.6778.204\chromedriver-win32/chromedriver.exe] found in cache
+2025-01-07 10:49:38,806 - INFO - Processo iniciado.
+2025-01-07 10:49:38,807 - ERROR - Erro ao carregar página
+NoneType: None
+2025-01-07 10:49:38,809 - INFO - ====== WebDriver manager ======
+2025-01-07 10:49:40,309 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 10:49:40,380 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 10:49:40,460 - INFO - Driver [C:\Users\LUANVITOR\.wdm\drivers\chromedriver\win64\131.0.6778.204\chromedriver-win32/chromedriver.exe] found in cache
+2025-01-07 10:50:03,329 - ERROR - Erro durante o processo de automação
+Traceback (most recent call last):
+  File "c:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\src\__pycache__\TelaPrincipal.py", line 222, in automate_login
+    wait.until(EC.presence_of_element_located((By.XPATH, "//iframe[contains(@src, 'blob:https://portaloisolucoes.oi.com.br/')]")))
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\support\wait.py", line 96, in until
+    value = method(self._driver)
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\support\expected_conditions.py", line 84, in _predicate
+    return driver.find_element(*locator)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 770, in find_element
+    return self.execute(Command.FIND_ELEMENT, {"using": by, "value": value})["value"]
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 384, in execute
+    self.error_handler.check_response(response)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\remote\errorhandler.py", line 232, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.NoSuchWindowException: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=131.0.6778.205)
+Stacktrace:
+	GetHandleVerifier [0x00F2EC13+23731]
+	(No symbol) [0x00EBC394]
+	(No symbol) [0x00D9BE63]
+	(No symbol) [0x00D7D92B]
+	(No symbol) [0x00E07F7F]
+	(No symbol) [0x00E1AD99]
+	(No symbol) [0x00E01BF6]
+	(No symbol) [0x00DD3F35]
+	(No symbol) [0x00DD4EBD]
+	GetHandleVerifier [0x0120F0D3+3039603]
+	GetHandleVerifier [0x01222DEA+3120778]
+	GetHandleVerifier [0x0121B592+3089970]
+	GetHandleVerifier [0x00FC43B0+635984]
+	(No symbol) [0x00EC4DCD]
+	(No symbol) [0x00EC2068]
+	(No symbol) [0x00EC2205]
+	(No symbol) [0x00EB4FD0]
+	BaseThreadInitThunk [0x75955D49+25]
+	RtlInitializeExceptionChain [0x76F2CEBB+107]
+	RtlGetAppContainerNamedObjectPath [0x76F2CE41+561]
+
+2025-01-07 11:08:49,068 - INFO - Processo iniciado.
+2025-01-07 11:08:49,068 - ERROR - Erro ao carregar página
+NoneType: None
+2025-01-07 11:08:49,070 - INFO - ====== WebDriver manager ======
+2025-01-07 11:08:50,467 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 11:08:50,566 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 11:08:50,644 - INFO - Driver [C:\Users\LUANVITOR\.wdm\drivers\chromedriver\win64\131.0.6778.204\chromedriver-win32/chromedriver.exe] found in cache
+2025-01-07 11:09:24,559 - ERROR - Erro durante o processo de automação
+Traceback (most recent call last):
+  File "c:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\src\__pycache__\TelaPrincipal.py", line 232, in automate_login
+    save_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//cr-icon-button[@id='download' and @aria-label='Baixar']")))
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\support\wait.py", line 96, in until
+    value = method(self._driver)
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\support\expected_conditions.py", line 363, in _predicate
+    target = driver.find_element(*target)  # grab element at locator
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 770, in find_element
+    return self.execute(Command.FIND_ELEMENT, {"using": by, "value": value})["value"]
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 384, in execute
+    self.error_handler.check_response(response)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\remote\errorhandler.py", line 232, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.NoSuchWindowException: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=131.0.6778.205)
+Stacktrace:
+	GetHandleVerifier [0x00F2EC13+23731]
+	(No symbol) [0x00EBC394]
+	(No symbol) [0x00D9BE63]
+	(No symbol) [0x00D7D92B]
+	(No symbol) [0x00E07F7F]
+	(No symbol) [0x00E1AD99]
+	(No symbol) [0x00E01BF6]
+	(No symbol) [0x00DD3F35]
+	(No symbol) [0x00DD4EBD]
+	GetHandleVerifier [0x0120F0D3+3039603]
+	GetHandleVerifier [0x01222DEA+3120778]
+	GetHandleVerifier [0x0121B592+3089970]
+	GetHandleVerifier [0x00FC43B0+635984]
+	(No symbol) [0x00EC4DCD]
+	(No symbol) [0x00EC2068]
+	(No symbol) [0x00EC2205]
+	(No symbol) [0x00EB4FD0]
+	BaseThreadInitThunk [0x75955D49+25]
+	RtlInitializeExceptionChain [0x76F2CEBB+107]
+	RtlGetAppContainerNamedObjectPath [0x76F2CE41+561]
+
+2025-01-07 11:14:43,123 - INFO - Processo iniciado.
+2025-01-07 11:14:43,123 - ERROR - Erro ao carregar página
+NoneType: None
+2025-01-07 11:14:43,125 - INFO - ====== WebDriver manager ======
+2025-01-07 11:14:44,784 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 11:14:44,864 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 11:14:44,935 - INFO - Driver [C:\Users\LUANVITOR\.wdm\drivers\chromedriver\win64\131.0.6778.204\chromedriver-win32/chromedriver.exe] found in cache
+2025-01-07 11:15:23,424 - ERROR - Erro durante o processo de automação
+Traceback (most recent call last):
+  File "c:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\src\__pycache__\TelaPrincipal.py", line 208, in automate_login
+    columns = row.find_elements(By.TAG_NAME, "td")
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\remote\webelement.py", line 421, in find_elements
+    return self._execute(Command.FIND_CHILD_ELEMENTS, {"using": by, "value": value})["value"]
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\remote\webelement.py", line 395, in _execute
+    return self._parent.execute(command, params)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 384, in execute
+    self.error_handler.check_response(response)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\remote\errorhandler.py", line 232, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.StaleElementReferenceException: Message: stale element reference: stale element not found in the current frame
+  (Session info: chrome=131.0.6778.205); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#stale-element-reference-exception
+Stacktrace:
+	GetHandleVerifier [0x00F2EC13+23731]
+	(No symbol) [0x00EBC394]
+	(No symbol) [0x00D9BE63]
+	(No symbol) [0x00DA1971]
+	(No symbol) [0x00DA388A]
+	(No symbol) [0x00DA3907]
+	(No symbol) [0x00DDF8F9]
+	(No symbol) [0x00DDFF2B]
+	(No symbol) [0x00DD5E11]
+	(No symbol) [0x00E01EA4]
+	(No symbol) [0x00DD59A4]
+	(No symbol) [0x00E020F4]
+	(No symbol) [0x00E1B46E]
+	(No symbol) [0x00E01BF6]
+	(No symbol) [0x00DD3F35]
+	(No symbol) [0x00DD4EBD]
+	GetHandleVerifier [0x0120F0D3+3039603]
+	GetHandleVerifier [0x01222DEA+3120778]
+	GetHandleVerifier [0x0121B592+3089970]
+	GetHandleVerifier [0x00FC43B0+635984]
+	(No symbol) [0x00EC4DCD]
+	(No symbol) [0x00EC2068]
+	(No symbol) [0x00EC2205]
+	(No symbol) [0x00EB4FD0]
+	BaseThreadInitThunk [0x75955D49+25]
+	RtlInitializeExceptionChain [0x76F2CEBB+107]
+	RtlGetAppContainerNamedObjectPath [0x76F2CE41+561]
+
+2025-01-07 11:28:43,885 - INFO - Processo iniciado.
+2025-01-07 11:28:43,886 - ERROR - Erro ao carregar página
+NoneType: None
+2025-01-07 11:28:43,887 - INFO - ====== WebDriver manager ======
+2025-01-07 11:28:45,471 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 11:28:45,557 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 11:28:45,629 - INFO - Driver [C:\Users\LUANVITOR\.wdm\drivers\chromedriver\win64\131.0.6778.204\chromedriver-win32/chromedriver.exe] found in cache
+2025-01-07 11:29:17,357 - ERROR - Erro durante o processo de automação
+Traceback (most recent call last):
+  File "c:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\src\__pycache__\TelaPrincipal.py", line 209, in automate_login
+    columns = row.find_elements(By.TAG_NAME, "td")
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\remote\webelement.py", line 421, in find_elements
+    return self._execute(Command.FIND_CHILD_ELEMENTS, {"using": by, "value": value})["value"]
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\remote\webelement.py", line 395, in _execute
+    return self._parent.execute(command, params)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 384, in execute
+    self.error_handler.check_response(response)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\remote\errorhandler.py", line 232, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.StaleElementReferenceException: Message: stale element reference: stale element not found in the current frame
+  (Session info: chrome=131.0.6778.205); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#stale-element-reference-exception
+Stacktrace:
+	GetHandleVerifier [0x00F2EC13+23731]
+	(No symbol) [0x00EBC394]
+	(No symbol) [0x00D9BE63]
+	(No symbol) [0x00DA1971]
+	(No symbol) [0x00DA388A]
+	(No symbol) [0x00DA3907]
+	(No symbol) [0x00DDF8F9]
+	(No symbol) [0x00DDFF2B]
+	(No symbol) [0x00DD5E11]
+	(No symbol) [0x00E01EA4]
+	(No symbol) [0x00DD59A4]
+	(No symbol) [0x00E020F4]
+	(No symbol) [0x00E1B46E]
+	(No symbol) [0x00E01BF6]
+	(No symbol) [0x00DD3F35]
+	(No symbol) [0x00DD4EBD]
+	GetHandleVerifier [0x0120F0D3+3039603]
+	GetHandleVerifier [0x01222DEA+3120778]
+	GetHandleVerifier [0x0121B592+3089970]
+	GetHandleVerifier [0x00FC43B0+635984]
+	(No symbol) [0x00EC4DCD]
+	(No symbol) [0x00EC2068]
+	(No symbol) [0x00EC2205]
+	(No symbol) [0x00EB4FD0]
+	BaseThreadInitThunk [0x75955D49+25]
+	RtlInitializeExceptionChain [0x76F2CEBB+107]
+	RtlGetAppContainerNamedObjectPath [0x76F2CE41+561]
+
+2025-01-07 13:22:03,088 - INFO - Processo iniciado.
+2025-01-07 13:22:03,089 - ERROR - Erro ao carregar página
+NoneType: None
+2025-01-07 13:22:03,091 - INFO - ====== WebDriver manager ======
+2025-01-07 13:22:04,665 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 13:22:04,890 - INFO - Get LATEST chromedriver version for google-chrome
+2025-01-07 13:22:04,960 - INFO - Driver [C:\Users\LUANVITOR\.wdm\drivers\chromedriver\win64\131.0.6778.204\chromedriver-win32/chromedriver.exe] found in cache
+2025-01-07 13:22:37,290 - ERROR - Erro durante o processo de automação
+Traceback (most recent call last):
+  File "c:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\src\__pycache__\TelaPrincipal.py", line 209, in automate_login
+    columns = row.find_elements(By.TAG_NAME, "td")
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\remote\webelement.py", line 421, in find_elements
+    return self._execute(Command.FIND_CHILD_ELEMENTS, {"using": by, "value": value})["value"]
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\remote\webelement.py", line 395, in _execute
+    return self._parent.execute(command, params)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 384, in execute
+    self.error_handler.check_response(response)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\00. Works\LE_Coleta\.venv\Lib\site-packages\selenium\webdriver\remote\errorhandler.py", line 232, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.StaleElementReferenceException: Message: stale element reference: stale element not found in the current frame
+  (Session info: chrome=131.0.6778.205); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#stale-element-reference-exception
+Stacktrace:
+	GetHandleVerifier [0x00F2EC13+23731]
+	(No symbol) [0x00EBC394]
+	(No symbol) [0x00D9BE63]
+	(No symbol) [0x00DA1971]
+	(No symbol) [0x00DA388A]
+	(No symbol) [0x00DA3907]
+	(No symbol) [0x00DDF8F9]
+	(No symbol) [0x00DDFF2B]
+	(No symbol) [0x00DD5E11]
+	(No symbol) [0x00E01EA4]
+	(No symbol) [0x00DD59A4]
+	(No symbol) [0x00E020F4]
+	(No symbol) [0x00E1B46E]
+	(No symbol) [0x00E01BF6]
+	(No symbol) [0x00DD3F35]
+	(No symbol) [0x00DD4EBD]
+	GetHandleVerifier [0x0120F0D3+3039603]
+	GetHandleVerifier [0x01222DEA+3120778]
+	GetHandleVerifier [0x0121B592+3089970]
+	GetHandleVerifier [0x00FC43B0+635984]
+	(No symbol) [0x00EC4DCD]
+	(No symbol) [0x00EC2068]
+	(No symbol) [0x00EC2205]
+	(No symbol) [0x00EB4FD0]
+	BaseThreadInitThunk [0x75955D49+25]
+	RtlInitializeExceptionChain [0x76F2CEBB+107]
+	RtlGetAppContainerNamedObjectPath [0x76F2CE41+561]
+
