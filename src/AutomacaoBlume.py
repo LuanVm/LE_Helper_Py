@@ -10,6 +10,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 from PyQt6.QtCore import QRunnable, pyqtSlot, QThreadPool
 from PyPDF2 import PdfReader
+from openpyxl import load_workbook
 import pandas as pd
 
 class AutomationTask(QRunnable):
@@ -135,21 +136,28 @@ class Blume:
                         continue
 
                     self.parent.log_message(f"Preparando para processar 'Pagar boleto - {index + 1}'...")
-                    driver.execute_script("arguments[0].scrollIntoView(true);", button)
-                    time.sleep(1)
+                    
+                    # Certifique-se de que o botão é clicável
+                    try:
+                        wait.until(EC.element_to_be_clickable(button))
+                        driver.execute_script("arguments[0].scrollIntoView(true);", button)
+                        time.sleep(1)
+                        button.click()
+                    except Exception as e:
+                        self.parent.log_message(f"Erro ao clicar no botão 'Pagar boleto - {index + 1}': {e}")
+                        continue
 
-                    # Reobtém os botões após a interação
-                    boleto_buttons = wait.until(
-                        EC.presence_of_all_elements_located((By.XPATH, "//span[text()='Pagar boleto']"))
-                    )
-                    button = boleto_buttons[index]
-
-                    button.click()
                     processed_boleto_ids.add(boleto_id)
 
-                    # Baixa o boleto
-                    self.download_boleto(wait, user_data, index + 1)
-                    time.sleep(2)
+                    # Aguarda o redirecionamento para a página de detalhes do boleto
+                    try:
+                        wait.until(EC.url_contains("billings"))
+                    
+                        self.download_boleto(wait, user_data, index + 1)
+                        time.sleep(2)
+                    except Exception as e:
+                        self.parent.log_message(f"Erro após clicar em 'Pagar boleto - {index + 1}': {e}")
+                        continue
 
                 # Verifica se ainda há boletos não processados
                 boletos_disponiveis = [
@@ -178,7 +186,7 @@ class Blume:
             latest_file = self.get_latest_file(download_dir)
 
             if latest_file:
-                self.parent.log_message(f"Boleto baixado: {latest_file}")
+                self.parent.log_message(f"Boleto baixado: {latest_file}", area = "tecnico")
                 contrato = self.extrair_contrato_pdf(latest_file)  # Passe o caminho do arquivo aqui
                 if contrato:  # Validar antes de continuar
                     self.handle_downloaded_file(contrato, latest_file, user_data)
@@ -284,7 +292,7 @@ class Blume:
                 nomenclatura = row['NOMENCLATURA']
                 destino = os.path.join(self.parent.save_directory, f"{nomenclatura}.pdf")
                 shutil.move(pdf_path, destino)
-                self.parent.log_message(f"Arquivo renomeado para: {destino}")
+                self.parent.log_message(f"Arquivo renomeado para: {destino}", area = "faturas")
                 self.df.loc[self.df['IDENTIFICAÇÃO'] == contrato, 'STATUS'] = 'COLETADO IA'
                 self.df.to_excel(self.parent.data_path, index=False)
                 return True
@@ -297,12 +305,27 @@ class Blume:
 
     def mark_as_collected(self, excel_identification, data_path):
         try:
-            self.df['IDENTIFICAÇÃO'] = self.df['IDENTIFICAÇÃO'].astype(str).str.lstrip('0').str.strip()
-            if excel_identification in self.df['IDENTIFICAÇÃO'].values:
-                self.df.loc[self.df['IDENTIFICAÇÃO'] == excel_identification, 'STATUS'] = 'COLETADO IA'
-                self.df.to_excel(data_path, index=False)
-                self.parent.log_message(f"Status atualizado para 'COLETADO IA' para {excel_identification}")
-            else:
-                self.parent.log_message(f"Identificação {excel_identification} não encontrada.")
+            # Carrega o arquivo Excel
+            with pd.ExcelWriter(data_path, mode='openpyxl', engine='openpyxl') as writer:
+                # Lê a planilha
+                df = pd.read_excel(data_path, engine='openpyxl')
+
+                # Garante que a coluna 'STATUS' seja do tipo string
+                if 'STATUS' in df.columns:
+                    df['STATUS'] = df['STATUS'].astype(str)
+
+                # Remove zeros à esquerda da identificação para garantir a correspondência
+                df['IDENTIFICAÇÃO'] = df['IDENTIFICAÇÃO'].astype(str).str.lstrip('0').str.strip()
+
+                # Verifica se a identificação existe
+                if excel_identification in df['IDENTIFICAÇÃO'].values:
+                    # Atualiza o status para 'COLETADO IA'
+                    df.loc[df['IDENTIFICAÇÃO'] == excel_identification, 'STATUS'] = 'COLETADO IA'
+
+                    # Salva as alterações de volta no arquivo original
+                    df.to_excel(writer, index=False, sheet_name='Sheet1')  # Certifique-se do nome correto da aba
+                    self.parent.log_message(f"Status atualizado para 'COLETADO IA' para {excel_identification}")
+                else:
+                    self.parent.log_message(f"Identificação {excel_identification} não encontrada.")
         except Exception as e:
             self.parent.log_message(f"Erro ao marcar como coletado: {e}")
