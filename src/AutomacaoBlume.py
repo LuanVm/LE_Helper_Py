@@ -128,6 +128,21 @@ class Blume:
                 driver.get("https://portal.blumetelecom.com.br/billings")
                 time.sleep(2)
 
+                # Verifica a presença do texto "Você não possui faturas em aberto"
+                try:
+                    no_invoices_message = wait.until(
+                        EC.presence_of_element_located((By.XPATH, "//div[text()='Você não possui faturas em aberto']"))
+                    )
+                    self.parent.log_message("Mensagem 'Você não possui faturas em aberto' encontrada.")
+                    # Atualiza o status para 'INDISPONIVEL'
+                    self.df.loc[self.df['LOGIN'] == user_data['LOGIN'], 'STATUS'] = 'INDISPONIVEL'
+                    self.df.to_excel(self.parent.data_path, index=False)
+                    self.parent.log_message("Status atualizado para 'INDISPONIVEL' na planilha.")
+                    break
+                except Exception:
+                    # Caso não encontre a mensagem, prossegue com a coleta de boletos
+                    pass
+
                 # Captura os botões 'Pagar boleto'
                 boleto_buttons = wait.until(
                     EC.presence_of_all_elements_located((By.XPATH, "//span[text()='Pagar boleto']"))
