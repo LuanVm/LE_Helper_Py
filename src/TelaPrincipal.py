@@ -14,6 +14,7 @@ class MainApp(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        # Estilo da interface gráfica
         self.setStyleSheet("""         
             QLabel {
                 font-family: 'Open Sans';
@@ -31,16 +32,16 @@ class MainApp(QMainWindow):
                 font-weight: bold;
                 font-size: 14px;
             }
-            """)
+        """)
 
-        # Load Excel data
+        # Carregar dados do Excel
         self.data_path = "resources/coleta.xlsx"
         self.df = pd.read_excel(self.data_path)
         self.df = self.df[self.df['STATUS'] != 'COLETADO IA']
         self.df = self.df.sort_values(by='VENCIMENTO', ascending=True)
 
-        # Set up the UI
-        self.setWindowTitle("LE - Automacao de Coleta")
+        # Configurar a janela principal
+        self.setWindowTitle("LE - Automação de Coleta")
         self.setWindowIcon(QIcon("resources/logo.ico"))
         self.setGeometry(100, 100, 800, 450)
 
@@ -50,17 +51,18 @@ class MainApp(QMainWindow):
         self.layout = QVBoxLayout()
         self.central_widget.setLayout(self.layout)
 
-        # Initialize the save_directory and other settings
+        # Inicializar o diretório de salvamento e outras configurações
         self.settings = QSettings("LE - Automacao de Coleta", "Settings")
         self.save_directory = self.settings.value("save_directory", "")
 
-        # Initialize the UI
+        # Inicializar a interface do usuário
         self.init_ui()
 
         # Thread pool
         self.threadpool = QThreadPool()
 
     def init_ui(self):
+        # Layout superior
         top_layout = QGridLayout()
 
         # Diretório de Salvamento
@@ -91,7 +93,7 @@ class MainApp(QMainWindow):
         # Layout dos Logs
         logs_layout = QGridLayout()
 
-        # Log Técnico
+        # Área para Log Técnico
         self.log_tecnico_area = QTextEdit(self)
         self.log_tecnico_area.setReadOnly(True)
         self.log_tecnico_area.setPlaceholderText("Log técnico")
@@ -105,7 +107,7 @@ class MainApp(QMainWindow):
         """)
         logs_layout.addWidget(self.log_tecnico_area, 0, 0, 2, 2)
 
-        # Log Faturas Coletadas
+        # Área para Log Faturas Coletadas
         self.faturas_coletadas_area = QTextEdit(self)
         self.faturas_coletadas_area.setReadOnly(True)
         self.faturas_coletadas_area.setPlaceholderText("Log faturas coletadas")
@@ -129,7 +131,7 @@ class MainApp(QMainWindow):
 
         self.layout.addLayout(logs_layout)
 
-        # Configurações de layout adicionais
+        # Configurações adicionais de layout
         top_layout.setColumnStretch(0, 1)
         top_layout.setColumnStretch(1, 4)
         top_layout.setColumnStretch(2, 1)
@@ -146,6 +148,7 @@ class MainApp(QMainWindow):
         self.faturas_coletadas_area.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
     def select_save_directory(self):
+        # Abrir o diálogo para selecionar diretório de salvamento
         dir_path = QFileDialog.getExistingDirectory(self, "Selecionar Diretório de Salvamento")
         if dir_path:
             self.save_directory = dir_path
@@ -155,6 +158,7 @@ class MainApp(QMainWindow):
             self.save_directory = ""
 
     def log_message(self, message, area="tecnico"):
+        # Exibir mensagem no log específico (técnico ou faturas)
         if area == "tecnico":
             self.log_tecnico_area.append(message)
             cursor = self.log_tecnico_area.textCursor()
@@ -167,6 +171,7 @@ class MainApp(QMainWindow):
             self.faturas_coletadas_area.setTextCursor(cursor)
 
     def start_automation(self):
+        # Início do processo de automação
         selected_operadora = self.operadora_combo.currentText()
 
         if not self.save_directory:

@@ -2,17 +2,17 @@ import os
 import time
 import shutil
 import re
-import traceback
+import pandas as pd
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
-from PyQt6.QtCore import QRunnable, pyqtSlot, QThreadPool
+from PyQt6.QtCore import QRunnable, pyqtSlot
 from PyPDF2 import PdfReader
 from openpyxl import load_workbook
-import pandas as pd
 
 class AutomationTask(QRunnable):
     def __init__(self, automator, user_data, log_function):
@@ -54,25 +54,26 @@ class Blume:
     def run_automation(self, user_data):
         self.parent.log_message("Iniciando processo de automação para a operadora Blume...", area="tecnico")
 
-        # Verifica se há necessidade de continuar a coleta
         if self.verificar_coleta_finalizada():
             self.parent.log_message("Nenhuma coleta pendente. Finalizando execução.")
             return
 
         for _, user in user_data.iterrows():
-            if user['STATUS'] == 'COLETADO IA':
-                self.parent.log_message(f"Estrutura {user['LOGIN']} já coletada, ignorando...", area="tecnico")
+            if user['STATUS'] == 'COLETADO IA' or user['STATUS'] == 'INDISPONIVEL':
+                self.parent.log_message(f"Estrutura {user['LOGIN']} já processada ou indisponível, ignorando...", area="tecnico")
                 continue
 
             driver = None
             try:
                 driver = self.initialize_browser()
                 wait = WebDriverWait(driver, 15)
-
                 driver.get("https://portal.blumetelecom.com.br")
                 time.sleep(2)
                 self.parent.log_message("Página de login carregada, iniciando login...", area="tecnico")
                 self.login(driver, wait, user)
+
+                time.sleep(2)
+                driver.get("https://portal.blumetelecom.com.br/billings")
 
                 self.parent.log_message("Login bem-sucedido, iniciando processamento dos boletos...", area="tecnico")
                 self.process_boletos(driver, wait, user)
@@ -84,16 +85,15 @@ class Blume:
                     self.parent.log_message("Fechando o navegador...", area="tecnico")
                     driver.quit()
 
-            remaining_status = self.df[self.df['STATUS'].isnull()]
-            if remaining_status.empty:
-                self.parent.log_message(f"Coleta finalizada para o login {user['LOGIN']}.", area="tecnico")
-            else:
-                self.parent.log_message(f"Ainda existem {len(remaining_status)} boletos para coleta.", area="tecnico")
+        remaining_status = self.df[self.df['STATUS'].isnull()]
+        if remaining_status.empty:
+            self.parent.log_message("Todos os boletos foram processados.", area="tecnico")
 
-    def login(self, driver, wait, user_data):
+    def login(self, wait, user_data):
         try:
             self.parent.log_message("Tentando acessar a página de login...")
 
+            time.sleep(1)
             email_field = wait.until(EC.presence_of_element_located((By.ID, "loginUsername")))
             password_field = wait.until(EC.presence_of_element_located((By.NAME, "password")))
             login_button = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "MuiButton-label")))
@@ -106,12 +106,7 @@ class Blume:
             password_field.clear()
             password_field.send_keys(user_data['SENHA'])
 
-            time.sleep(1)
             login_button.click()
-
-            time.sleep(2)
-            driver.get("https://portal.blumetelecom.com.br/billings")
-            wait.until(EC.presence_of_element_located((By.XPATH, "//span[text()='Pagar boleto']")))
 
             self.parent.log_message("Login realizado com sucesso.")
 
@@ -131,7 +126,7 @@ class Blume:
                 # Verifica a presença do texto "Você não possui faturas em aberto"
                 try:
                     no_invoices_message = wait.until(
-                        EC.presence_of_element_located((By.XPATH, "//div[text()='Você não possui faturas em aberto']"))
+                        EC.presence_of_element_located((By.XPATH, "//h5[contains(text(), 'Você não possui faturas em aberto')]"))
                     )
                     self.parent.log_message("Mensagem 'Você não possui faturas em aberto' encontrada.")
                     # Atualiza o status para 'INDISPONIVEL'
@@ -272,13 +267,14 @@ class Blume:
                 nomenclatura = row['NOMENCLATURA']
                 destino = os.path.join(self.parent.save_directory, f"{nomenclatura}.pdf")
                 
-                # Move e renomeia o arquivo baixado
                 shutil.move(latest_file, destino)
                 self.parent.log_message(f"{nomenclatura}", area="faturas")
 
-                # Atualiza o status na planilha
                 self.df.loc[self.df['IDENTIFICAÇÃO'] == contrato, 'STATUS'] = 'COLETADO IA'
-                self.df.to_excel(self.parent.data_path, index=False)
+
+                # Preservar formatação existente
+                with pd.ExcelWriter(self.parent.data_path, mode='a', engine='openpyxl', if_sheet_exists='overlay') as writer:
+                    self.df.to_excel(writer, index=False, startrow=1, header=False)
             else:
                 self.parent.log_message(f"Contrato {contrato} não encontrado na planilha.")
                 self.mover_boleto_nao_encontrado(latest_file)
