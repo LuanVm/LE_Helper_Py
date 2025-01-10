@@ -2,6 +2,7 @@ import os
 import time
 import shutil
 import re
+import traceback
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
@@ -25,7 +26,7 @@ class AutomationTask(QRunnable):
         try:
             self.log_function("Iniciando automação para o usuário...")
             self.automator.run_automation(self.user_data)
-            self.log_function("Automacao concluída com sucesso.")
+            self.log_function("Automação concluída com sucesso.")
         except Exception as e:
             self.log_function(f"Erro durante a automação: {str(e)}")
 
@@ -52,6 +53,11 @@ class Blume:
 
     def run_automation(self, user_data):
         self.parent.log_message("Iniciando processo de automação para a operadora Blume...", area="tecnico")
+
+        # Verifica se há necessidade de continuar a coleta
+        if self.verificar_coleta_finalizada():
+            self.parent.log_message("Nenhuma coleta pendente. Finalizando execução.")
+            return
 
         for _, user in user_data.iterrows():
             if user['STATUS'] == 'COLETADO IA':
@@ -82,9 +88,7 @@ class Blume:
             if remaining_status.empty:
                 self.parent.log_message(f"Coleta finalizada para o login {user['LOGIN']}.", area="tecnico")
             else:
-                self.parent.log_message(
-                    f"Ainda existem {len(remaining_status)} boletos para coleta.", area="tecnico"
-                )
+                self.parent.log_message(f"Ainda existem {len(remaining_status)} boletos para coleta.", area="tecnico")
 
     def login(self, driver, wait, user_data):
         try:
@@ -152,7 +156,6 @@ class Blume:
                     # Aguarda o redirecionamento para a página de detalhes do boleto
                     try:
                         wait.until(EC.url_contains("billings"))
-                    
                         self.download_boleto(wait, user_data, index + 1)
                         time.sleep(2)
                     except Exception as e:
@@ -186,8 +189,8 @@ class Blume:
             latest_file = self.get_latest_file(download_dir)
 
             if latest_file:
-                self.parent.log_message(f"Boleto baixado: {latest_file}", area = "tecnico")
-                contrato = self.extrair_contrato_pdf(latest_file)  # Passe o caminho do arquivo aqui
+                self.parent.log_message(f"Boleto baixado: {latest_file}", area="tecnico")
+                contrato = self.extrair_contrato_pdf(latest_file)
                 if contrato:  # Validar antes de continuar
                     self.handle_downloaded_file(contrato, latest_file, user_data)
             else:
@@ -211,15 +214,17 @@ class Blume:
         raise Exception("Tempo de download excedido ou arquivo incompleto.")
 
     def extrair_contrato_pdf(self, pdf_path):
-        """Extrai o número do contrato de um arquivo PDF e remove todos os zeros à esquerda."""
         try:
+            if not os.path.exists(pdf_path) or os.path.getsize(pdf_path) == 0:
+                self.parent.log_message(f"Arquivo PDF inválido: {pdf_path}")
+                return None
             leitor = PdfReader(pdf_path)
             texto = ""
             for pagina in leitor.pages:
                 texto += pagina.extract_text()
 
             # Regex ajustado para capturar especificamente o contrato no formato correto
-            padrao = r'\b0{3,}(\d{3,})\b'  # Captura pelo menos 3 zeros seguidos de dígitos
+            padrao = r'\b0{3,}(\d{3,})\b'
             match = re.search(padrao, texto)
 
             if match:
@@ -241,21 +246,20 @@ class Blume:
 
     def handle_downloaded_file(self, contrato, latest_file, user_data):
         if contrato:
-            contrato = contrato.lstrip('0')  # Remove zeros à esquerda
+            contrato = contrato.lstrip('0')
             self.parent.log_message(f"Número do contrato extraído: {contrato}")
 
             # Normaliza os dados da coluna 'IDENTIFICAÇÃO'
             self.df['IDENTIFICAÇÃO'] = self.df['IDENTIFICAÇÃO'].astype(str).str.lstrip('0').str.strip()
 
             if contrato in self.df['IDENTIFICAÇÃO'].values:
-                # Busca a linha correspondente ao contrato
                 row = self.df[self.df['IDENTIFICAÇÃO'] == contrato].iloc[0]
                 nomenclatura = row['NOMENCLATURA']
                 destino = os.path.join(self.parent.save_directory, f"{nomenclatura}.pdf")
                 
                 # Move e renomeia o arquivo baixado
                 shutil.move(latest_file, destino)
-                self.parent.log_message(f"Arquivo renomeado para: {destino}")
+                self.parent.log_message(f"{nomenclatura}", area="faturas")
 
                 # Atualiza o status na planilha
                 self.df.loc[self.df['IDENTIFICAÇÃO'] == contrato, 'STATUS'] = 'COLETADO IA'
@@ -292,7 +296,7 @@ class Blume:
                 nomenclatura = row['NOMENCLATURA']
                 destino = os.path.join(self.parent.save_directory, f"{nomenclatura}.pdf")
                 shutil.move(pdf_path, destino)
-                self.parent.log_message(f"Arquivo renomeado para: {destino}", area = "faturas")
+                self.parent.log_message(f"{nomenclatura}", area="faturas")
                 self.df.loc[self.df['IDENTIFICAÇÃO'] == contrato, 'STATUS'] = 'COLETADO IA'
                 self.df.to_excel(self.parent.data_path, index=False)
                 return True
@@ -305,27 +309,37 @@ class Blume:
 
     def mark_as_collected(self, excel_identification, data_path):
         try:
-            # Carrega o arquivo Excel
-            with pd.ExcelWriter(data_path, mode='openpyxl', engine='openpyxl') as writer:
-                # Lê a planilha
-                df = pd.read_excel(data_path, engine='openpyxl')
+            workbook = load_workbook(data_path)
+            sheet = workbook.active  # Ou use o nome da aba: workbook["NomeDaAba"]
 
-                # Garante que a coluna 'STATUS' seja do tipo string
-                if 'STATUS' in df.columns:
-                    df['STATUS'] = df['STATUS'].astype(str)
+            found = False
+            for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row, values_only=False):
+                cell_identification = row[0]  # Supondo que a coluna 'IDENTIFICAÇÃO' seja a primeira
+                cell_status = row[1]  # Supondo que a coluna 'STATUS' seja a segunda
 
-                # Remove zeros à esquerda da identificação para garantir a correspondência
-                df['IDENTIFICAÇÃO'] = df['IDENTIFICAÇÃO'].astype(str).str.lstrip('0').str.strip()
+                if cell_identification.value and str(cell_identification.value).lstrip("0").strip() == excel_identification:
+                    cell_status.value = "COLETADO IA"
+                    found = True
+                    break
 
-                # Verifica se a identificação existe
-                if excel_identification in df['IDENTIFICAÇÃO'].values:
-                    # Atualiza o status para 'COLETADO IA'
-                    df.loc[df['IDENTIFICAÇÃO'] == excel_identification, 'STATUS'] = 'COLETADO IA'
-
-                    # Salva as alterações de volta no arquivo original
-                    df.to_excel(writer, index=False, sheet_name='Sheet1')  # Certifique-se do nome correto da aba
-                    self.parent.log_message(f"Status atualizado para 'COLETADO IA' para {excel_identification}")
-                else:
-                    self.parent.log_message(f"Identificação {excel_identification} não encontrada.")
+            if found:
+                workbook.save(data_path)
+                self.parent.log_message(f"Status atualizado para 'COLETADO IA' para {excel_identification}")
+            else:
+                self.parent.log_message(f"Identificação {excel_identification} não encontrada.")
         except Exception as e:
             self.parent.log_message(f"Erro ao marcar como coletado: {e}")
+
+    def verificar_coleta_finalizada(self):
+        try:
+            registros_nao_coletados = self.df[self.df['STATUS'] != 'COLETADO IA']
+
+            if registros_nao_coletados.empty:
+                self.parent.log_message("Todos os registros já foram coletados. Nenhuma ação necessária.")
+                return True
+            else:
+                self.parent.log_message(f"Ainda existem {len(registros_nao_coletados)} registros para coleta.")
+                return False
+        except Exception as e:
+            self.parent.log_message(f"Erro ao verificar a coleta: {e}")
+            return False
