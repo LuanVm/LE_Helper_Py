@@ -89,7 +89,7 @@ class Blume:
         if remaining_status.empty:
             self.parent.log_message("Todos os boletos foram processados.", area="tecnico")
 
-    def login(self, wait, user_data):
+    def login(self, driver, wait, user_data):
         try:
             self.parent.log_message("Tentando acessar a página de login...")
 
@@ -320,20 +320,23 @@ class Blume:
 
     def mark_as_collected(self, excel_identification, data_path):
         try:
-            workbook = load_workbook(data_path)
-            sheet = workbook.active  # Ou use o nome da aba: workbook["NomeDaAba"]
+            # Carregar o arquivo mantendo formatação
+            workbook = load_workbook(data_path, keep_vba=True)
+            sheet = workbook.active
 
             found = False
             for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row, values_only=False):
-                cell_identification = row[0]  # Supondo que a coluna 'IDENTIFICAÇÃO' seja a primeira
-                cell_status = row[1]  # Supondo que a coluna 'STATUS' seja a segunda
+                
+                cell_identification = row['IDENTIFICAÇÃO'] 
+                cell_status = row['STATUS']
 
                 if cell_identification.value and str(cell_identification.value).lstrip("0").strip() == excel_identification:
-                    cell_status.value = "COLETADO IA"
+                    cell_status.value = str("COLETADO IA")
                     found = True
                     break
 
             if found:
+                # Salvar preservando a formatação
                 workbook.save(data_path)
                 self.parent.log_message(f"Status atualizado para 'COLETADO IA' para {excel_identification}")
             else:

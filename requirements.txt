@@ -1,6 +1,5 @@
 pandas
-PyQt5
+PyQt6
 selenium
-qt_material
 webdriver_manager
 openpyxl
