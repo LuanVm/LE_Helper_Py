@@ -1,38 +1,24 @@
 import os
 import sys
 import pandas as pd
+
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QLabel, QComboBox,
     QWidget, QGridLayout, QMessageBox, QTextEdit, QSizePolicy, QFileDialog, QLineEdit, QVBoxLayout, QPushButton
 )
 from PyQt6.QtCore import QThreadPool, Qt, QSettings
 from PyQt6.QtGui import QIcon, QTextCursor
-from utils.Input import estilo_hover, estilo_label, estilo_text_edit
-from AutomacaoBlume import Blume, AutomationTask
+from templates.estilos import estilo_hover, estilo_label, estilo_log, estilo_sheet, estilo_texto_padrao, estilo_combo_box
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'backend')))
+from autoBlume import Blume, AutomationTask
 
 class MainApp(QMainWindow):
     def __init__(self):
         super().__init__()
 
         # Configuração da interface gráfica
-        self.setStyleSheet("""
-            QLabel {
-                font-family: 'Open Sans';
-                font-size: 12px;
-                color: white;
-            }
-            QGroupBox {
-                background-color: rgba(255, 255, 255, 0.9);
-                border: 1px solid #E0E0E0;
-                border-radius: 8px;
-                margin-top: 20px;
-            }
-            QGroupBox:title {
-                padding: 10px;
-                font-weight: bold;
-                font-size: 14px;
-            }
-        """)
+        self.setStyleSheet(estilo_sheet())
 
         # Configurações persistentes
         self.settings_path = "config.json"
@@ -40,7 +26,9 @@ class MainApp(QMainWindow):
 
         # Configurar a janela principal
         self.setWindowTitle("LE - Automação de Coleta")
-        self.setWindowIcon(QIcon("resources/logo.ico"))
+
+        logo_path = os.path.join(os.path.dirname(__file__), "frontend", "static", "images", "logo.ico")
+        self.setWindowIcon(QIcon(logo_path))
         self.setGeometry(100, 100, 900, 550)
 
         self.central_widget = QWidget()
@@ -51,12 +39,11 @@ class MainApp(QMainWindow):
 
         self.df = pd.DataFrame()
 
-        # Carregar configurações e definir layout
         self.load_settings()
         self.init_ui()
         self.threadpool = QThreadPool()
 
-        # Carregar a planilha automaticamente, se o caminho estiver definido
+        #load da planilha se já estiver definida
         if self.data_path:
             self.load_data_file(self.data_path)
         else:
@@ -79,21 +66,21 @@ class MainApp(QMainWindow):
 
         # Aplicar estilo ao QLabel
         label_salvamento = QLabel("Local de Salvamento:", self)
-        label_planilha = QLabel("Planilha de dados:", self)
-        label_operadora = QLabel("Selecionar Operadora:", self)
-
         label_salvamento.setStyleSheet(estilo_label())
+        label_planilha = QLabel("Planilha de dados:", self)
         label_planilha.setStyleSheet(estilo_label())
+        label_operadora = QLabel("Selecionar Operadora:", self)
         label_operadora.setStyleSheet(estilo_label())
 
-        top_layout.addWidget(label_salvamento, 0, 0, alignment=Qt.AlignmentFlag.AlignCenter)
-        top_layout.addWidget(label_planilha, 1, 0, alignment=Qt.AlignmentFlag.AlignCenter)
-        top_layout.addWidget(label_operadora, 2, 0, alignment=Qt.AlignmentFlag.AlignCenter)
+        top_layout.addWidget(label_salvamento, 0, 0, alignment=Qt.AlignmentFlag.AlignLeft)
+        top_layout.addWidget(label_planilha, 1, 0, alignment=Qt.AlignmentFlag.AlignLeft)
+        top_layout.addWidget(label_operadora, 2, 0, alignment=Qt.AlignmentFlag.AlignLeft)
 
         # Diretório de Salvamento
         self.save_dir_field = QLineEdit(self)
         self.save_dir_field.setReadOnly(True)
         self.save_dir_field.setText(self.save_directory)
+        self.save_dir_field.setStyleSheet(estilo_texto_padrao())
         top_layout.addWidget(self.save_dir_field, 0, 1)
 
         self.save_dir_button = QPushButton("Selecionar Pasta", self)
@@ -105,6 +92,7 @@ class MainApp(QMainWindow):
         self.planilha_field = QLineEdit(self)
         self.planilha_field.setReadOnly(True)
         self.planilha_field.setText(self.data_path)
+        self.planilha_field.setStyleSheet(estilo_texto_padrao())
         top_layout.addWidget(self.planilha_field, 1, 1)
 
         self.planilha_button = QPushButton("Selecionar Planilha", self)
@@ -115,6 +103,7 @@ class MainApp(QMainWindow):
         # Seleção de Operadora
         self.operadora_combo = QComboBox(self)
         self.operadora_combo.addItem("Selecione uma planilha primeiro")
+        self.operadora_combo.setStyleSheet(estilo_combo_box())
         top_layout.addWidget(self.operadora_combo, 2, 1)
 
         self.confirm_button = QPushButton("Iniciar automação", self)
@@ -131,15 +120,16 @@ class MainApp(QMainWindow):
         self.log_tecnico_area = QTextEdit(self)
         self.log_tecnico_area.setReadOnly(True)
         self.log_tecnico_area.setPlaceholderText("Log técnico")
-        self.log_tecnico_area.setStyleSheet(estilo_text_edit())
+        self.log_tecnico_area.setStyleSheet(estilo_log())
         logs_layout.addWidget(self.log_tecnico_area, 0, 0, 2, 2)
 
         self.faturas_coletadas_area = QTextEdit(self)
         self.faturas_coletadas_area.setReadOnly(True)
         self.faturas_coletadas_area.setPlaceholderText("Log faturas coletadas")
-        self.faturas_coletadas_area.setStyleSheet(estilo_text_edit())
+        self.faturas_coletadas_area.setStyleSheet(estilo_log())
         logs_layout.addWidget(self.faturas_coletadas_area, 0, 2, 2, 2)
 
+        # Melhorar layout de logs
         logs_layout.setVerticalSpacing(10)
         logs_layout.setHorizontalSpacing(10)
 

@@ -1,5 +1,6 @@
-pandas
+json
+openpyxl
+Pandas
 PyQt6
 selenium
 webdriver_manager
-openpyxl
