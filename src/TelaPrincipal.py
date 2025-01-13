@@ -3,11 +3,11 @@ import sys
 import pandas as pd
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QLabel, QComboBox,
-    QWidget, QGridLayout, QMessageBox, QTextEdit, QSizePolicy, QFileDialog, QLineEdit, QVBoxLayout
+    QWidget, QGridLayout, QMessageBox, QTextEdit, QSizePolicy, QFileDialog, QLineEdit, QVBoxLayout, QPushButton
 )
 from PyQt6.QtCore import QThreadPool, Qt, QSettings
 from PyQt6.QtGui import QIcon, QTextCursor
-from utils.Input import HoverButton
+from utils.Input import estilo_hover, estilo_label, estilo_text_edit
 from AutomacaoBlume import Blume, AutomationTask
 
 class MainApp(QMainWindow):
@@ -63,13 +63,11 @@ class MainApp(QMainWindow):
             self.select_data_file()
 
     def load_settings(self):
-        """Carrega configurações salvas usando QSettings."""
         settings = QSettings(self.settings_path, QSettings.Format.IniFormat)
         self.save_directory = settings.value("save_directory", "")
         self.data_path = settings.value("data_path", "")
 
     def save_settings(self):
-        """Salva configurações usando QSettings."""
         settings = QSettings(self.settings_path, QSettings.Format.IniFormat)
         settings.setValue("save_directory", self.save_directory)
         settings.setValue("data_path", self.data_path)
@@ -77,16 +75,29 @@ class MainApp(QMainWindow):
         settings.sync()
 
     def init_ui(self):
-        """Inicializa a interface do usuário."""
         top_layout = QGridLayout()
+
+        # Aplicar estilo ao QLabel
+        label_salvamento = QLabel("Local de Salvamento:", self)
+        label_planilha = QLabel("Planilha de dados:", self)
+        label_operadora = QLabel("Selecionar Operadora:", self)
+
+        label_salvamento.setStyleSheet(estilo_label())
+        label_planilha.setStyleSheet(estilo_label())
+        label_operadora.setStyleSheet(estilo_label())
+
+        top_layout.addWidget(label_salvamento, 0, 0, alignment=Qt.AlignmentFlag.AlignCenter)
+        top_layout.addWidget(label_planilha, 1, 0, alignment=Qt.AlignmentFlag.AlignCenter)
+        top_layout.addWidget(label_operadora, 2, 0, alignment=Qt.AlignmentFlag.AlignCenter)
 
         # Diretório de Salvamento
         self.save_dir_field = QLineEdit(self)
         self.save_dir_field.setReadOnly(True)
         self.save_dir_field.setText(self.save_directory)
-        top_layout.addWidget(QLabel("Local de Salvamento:"), 0, 0, alignment=Qt.AlignmentFlag.AlignCenter)
         top_layout.addWidget(self.save_dir_field, 0, 1)
-        self.save_dir_button = HoverButton("Selecionar Pasta", self)
+
+        self.save_dir_button = QPushButton("Selecionar Pasta", self)
+        estilo_hover(self.save_dir_button)
         self.save_dir_button.clicked.connect(self.select_save_directory)
         top_layout.addWidget(self.save_dir_button, 0, 2)
 
@@ -94,19 +105,20 @@ class MainApp(QMainWindow):
         self.planilha_field = QLineEdit(self)
         self.planilha_field.setReadOnly(True)
         self.planilha_field.setText(self.data_path)
-        top_layout.addWidget(QLabel("Planilha de dados:"), 1, 0, alignment=Qt.AlignmentFlag.AlignCenter)
         top_layout.addWidget(self.planilha_field, 1, 1)
-        self.planilha_button = HoverButton("Selecionar Planilha", self)
+
+        self.planilha_button = QPushButton("Selecionar Planilha", self)
+        estilo_hover(self.planilha_button)
         self.planilha_button.clicked.connect(self.select_data_file)
         top_layout.addWidget(self.planilha_button, 1, 2)
 
         # Seleção de Operadora
         self.operadora_combo = QComboBox(self)
         self.operadora_combo.addItem("Selecione uma planilha primeiro")
-        top_layout.addWidget(QLabel("Selecionar Operadora:"), 2, 0, alignment=Qt.AlignmentFlag.AlignCenter)
         top_layout.addWidget(self.operadora_combo, 2, 1)
 
-        self.confirm_button = HoverButton("Iniciar automação", self)
+        self.confirm_button = QPushButton("Iniciar automação", self)
+        estilo_hover(self.confirm_button)
         self.confirm_button.clicked.connect(self.start_automation)
         top_layout.addWidget(self.confirm_button, 2, 2)
 
@@ -115,32 +127,17 @@ class MainApp(QMainWindow):
         # Layout dos Logs
         logs_layout = QGridLayout()
 
-        # Área para Log Técnico
+        # Aplicar estilo ao QTextEdit
         self.log_tecnico_area = QTextEdit(self)
         self.log_tecnico_area.setReadOnly(True)
         self.log_tecnico_area.setPlaceholderText("Log técnico")
-        self.log_tecnico_area.setStyleSheet("""
-            QTextEdit {
-                border: 1px solid #CCCCCC;
-                border-radius: 8px;
-                background-color: #262525;
-                padding: 5px;
-            }
-        """)
+        self.log_tecnico_area.setStyleSheet(estilo_text_edit())
         logs_layout.addWidget(self.log_tecnico_area, 0, 0, 2, 2)
 
-        # Área para Log Faturas Coletadas
         self.faturas_coletadas_area = QTextEdit(self)
         self.faturas_coletadas_area.setReadOnly(True)
         self.faturas_coletadas_area.setPlaceholderText("Log faturas coletadas")
-        self.faturas_coletadas_area.setStyleSheet("""
-            QTextEdit {
-                border: 1px solid #CCCCCC;
-                border-radius: 8px;
-                background-color: #262525;
-                padding: 5px;
-            }
-        """)
+        self.faturas_coletadas_area.setStyleSheet(estilo_text_edit())
         logs_layout.addWidget(self.faturas_coletadas_area, 0, 2, 2, 2)
 
         logs_layout.setVerticalSpacing(10)
