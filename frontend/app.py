@@ -8,7 +8,7 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import QThreadPool, Qt, QSettings
 from PyQt6.QtGui import QIcon, QTextCursor
-from templates.estilos import estilo_hover, estilo_label, estilo_log, estilo_sheet, estilo_texto_padrao, estilo_combo_box
+from templates.estilos import estilo_hover, estilo_label, estilo_log, estilo_sheet, qLine, estilo_combo_box
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'backend')))
 from autoBlume import Blume, AutomationTask
@@ -27,8 +27,16 @@ class MainApp(QMainWindow):
         # Configurar a janela principal
         self.setWindowTitle("LE - Automação de Coleta")
 
-        logo_path = os.path.join(os.path.dirname(__file__), "frontend", "static", "images", "logo.ico")
-        self.setWindowIcon(QIcon(logo_path))
+        # Caminho do ícone
+        logo_path = "frontend/static/images/logo.png"
+        
+        # Verifica se o arquivo do ícone existe
+        if os.path.exists(logo_path):
+            self.setWindowIcon(QIcon(logo_path))
+        else:
+            print(f"Erro: O arquivo do ícone não foi encontrado em {logo_path}")
+            # Aqui você pode definir um ícone padrão ou exibir uma mensagem de erro
+
         self.setGeometry(100, 100, 900, 550)
 
         self.central_widget = QWidget()
@@ -43,7 +51,7 @@ class MainApp(QMainWindow):
         self.init_ui()
         self.threadpool = QThreadPool()
 
-        #load da planilha se já estiver definida
+        # Carrega a planilha se já estiver definida
         if self.data_path:
             self.load_data_file(self.data_path)
         else:
@@ -80,7 +88,7 @@ class MainApp(QMainWindow):
         self.save_dir_field = QLineEdit(self)
         self.save_dir_field.setReadOnly(True)
         self.save_dir_field.setText(self.save_directory)
-        self.save_dir_field.setStyleSheet(estilo_texto_padrao())
+        self.save_dir_field.setStyleSheet(qLine())
         top_layout.addWidget(self.save_dir_field, 0, 1)
 
         self.save_dir_button = QPushButton("Selecionar Pasta", self)
@@ -92,7 +100,7 @@ class MainApp(QMainWindow):
         self.planilha_field = QLineEdit(self)
         self.planilha_field.setReadOnly(True)
         self.planilha_field.setText(self.data_path)
-        self.planilha_field.setStyleSheet(estilo_texto_padrao())
+        self.planilha_field.setStyleSheet(qLine())
         top_layout.addWidget(self.planilha_field, 1, 1)
 
         self.planilha_button = QPushButton("Selecionar Planilha", self)
