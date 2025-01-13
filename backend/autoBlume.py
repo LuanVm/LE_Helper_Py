@@ -2,17 +2,16 @@ import os
 import time
 import shutil
 import re
-import pandas as pd
-
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
-from PyQt6.QtCore import QRunnable, pyqtSlot
+from PyQt6.QtCore import QRunnable, pyqtSlot, QMutex
 from PyPDF2 import PdfReader
 from openpyxl import load_workbook
+
 
 class AutomationTask(QRunnable):
     def __init__(self, automator, user_data, log_function):
@@ -30,10 +29,14 @@ class AutomationTask(QRunnable):
         except Exception as e:
             self.log_function(f"Erro durante a automação: {str(e)}")
 
+
 class Blume:
-    def __init__(self, parent, df):
+    def __init__(self, parent, data_path):
         self.parent = parent
-        self.df = df
+        self.data_path = data_path
+        self.workbook = load_workbook(data_path)
+        self.sheet = self.workbook.active
+        self.mutex = QMutex()
 
     def initialize_browser(self):
         try:
@@ -41,6 +44,7 @@ class Blume:
             options.add_argument("--disable-extensions")
             options.add_argument("--disable-popup-blocking")
 
+            self.parent.log_message("Inicializando o navegador...")
             driver = webdriver.Chrome(
                 service=Service(ChromeDriverManager().install()),
                 options=options
@@ -58,7 +62,7 @@ class Blume:
             self.parent.log_message("Nenhuma coleta pendente. Finalizando execução.")
             return
 
-        for _, user in user_data.iterrows():
+        for user in user_data:
             if user['STATUS'] == 'COLETADO IA' or user['STATUS'] == 'INDISPONIVEL':
                 self.parent.log_message(f"Estrutura {user['LOGIN']} já processada ou indisponível, ignorando...", area="tecnico")
                 continue
@@ -85,27 +89,50 @@ class Blume:
                     self.parent.log_message("Fechando o navegador...", area="tecnico")
                     driver.quit()
 
-        remaining_status = self.df[self.df['STATUS'].isnull()]
-        if remaining_status.empty:
-            self.parent.log_message("Todos os boletos foram processados.", area="tecnico")
+        self.parent.log_message("Todos os boletos foram processados.", area="tecnico")
 
     def login(self, driver, wait, user_data):
         try:
             self.parent.log_message("Tentando acessar a página de login...")
 
-            time.sleep(1)
+            # Espera até que a página esteja completamente carregada
+            wait.until(lambda driver: driver.execute_script("return document.readyState") == "complete")
+
+            self.parent.log_message("Procurando campo de email...")
             email_field = wait.until(EC.presence_of_element_located((By.ID, "loginUsername")))
-            password_field = wait.until(EC.presence_of_element_located((By.NAME, "password")))
-            login_button = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "MuiButton-label")))
+            self.parent.log_message("Campo de email encontrado.")
 
-            self.parent.log_message("Campos de login encontrados, preenchendo informações...")
+            # Rola a página até o campo de e-mail (caso ele não esteja visível)
+            driver.execute_script("arguments[0].scrollIntoView(true);", email_field)
+            time.sleep(1)  # Pequena pausa para garantir que o campo esteja visível
 
-            email_field.clear()
-            email_field.send_keys(user_data['LOGIN'])
+            # Tenta preencher o campo de e-mail sem limpar
+            try:
+                self.parent.log_message("Preenchendo campo de email...")
+                email_field.send_keys(user_data['LOGIN'])
+            except Exception as e:
+                self.parent.log_message(f"Erro ao preencher o campo de e-mail: {e}")
+                raise
 
+            self.parent.log_message("Procurando campo de senha...")
+            password_field = wait.until(EC.element_to_be_clickable((By.NAME, "password")))
+            self.parent.log_message("Campo de senha encontrado.")
+
+            # Rola a página até o campo de senha (caso ele não esteja visível)
+            driver.execute_script("arguments[0].scrollIntoView(true);", password_field)
+
+            self.parent.log_message("Preenchendo campo de senha...")
             password_field.clear()
             password_field.send_keys(user_data['SENHA'])
 
+            self.parent.log_message("Procurando botão de login...")
+            login_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "MuiButton-label")))
+            self.parent.log_message("Botão de login encontrado.")
+
+            # Rola a página até o botão de login (caso ele não esteja visível)
+            driver.execute_script("arguments[0].scrollIntoView(true);", login_button)
+
+            self.parent.log_message("Clicando no botão de login...")
             login_button.click()
 
             self.parent.log_message("Login realizado com sucesso.")
@@ -121,7 +148,6 @@ class Blume:
             while True:
                 self.parent.log_message("Acessando página de billings...")
                 driver.get("https://portal.blumetelecom.com.br/billings")
-                time.sleep(2)
 
                 # Verifica a presença do texto "Você não possui faturas em aberto"
                 try:
@@ -129,20 +155,25 @@ class Blume:
                         EC.presence_of_element_located((By.XPATH, "//h5[contains(text(), 'Você não possui faturas em aberto')]"))
                     )
                     self.parent.log_message("Mensagem 'Você não possui faturas em aberto' encontrada.")
-                    # Atualiza o status para 'INDISPONIVEL'
-                    self.df.loc[self.df['LOGIN'] == user_data['LOGIN'], 'STATUS'] = 'INDISPONIVEL'
-                    self.df.to_excel(self.parent.data_path, index=False)
-                    self.parent.log_message("Status atualizado para 'INDISPONIVEL' na planilha.")
-                    break
-                except Exception:
+                    
+                    # Atualiza o status para 'INDISPONIVEL' e encerra o processamento para este cliente
+                    self.atualizar_status_na_planilha(user_data['LOGIN'], 'INDISPONIVEL')
+                    self.parent.log_message(f"Status atualizado para 'INDISPONIVEL' para o cliente {user_data['LOGIN']}.")
+                    return  # Encerra o método process_boletos para este cliente
+                except Exception as e:
+                    self.parent.log_message(f"Não encontrou a mensagem 'Você não possui faturas em aberto': {e}")
                     # Caso não encontre a mensagem, prossegue com a coleta de boletos
                     pass
 
                 # Captura os botões 'Pagar boleto'
-                boleto_buttons = wait.until(
-                    EC.presence_of_all_elements_located((By.XPATH, "//span[text()='Pagar boleto']"))
-                )
-                self.parent.log_message(f"Botões 'Pagar boleto' encontrados: {len(boleto_buttons)}")
+                try:
+                    boleto_buttons = wait.until(
+                        EC.presence_of_all_elements_located((By.XPATH, "//span[text()='Pagar boleto']"))
+                    )
+                    self.parent.log_message(f"Botões 'Pagar boleto' encontrados: {len(boleto_buttons)}")
+                except Exception as e:
+                    self.parent.log_message(f"Erro ao localizar botões 'Pagar boleto': {e}")
+                    break
 
                 for index, button in enumerate(boleto_buttons):
                     boleto_id = f"button-{index}"
@@ -150,12 +181,11 @@ class Blume:
                         continue
 
                     self.parent.log_message(f"Preparando para processar 'Pagar boleto - {index + 1}'...")
-                    
+
                     # Certifique-se de que o botão é clicável
                     try:
                         wait.until(EC.element_to_be_clickable(button))
                         driver.execute_script("arguments[0].scrollIntoView(true);", button)
-                        time.sleep(1)
                         button.click()
                     except Exception as e:
                         self.parent.log_message(f"Erro ao clicar no botão 'Pagar boleto - {index + 1}': {e}")
@@ -167,7 +197,7 @@ class Blume:
                     try:
                         wait.until(EC.url_contains("billings"))
                         self.download_boleto(wait, user_data, index + 1)
-                        time.sleep(2)
+                        time.sleep(1)
                     except Exception as e:
                         self.parent.log_message(f"Erro após clicar em 'Pagar boleto - {index + 1}': {e}")
                         continue
@@ -259,22 +289,15 @@ class Blume:
             contrato = contrato.lstrip('0')
             self.parent.log_message(f"Número do contrato extraído: {contrato}")
 
-            # Normaliza os dados da coluna 'IDENTIFICAÇÃO'
-            self.df['IDENTIFICAÇÃO'] = self.df['IDENTIFICAÇÃO'].astype(str).str.lstrip('0').str.strip()
-
-            if contrato in self.df['IDENTIFICAÇÃO'].values:
-                row = self.df[self.df['IDENTIFICAÇÃO'] == contrato].iloc[0]
-                nomenclatura = row['NOMENCLATURA']
+            # Verifica se o contrato existe na planilha
+            if self.verificar_contrato_na_planilha(contrato):
+                nomenclatura = self.obter_nomenclatura_por_contrato(contrato)
                 destino = os.path.join(self.parent.save_directory, f"{nomenclatura}.pdf")
-                
                 shutil.move(latest_file, destino)
                 self.parent.log_message(f"{nomenclatura}", area="faturas")
 
-                self.df.loc[self.df['IDENTIFICAÇÃO'] == contrato, 'STATUS'] = 'COLETADO IA'
-
-                # Preservar formatação existente
-                with pd.ExcelWriter(self.parent.data_path, mode='a', engine='openpyxl', if_sheet_exists='overlay') as writer:
-                    self.df.to_excel(writer, index=False, startrow=1, header=False)
+                # Atualiza o status na planilha
+                self.atualizar_status_na_planilha(contrato, 'COLETADO IA')
             else:
                 self.parent.log_message(f"Contrato {contrato} não encontrado na planilha.")
                 self.mover_boleto_nao_encontrado(latest_file)
@@ -297,63 +320,34 @@ class Blume:
         shutil.move(pdf_path, destino)
         self.parent.log_message(f"Boleto movido para 'Boleto não encontrado' como: {destino}")
 
-    def comparar_e_atualizar_excel(self, contrato, pdf_path):
-        try:
-            contrato = contrato.lstrip('0').strip()
-            self.df['IDENTIFICAÇÃO'] = self.df['IDENTIFICAÇÃO'].astype(str).str.lstrip('0').str.strip()
-
-            if contrato in self.df['IDENTIFICAÇÃO'].values:
-                row = self.df[self.df['IDENTIFICAÇÃO'] == contrato].iloc[0]
-                nomenclatura = row['NOMENCLATURA']
-                destino = os.path.join(self.parent.save_directory, f"{nomenclatura}.pdf")
-                shutil.move(pdf_path, destino)
-                self.parent.log_message(f"{nomenclatura}", area="faturas")
-                self.df.loc[self.df['IDENTIFICAÇÃO'] == contrato, 'STATUS'] = 'COLETADO IA'
-                self.df.to_excel(self.parent.data_path, index=False)
+    def verificar_contrato_na_planilha(self, contrato):
+        for row in self.sheet.iter_rows(min_row=2, values_only=True):
+            if str(row[4]).lstrip('0') == contrato:  # Coluna 4: IDENTIFICAÇÃO
                 return True
-            else:
-                self.parent.log_message(f"Contrato {contrato} não encontrado na planilha.")
-                return False
-        except Exception as e:
-            self.parent.log_message(f"Erro ao comparar e atualizar Excel: {e}")
-            return False
+        return False
 
-    def mark_as_collected(self, excel_identification, data_path):
+    def obter_nomenclatura_por_contrato(self, contrato):
+        for row in self.sheet.iter_rows(min_row=2, values_only=True):
+            if str(row[4]).lstrip('0') == contrato:  # Coluna 4: IDENTIFICAÇÃO
+                return row[12]  # Coluna 12: NOMENCLATURA
+        return None
+
+    def atualizar_status_na_planilha(self, login, status):
+        self.mutex.lock()
         try:
-            # Carregar o arquivo mantendo formatação
-            workbook = load_workbook(data_path, keep_vba=True)
-            sheet = workbook.active
-
-            found = False
-            for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row, values_only=False):
-                
-                cell_identification = row['IDENTIFICAÇÃO'] 
-                cell_status = row['STATUS']
-
-                if cell_identification.value and str(cell_identification.value).lstrip("0").strip() == excel_identification:
-                    cell_status.value = str("COLETADO IA")
-                    found = True
+            for row in self.sheet.iter_rows(min_row=2):
+                if str(row[8].value) == login:  # Coluna 8: LOGIN
+                    row[11].value = status  # Coluna 11: STATUS
+                    self.workbook.save(self.data_path)
+                    self.parent.log_message(f"Status atualizado para '{status}' no login {login}.")
                     break
-
-            if found:
-                # Salvar preservando a formatação
-                workbook.save(data_path)
-                self.parent.log_message(f"Status atualizado para 'COLETADO IA' para {excel_identification}")
-            else:
-                self.parent.log_message(f"Identificação {excel_identification} não encontrada.")
         except Exception as e:
-            self.parent.log_message(f"Erro ao marcar como coletado: {e}")
+            self.parent.log_message(f"Erro ao atualizar status na planilha: {e}")
+        finally:
+            self.mutex.unlock()
 
     def verificar_coleta_finalizada(self):
-        try:
-            registros_nao_coletados = self.df[self.df['STATUS'] != 'COLETADO IA']
-
-            if registros_nao_coletados.empty:
-                self.parent.log_message("Todos os registros já foram coletados. Nenhuma ação necessária.")
-                return True
-            else:
-                self.parent.log_message(f"Ainda existem {len(registros_nao_coletados)} registros para coleta.")
+        for row in self.sheet.iter_rows(min_row=2, values_only=True):
+            if row[11] != 'COLETADO IA':  # Coluna 11: STATUS
                 return False
-        except Exception as e:
-            self.parent.log_message(f"Erro ao verificar a coleta: {e}")
-            return False
+        return True
