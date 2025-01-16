@@ -6,136 +6,31 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import QThreadPool, Qt, QSettings, QSize
 from PyQt6.QtGui import QIcon, QTextCursor, QPixmap
-from templates.estilos import estilo_sheet, estilo_label, estilo_log, campo_qline, estilo_combo_box, estilo_hover
 from openpyxl import load_workbook
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'backend')))
 from autoBlume import Blume, AutomationTask
-from templates.window import ResizableWindow
+from templates.GerenJanela import ResizableWindow
+from templates.GerenEstilos import estilo_sheet, estilo_label, estilo_log, campo_qline, estilo_combo_box, estilo_hover
 
 
-class MainApp(ResizableWindow):
-    def __init__(self):
-        super().__init__()
+class GuiAutoBlume(QWidget):
+    """Interface gráfica para a funcionalidade 'Automação coleta'."""
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.parent = parent
+        self.workbook = None
+        self.sheet = None
+        self.data_path = ""
+        self.save_directory = ""
+        self.threadpool = QThreadPool()
+        self.init_ui()
 
-        # Configuração da interface gráfica
-        self.setStyleSheet(estilo_sheet())
-
-        # Remove a barra de título padrão do sistema operacional
-        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
-        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)  # Fundo transparente
-
-        # Configurações persistentes
-        self.settings_path = "config.json"
-        self.load_settings()
-
-        # Configurar a janela principal
-        self.setWindowTitle("LE Helper")  # Título da janela
-        self.setGeometry(100, 100, 900, 550)  # Tamanho e posição da janela
-
-        # Cria um widget central com bordas arredondadas
-        self.central_widget = QWidget(self)
-        self.central_widget.setObjectName("central_widget")
-        self.central_widget.setStyleSheet("""
-            QWidget#central_widget {
-                background-color: #f4f4f4;
-                border-radius: 12px;
-                border: 1px solid #cccccc;
-            }
-        """)
-        self.setCentralWidget(self.central_widget)
-
-        # Layout principal
-        self.layout = QVBoxLayout(self.central_widget)
+    def init_ui(self):
+        self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(10, 10, 10, 10)
         self.layout.setSpacing(10)
 
-        # Cria uma barra de título personalizada
-        self.barra_titulo = QWidget(self.central_widget)
-        self.barra_titulo.setObjectName("barra_titulo")
-        self.barra_titulo.setFixedHeight(30)
-
-        layout_titulo = QHBoxLayout(self.barra_titulo)
-        layout_titulo.setContentsMargins(5, 0, 5, 0)
-        layout_titulo.setSpacing(5)
-
-        titulo_widget = QWidget()
-        titulo_layout = QHBoxLayout(titulo_widget)
-        titulo_layout.setContentsMargins(0, 0, 0, 0)
-        titulo_layout.setSpacing(0)
-
-        # Ícone do título
-        caminho_base = os.path.join(os.path.dirname(__file__), "..", "frontend", "static", "images")
-        icone_titulo = QLabel()
-        caminho_icone = os.path.join(caminho_base, "logo.png")
-        if os.path.exists(caminho_icone):
-            icone_titulo.setPixmap(QPixmap(caminho_icone).scaled(
-                24, 24, 
-                Qt.AspectRatioMode.IgnoreAspectRatio,
-                Qt.TransformationMode.SmoothTransformation
-            ))
-        else:
-            print(f"Arquivo de ícone não encontrado: {caminho_icone}")
-
-        titulo_layout.addWidget(icone_titulo)
-
-        # Adiciona o widget do título ao layout da barra de título
-        layout_titulo.addWidget(titulo_widget)
-
-        # Espaçador para alinhar os botões à direita
-        layout_titulo.addStretch()
-
-        # Botão de minimizar
-        self.botao_minimizar = QPushButton()
-        self.botao_minimizar.setObjectName("botao_minimizar")
-        self.botao_minimizar.setIcon(QIcon("frontend/static/icons/minimize.png"))  # Ícone de minimizar
-        self.botao_minimizar.setFixedSize(QSize(20, 20))  # Tamanho fixo
-        self.botao_minimizar.clicked.connect(self.showMinimized)  # Conecta ao método de minimizar
-        layout_titulo.addWidget(self.botao_minimizar)
-
-        # Botão de fechar
-        self.botao_fechar = QPushButton()
-        self.botao_fechar.setObjectName("botao_fechar")
-        self.botao_fechar.setIcon(QIcon("frontend/static/icons/exit.png"))  # Ícone de fechar
-        self.botao_fechar.setFixedSize(QSize(20, 20))  # Tamanho fixo
-        self.botao_fechar.clicked.connect(self.close)  # Conecta ao método de fechar
-        layout_titulo.addWidget(self.botao_fechar)
-
-        # Adiciona a barra de título personalizada ao layout principal
-        self.layout.addWidget(self.barra_titulo)
-
-        # Widget central e layout principal
-        self.central_content = QWidget()
-        self.layout.addWidget(self.central_content)
-        self.content_layout = QVBoxLayout(self.central_content)
-
-        self.workbook = None  # Workbook do Excel
-        self.sheet = None  # Planilha ativa
-        self.data_path = ""  # Caminho do arquivo Excel
-
-        self.load_settings()  # Carrega as configurações persistentes
-        self.init_ui()  # Inicializa a interface do usuário
-        self.threadpool = QThreadPool()  # Pool de threads para execução de tarefas
-
-        # Carrega a planilha se já estiver definida
-        if self.data_path:
-            self.load_data_file(self.data_path)
-        else:
-            self.select_data_file()
-
-    def load_settings(self):
-        settings = QSettings(self.settings_path, QSettings.Format.IniFormat)
-        self.save_directory = settings.value("save_directory", "")
-        self.data_path = settings.value("data_path", "")
-
-    def save_settings(self):
-        settings = QSettings(self.settings_path, QSettings.Format.IniFormat)
-        settings.setValue("save_directory", self.save_directory)
-        settings.setValue("data_path", self.data_path)
-        settings.setValue("last_open_dir", os.path.dirname(self.data_path))
-        settings.sync()
-
-    def init_ui(self):
         top_layout = QGridLayout()
 
         # Aplicar estilo ao QLabel
@@ -190,7 +85,6 @@ class MainApp(ResizableWindow):
         # Layout dos Logs
         logs_layout = QGridLayout()
 
-        # Aplicar estilo ao QTextEdit
         self.log_tecnico_area = QTextEdit(self)
         self.log_tecnico_area.setReadOnly(True)
         self.log_tecnico_area.setPlaceholderText("Log técnico")
@@ -203,37 +97,10 @@ class MainApp(ResizableWindow):
         self.faturas_coletadas_area.setStyleSheet(estilo_log())
         logs_layout.addWidget(self.faturas_coletadas_area, 0, 2, 2, 2)
 
-        # Melhorar layout de logs
-        logs_layout.setVerticalSpacing(10)
-        logs_layout.setHorizontalSpacing(10)
-
-        logs_layout.setColumnStretch(0, 2)
-        logs_layout.setColumnStretch(1, 3)
-        logs_layout.setColumnStretch(2, 2)
-        logs_layout.setColumnStretch(3, 3)
-
         self.layout.addLayout(logs_layout)
 
-        # Configurações adicionais de layout
-        top_layout.setColumnStretch(0, 1)
-        top_layout.setColumnStretch(1, 4)
-        top_layout.setColumnStretch(2, 1)
-
-        logs_layout.setRowStretch(0, 2)
-        logs_layout.setRowStretch(1, 4)
-
-        # Configurações de tamanho
-        self.save_dir_field.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
-        self.planilha_field.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
-        self.operadora_combo.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
-        self.confirm_button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
-        self.save_dir_button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
-        self.planilha_button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
-        self.log_tecnico_area.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        self.faturas_coletadas_area.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-
     def select_data_file(self):
-        last_dir = QSettings(self.settings_path, QSettings.Format.IniFormat).value("last_open_dir", "")
+        last_dir = QSettings(self.parent.settings_path, QSettings.Format.IniFormat).value("last_open_dir", "")
         file_path, _ = QFileDialog.getOpenFileName(self, "Selecionar Planilha de Dados", last_dir, "Arquivos Excel (*.xlsx *.xlsm)")
 
         if file_path:
@@ -255,38 +122,20 @@ class MainApp(ResizableWindow):
                     operadoras.add(row[3])
             self.operadora_combo.addItems(operadoras)
 
-            self.save_settings()
+            self.parent.save_settings()
         except Exception as e:
             QMessageBox.critical(self, "Erro", f"Erro ao carregar a planilha: {e}")
 
     def select_save_directory(self):
-        last_save_dir = QSettings(self.settings_path, QSettings.Format.IniFormat).value("last_save_dir", "")
+        last_save_dir = QSettings(self.parent.settings_path, QSettings.Format.IniFormat).value("last_save_dir", "")
         dir_path = QFileDialog.getExistingDirectory(self, "Selecionar Diretório de Salvamento", last_save_dir)
 
         if dir_path:
             self.save_directory = dir_path
             self.save_dir_field.setText(dir_path)
-
-            settings = QSettings(self.settings_path, QSettings.Format.IniFormat)
-            settings.setValue("save_directory", dir_path)
-            settings.setValue("last_save_dir", dir_path)
-
-            self.save_settings()
+            self.parent.save_settings()
         else:
             self.save_directory = ""
-
-    def log_message(self, message, area="tecnico"):
-        """Exibe mensagens nos logs adequados."""
-        if area == "tecnico":
-            self.log_tecnico_area.append(message)
-            cursor = self.log_tecnico_area.textCursor()
-            cursor.movePosition(QTextCursor.MoveOperation.End)
-            self.log_tecnico_area.setTextCursor(cursor)
-        elif area == "faturas":
-            self.faturas_coletadas_area.append(message)
-            cursor = self.faturas_coletadas_area.textCursor()
-            cursor.movePosition(QTextCursor.MoveOperation.End)
-            self.faturas_coletadas_area.setTextCursor(cursor)
 
     def start_automation(self):
         """Inicia o processo de automação."""
@@ -304,11 +153,24 @@ class MainApp(ResizableWindow):
             QMessageBox.warning(self, "Erro", "Selecione uma planilha de dados primeiro.")
             return
 
-        if not self.workbook:
-            QMessageBox.warning(self, "Erro", "A planilha de dados ainda não foi carregada.")
+        if selected_operadora.upper() == "BLUME":
+            try:
+                automator = Blume(self, self.data_path)
+            except Exception as e:
+                QMessageBox.critical(self, "Erro", f"Erro ao criar o automator Blume: {e}")
+                return
+        else:
+            QMessageBox.warning(self, "Erro", f"Automação para a operadora {selected_operadora} não está implementada.")
             return
 
-        # Filtra os dados da operadora selecionada
+        try:
+            task = AutomationTask(automator, self.get_user_data(selected_operadora), self.log_message)
+            self.threadpool.start(task)
+        except Exception as e:
+            QMessageBox.critical(self, "Erro", f"Erro ao iniciar a tarefa de automação: {e}")
+
+    def get_user_data(self, selected_operadora):
+        """Filtra os dados da operadora selecionada."""
         user_data = []
         for row in self.sheet.iter_rows(min_row=2, values_only=True):
             if row[3] == selected_operadora and row[11] != 'COLETADO IA':  # Coluna 3: OPERADORA, Coluna 11: STATUS
@@ -327,26 +189,126 @@ class MainApp(ResizableWindow):
                     "STATUS": row[11],
                     "NOMENCLATURA": row[12]
                 })
+        return user_data
 
-        if not user_data:
-            QMessageBox.warning(self, "Erro", f"Nenhum dado encontrado para a operadora {selected_operadora}.")
-            return
+    def log_message(self, message, area="tecnico"):
+        """Exibe mensagens nos logs adequados."""
+        if area == "tecnico":
+            self.log_tecnico_area.append(message)
+            cursor = self.log_tecnico_area.textCursor()
+            cursor.movePosition(QTextCursor.MoveOperation.End)
+            self.log_tecnico_area.setTextCursor(cursor)
+        elif area == "faturas":
+            self.faturas_coletadas_area.append(message)
+            cursor = self.faturas_coletadas_area.textCursor()
+            cursor.movePosition(QTextCursor.MoveOperation.End)
+            self.faturas_coletadas_area.setTextCursor(cursor)
 
-        if selected_operadora.upper() == "BLUME":
-            try:
-                automator = Blume(self, self.data_path)
-            except Exception as e:
-                QMessageBox.critical(self, "Erro", f"Erro ao criar o automator Blume: {e}")
-                return
+
+class MainApp(ResizableWindow):
+    def __init__(self):
+        super().__init__()
+
+        # Configuração da interface gráfica
+        self.setStyleSheet(estilo_sheet())
+
+        # Remove a barra de título padrão do sistema operacional
+        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)  # Fundo transparente
+
+        # Configurações persistentes
+        self.settings_path = "config.ini"
+        self.save_directory = ""
+        self.data_path = ""
+
+        # Configurar a janela principal
+        self.setWindowTitle("LE Helper")
+        self.setGeometry(100, 100, 900, 550)
+
+        # Cria um widget central com bordas arredondadas
+        self.central_widget = QWidget(self)
+        self.central_widget.setObjectName("central_widget")
+        self.central_widget.setStyleSheet("""
+            QWidget#central_widget {
+                background-color: #f4f4f4;
+                border-radius: 12px;
+                border: 1px solid #cccccc;
+            }
+        """)
+        self.setCentralWidget(self.central_widget)
+
+        # Layout principal
+        self.layout = QVBoxLayout(self.central_widget)
+        self.layout.setContentsMargins(10, 10, 10, 10)
+        self.layout.setSpacing(10)
+
+        # Cria uma barra de título personalizada
+        self.barra_titulo = QWidget(self.central_widget)
+        self.barra_titulo.setObjectName("barra_titulo")
+        self.barra_titulo.setFixedHeight(30)
+
+        layout_titulo = QHBoxLayout(self.barra_titulo)
+        layout_titulo.setContentsMargins(5, 0, 5, 0)
+        layout_titulo.setSpacing(5)
+
+        # Ícone do título
+        caminho_base = os.path.join(os.path.dirname(__file__), "..", "frontend", "static", "images")
+        icone_titulo = QLabel()
+        caminho_icone = os.path.join(caminho_base, "logo.png")
+        if os.path.exists(caminho_icone):
+            icone_titulo.setPixmap(QPixmap(caminho_icone).scaled(
+                24, 24, 
+                Qt.AspectRatioMode.IgnoreAspectRatio,
+                Qt.TransformationMode.SmoothTransformation
+
+            ))
+        layout_titulo.addWidget(icone_titulo)
+
+        # ComboBox para selecionar funcionalidades
+        self.funcionalidades_combo = QComboBox(self.barra_titulo)
+        self.funcionalidades_combo.addItem("Automação coleta")
+        self.funcionalidades_combo.setStyleSheet(estilo_combo_box())
+        self.funcionalidades_combo.currentTextChanged.connect(self.mudar_funcionalidade)
+        layout_titulo.addWidget(self.funcionalidades_combo)
+
+        # Espaçador para alinhar os botões à direita
+        layout_titulo.addStretch()
+
+        # Botão de minimizar
+        self.botao_minimizar = QPushButton(self.barra_titulo)
+        self.botao_minimizar.setObjectName("botao_minimizar")
+        self.botao_minimizar.setIcon(QIcon("frontend/static/icons/minimize.png"))
+        self.botao_minimizar.setFixedSize(QSize(20, 20))
+        self.botao_minimizar.clicked.connect(self.showMinimized)
+        layout_titulo.addWidget(self.botao_minimizar)
+
+        # Botão de fechar
+        self.botao_fechar = QPushButton(self.barra_titulo)
+        self.botao_fechar.setObjectName("botao_fechar")
+        self.botao_fechar.setIcon(QIcon("frontend/static/icons/exit.png"))
+        self.botao_fechar.setFixedSize(QSize(20, 20))
+        self.botao_fechar.clicked.connect(self.close)
+        layout_titulo.addWidget(self.botao_fechar)
+
+        # Adiciona a barra de título personalizada ao layout principal
+        self.layout.addWidget(self.barra_titulo)
+
+        # Widget central e layout principal
+        self.central_content = QWidget(self.central_widget)
+        self.layout.addWidget(self.central_content)
+        self.content_layout = QVBoxLayout(self.central_content)
+
+        # Inicializa a funcionalidade padrão
+        self.gui_auto_blume = GuiAutoBlume(self)
+        self.content_layout.addWidget(self.gui_auto_blume)
+
+    def mudar_funcionalidade(self, funcionalidade):
+        """Alterna entre as funcionalidades disponíveis."""
+        if funcionalidade == "Automação coleta":
+            self.content_layout.addWidget(self.gui_auto_blume)
         else:
-            QMessageBox.warning(self, "Erro", f"Automação para a operadora {selected_operadora} não está implementada.")
-            return
-
-        try:
-            task = AutomationTask(automator, user_data, self.log_message)
-            self.threadpool.start(task)
-        except Exception as e:
-            QMessageBox.critical(self, "Erro", f"Erro ao iniciar a tarefa de automação: {e}")
+            # Adicione outras funcionalidades aqui
+            pass
 
 
 if __name__ == "__main__":
