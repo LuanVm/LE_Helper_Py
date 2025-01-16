@@ -8,7 +8,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
-from PyQt6.QtCore import QRunnable, pyqtSlot, QMutex
+from PyQt6.QtCore import QRunnable, QObject, pyqtSignal, QMutex
 from PyPDF2 import PdfReader
 from openpyxl import load_workbook
 
@@ -20,14 +20,43 @@ class AutomationTask(QRunnable):
         self.user_data = user_data
         self.log_function = log_function
 
-    @pyqtSlot()
     def run(self):
+        """Método executado quando a tarefa é iniciada pelo QThreadPool."""
         try:
             self.log_function("Iniciando automação para o usuário...")
+            if hasattr(self.automator, 'stop_flag') and self.automator.stop_flag:
+                self.log_function("Automação interrompida antes de iniciar.")
+                return
             self.automator.run_automation(self.user_data)
             self.log_function("Automação concluída com sucesso.")
         except Exception as e:
             self.log_function(f"Erro durante a automação: {str(e)}")
+
+class StopAutomation:
+    def __init__(self, automator):
+        self.automator = automator
+
+    def stop(self):
+        """Para a automação em execução e encerra todos os navegadores."""
+        if hasattr(self.automator, 'stop_flag'):
+            self.automator.stop_flag = True
+            self.automator.parent.log_message("Automação interrompida pelo usuário.", area="tecnico", color="red")
+            self.close_all_browsers()  # Fecha todos os navegadores abertos
+        else:
+            self.automator.parent.log_message("Nenhuma automação em execução para interromper.", area="tecnico")
+
+    def close_all_browsers(self):
+        """Fecha todos os navegadores abertos pelo Selenium."""
+        if hasattr(self.automator, 'drivers') and self.automator.drivers:
+            self.automator.parent.log_message("Fechando todos os navegadores abertos...", area="tecnico")
+            for driver in self.automator.drivers:
+                try:
+                    driver.quit()  # Fecha o navegador
+                except Exception as e:
+                    self.automator.parent.log_message(f"Erro ao fechar o navegador: {e}", area="tecnico")
+            self.automator.drivers.clear()  # Limpa a lista de drivers
+        else:
+            self.automator.parent.log_message("Nenhum navegador aberto para fechar.", area="tecnico")
 
 class Blume:
     def __init__(self, parent, data_path):
@@ -36,6 +65,8 @@ class Blume:
         self.workbook = load_workbook(data_path)
         self.sheet = self.workbook.active
         self.mutex = QMutex()
+        self.stop_flag = False
+        self.drivers = []
 
     def initialize_browser(self):
         try:
@@ -48,6 +79,7 @@ class Blume:
                 service=Service(ChromeDriverManager().install()),
                 options=options
             )
+            self.drivers.append(driver)  # Adiciona o driver à lista de drivers
             self.parent.log_message("Navegador inicializado com sucesso.")
             return driver
         except Exception as e:
@@ -64,6 +96,11 @@ class Blume:
             return
 
         for user in user_data:
+            if self.stop_flag:  # Verifica se a automação foi interrompida
+                self.parent.log_message("Automação interrompida pelo usuário.", area="tecnico")
+                self.close_all_browsers()  # Fecha todos os navegadores abertos
+                return
+
             if user['STATUS'] == 'COLETADO IA':
                 self.parent.log_message(f"Estrutura {user['LOGIN']} já coletada, ignorando...", area="tecnico")
                 continue
@@ -90,8 +127,18 @@ class Blume:
                 if driver:
                     self.parent.log_message("Fechando o navegador...", area="tecnico")
                     driver.quit()
+                    self.drivers.remove(driver)  # Remove o driver da lista de drivers
 
         self.parent.log_message("Todos os boletos foram processados.", area="tecnico")
+
+    def close_all_browsers(self):
+        """Fecha todos os navegadores abertos."""
+        for driver in self.drivers:
+            try:
+                driver.quit()
+            except Exception as e:
+                self.parent.log_message(f"Erro ao fechar o navegador: {e}", area="tecnico")
+        self.drivers.clear()  # Limpa a lista de drivers
 
     def login(self, driver, wait, user_data):
         try:
