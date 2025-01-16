@@ -44,7 +44,7 @@ def estilo_sheet():
         }
     """
 
-def qLine():
+def campo_qline():
     return """
         QLineEdit {
             font-family: 'Open Sans', sans-serif;

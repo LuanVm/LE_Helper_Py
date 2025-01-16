@@ -1,45 +1,31 @@
-from PyQt6.QtCore import Qt, QPoint, QRect
+from PyQt6.QtCore import Qt, QPoint
 from PyQt6.QtWidgets import QMainWindow
-from PyQt6.QtGui import QCursor, QPixmap
-import os
 
 class ResizableWindow(QMainWindow):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, barra_titulo=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.dragging = False
         self.offset = QPoint()
         self.resizing = False
         self.resize_direction = None
-
-        # Carrega o ícone de redimensionamento personalizado
-        caminho_base_cursor = os.path.join(os.path.dirname(__file__), "..", "frontend", "static", "icons")
-        caminho_icone = os.path.join(caminho_base_cursor, "resize.png")
-        self.resize_cursor = self.load_custom_cursor(caminho_icone)
-
-    def load_custom_cursor(self, path):
-        """Carrega um cursor personalizado a partir de uma imagem."""
-        if os.path.exists(path):
-            pixmap = QPixmap(path)
-            if not pixmap.isNull():
-                return QCursor(pixmap, hotX=8, hotY=8)  # Define o ponto de hotspot do cursor
-        return QCursor(Qt.CursorShape.ArrowCursor)  # Retorna o cursor padrão se a imagem não for carregada
+        self.barra_titulo = barra_titulo  # Recebe a barra de título personalizada
 
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
-            if self.barra_titulo.geometry().contains(event.pos()):
+            if self.barra_titulo and self.barra_titulo.geometry().contains(event.pos()):
                 self.dragging = True
-                self.offset = event.position().toPoint()
+                self.offset = event.pos()  # Usa event.pos() em vez de event.position().toPoint()
             else:
                 self.resizing = True
-                self.resize_direction = self.get_resize_direction(event.position().toPoint())
+                self.resize_direction = self.get_resize_direction(event.pos())
 
     def mouseMoveEvent(self, event):
         if self.dragging:
-            self.move(self.pos() + event.position().toPoint() - self.offset)
+            self.move(self.pos() + event.pos() - self.offset)
         elif self.resizing and self.resize_direction:
-            self.resize_window(event.position().toPoint())
+            self.resize_window(event.pos())
         else:
-            self.update_cursor(event.position().toPoint())
+            self.update_cursor(event.pos())
 
     def mouseReleaseEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:

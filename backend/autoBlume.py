@@ -29,7 +29,6 @@ class AutomationTask(QRunnable):
         except Exception as e:
             self.log_function(f"Erro durante a automação: {str(e)}")
 
-
 class Blume:
     def __init__(self, parent, data_path):
         self.parent = parent
@@ -58,13 +57,15 @@ class Blume:
     def run_automation(self, user_data):
         self.parent.log_message("Iniciando processo de automação para a operadora Blume...", area="tecnico")
 
+        # Verifica se todas as estruturas já foram coletadas
         if self.verificar_coleta_finalizada():
-            self.parent.log_message("Nenhuma coleta pendente. Finalizando execução.")
+            self.parent.log_message("Todas as faturas na planilha base estão identificadas como 'Coletadas'.",
+                                    area="tecnico")
             return
 
         for user in user_data:
-            if user['STATUS'] == 'COLETADO IA' or user['STATUS'] == 'INDISPONIVEL':
-                self.parent.log_message(f"Estrutura {user['LOGIN']} já processada ou indisponível, ignorando...", area="tecnico")
+            if user['STATUS'] == 'COLETADO IA':
+                self.parent.log_message(f"Estrutura {user['LOGIN']} já coletada, ignorando...", area="tecnico")
                 continue
 
             driver = None
@@ -83,7 +84,8 @@ class Blume:
                 self.process_boletos(driver, wait, user)
 
             except Exception as e:
-                self.parent.log_message(f"Erro durante o processamento do usuário {user['LOGIN']}: {str(e)}", area="tecnico")
+                self.parent.log_message(f"Erro durante o processamento do usuário {user['LOGIN']}: {str(e)}",
+                                        area="tecnico")
             finally:
                 if driver:
                     self.parent.log_message("Fechando o navegador...", area="tecnico")
@@ -152,13 +154,15 @@ class Blume:
                 # Verifica a presença do texto "Você não possui faturas em aberto"
                 try:
                     no_invoices_message = wait.until(
-                        EC.presence_of_element_located((By.XPATH, "//h5[contains(text(), 'Você não possui faturas em aberto')]"))
+                        EC.presence_of_element_located(
+                            (By.XPATH, "//h5[contains(text(), 'Você não possui faturas em aberto')]"))
                     )
                     self.parent.log_message("Mensagem 'Você não possui faturas em aberto' encontrada.")
-                    
+
                     # Atualiza o status para 'INDISPONIVEL' e encerra o processamento para este cliente
                     self.atualizar_status_na_planilha(user_data['LOGIN'], 'INDISPONIVEL')
-                    self.parent.log_message(f"Status atualizado para 'INDISPONIVEL' para o cliente {user_data['LOGIN']}.")
+                    self.parent.log_message(
+                        f"Status atualizado para 'INDISPONIVEL' para o cliente {user_data['LOGIN']}.")
                     return  # Encerra o método process_boletos para este cliente
                 except Exception as e:
                     self.parent.log_message(f"Não encontrou a mensagem 'Você não possui faturas em aberto': {e}")
@@ -239,13 +243,15 @@ class Blume:
         except Exception as e:
             self.parent.log_message(f"Erro ao processar o download do boleto {index}: {e}")
 
-    def wait_for_download(self):
+    @staticmethod
+    def wait_for_download():
         download_dir = os.path.join(os.path.expanduser('~'), 'Downloads')
         timeout = 60
         while timeout > 0:
             pdf_files = [fname for fname in os.listdir(download_dir) if fname.endswith(".pdf")]
             if pdf_files:
-                latest_file = os.path.join(download_dir, max(pdf_files, key=lambda f: os.path.getmtime(os.path.join(download_dir, f))))
+                latest_file = os.path.join(download_dir, max(pdf_files, key=lambda f: os.path.getmtime(
+                    os.path.join(download_dir, f))))
                 if not latest_file.endswith(".crdownload") and os.path.getsize(latest_file) > 0:
                     time.sleep(2)
                     return

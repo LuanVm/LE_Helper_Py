@@ -6,13 +6,12 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import QThreadPool, Qt, QSettings, QSize
 from PyQt6.QtGui import QIcon, QTextCursor, QPixmap
-from templates.estilos import estilo_sheet, estilo_label, estilo_log, qLine, estilo_combo_box, estilo_hover
+from templates.estilos import estilo_sheet, estilo_label, estilo_log, campo_qline, estilo_combo_box, estilo_hover
 from openpyxl import load_workbook
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'backend')))
-
 from autoBlume import Blume, AutomationTask
-from templates.resize import ResizableWindow
+from templates.window import ResizableWindow
 
 
 class MainApp(ResizableWindow):
@@ -155,7 +154,7 @@ class MainApp(ResizableWindow):
         self.save_dir_field = QLineEdit(self)
         self.save_dir_field.setReadOnly(True)
         self.save_dir_field.setText(self.save_directory)
-        self.save_dir_field.setStyleSheet(qLine())
+        self.save_dir_field.setStyleSheet(campo_qline())
         top_layout.addWidget(self.save_dir_field, 0, 1)
 
         self.save_dir_button = QPushButton("Selecionar Pasta", self)
@@ -167,7 +166,7 @@ class MainApp(ResizableWindow):
         self.planilha_field = QLineEdit(self)
         self.planilha_field.setReadOnly(True)
         self.planilha_field.setText(self.data_path)
-        self.planilha_field.setStyleSheet(qLine())
+        self.planilha_field.setStyleSheet(campo_qline())
         top_layout.addWidget(self.planilha_field, 1, 1)
 
         self.planilha_button = QPushButton("Selecionar Planilha", self)
