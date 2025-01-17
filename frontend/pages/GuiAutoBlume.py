@@ -13,9 +13,8 @@ from AutoBlume import Blume, AutomationTask, StopAutomation
 
 #Estilos e gerenciamento
 from templates.GerenEstilos import (
-    estilo_sheet_light, estilo_label_light, estilo_combo_box_light, estilo_hover_light,
-    campo_qline_light, estilo_log_light, estilo_sheet_dark, estilo_label_dark, estilo_combo_box_dark, estilo_hover_dark,
-    campo_qline_dark, estilo_log_dark
+    estilo_label_light, estilo_combo_box_light, estilo_hover,
+    campo_qline_light, estilo_log_light
 )
 
 
@@ -59,7 +58,7 @@ class GuiAutoBlume(QWidget):
         top_layout.addWidget(self.save_dir_field, 0, 1)
 
         self.save_dir_button = QPushButton("Selecionar Pasta", self)
-        estilo_hover_light(self.save_dir_button)
+        estilo_hover(self.save_dir_button)
         self.save_dir_button.clicked.connect(self.select_save_directory)
         top_layout.addWidget(self.save_dir_button, 0, 2)
 
@@ -71,7 +70,7 @@ class GuiAutoBlume(QWidget):
         top_layout.addWidget(self.planilha_field, 1, 1)
 
         self.planilha_button = QPushButton("Selecionar Planilha", self)
-        estilo_hover_light(self.planilha_button)
+        estilo_hover(self.planilha_button)
         self.planilha_button.clicked.connect(self.select_data_file)
         top_layout.addWidget(self.planilha_button, 1, 2)
 
@@ -83,7 +82,7 @@ class GuiAutoBlume(QWidget):
 
         # Botão de Iniciar/Parar Automação
         self.confirm_button = QPushButton("Iniciar automação", self)
-        estilo_hover_light(self.confirm_button)
+        estilo_hover(self.confirm_button)
         self.confirm_button.clicked.connect(self.toggle_automation)  # Alterado para toggle_automation
         top_layout.addWidget(self.confirm_button, 2, 2)
 

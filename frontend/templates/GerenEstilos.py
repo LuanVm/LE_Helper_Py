@@ -120,7 +120,7 @@ def estilo_combo_box_light():
         }
 
         QComboBox::down-arrow {
-            image: url("frontend/static/icons/ui_drop_down.png");
+            image: url("frontend/static/icons/ui_drop_down_light.png");
             width: 16px;
             height: 16px;
         }
@@ -170,7 +170,7 @@ def estilo_log_light():
         color: #333333;
     """
 
-def estilo_hover_light(button):
+def estilo_hover(button):
     """Aplica o estilo de hover a um QPushButton."""
     button.setStyleSheet("""
         QPushButton {
@@ -315,7 +315,7 @@ def estilo_combo_box_dark():
         }
 
         QComboBox::down-arrow {
-            image: url("frontend/static/icons/ui_drop_down.png");
+            image: url("frontend/static/icons/ui_drop_down_dark.png");
             width: 16px;
             height: 16px;
         }
@@ -364,26 +364,3 @@ def estilo_log_dark():
         font-size: 12px;
         color: #e0e0e0;
     """
-
-def estilo_hover_dark(button):
-    """Aplica o estilo de hover a um QPushButton."""
-    button.setStyleSheet("""
-        QPushButton {
-            background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #EF4765, stop:1 #f58634);  /* Gradiente laranja principal */
-            border: 0;
-            border-radius: 12px;
-            color: #FFFFFF;
-            font-family: 'Segoe UI Black', Roboto, Helvetica, Arial, sans-serif;
-            font-size: 12px;
-            font-weight: 500;
-            padding: 8px 24px;
-            text-align: center;
-        }
-        QPushButton:hover {
-            background: qlineargradient(spread:pad, x1:0.5, y1:0.5, x2:1, y2:1, stop:0 #FFC2A3, stop:1 #FFB089);  /* Gradiente laranja mais claro */
-            border: 1px solid rgba(255, 255, 255, 0.6);
-        }
-        QPushButton:focus {
-            outline: none;
-        }
-    """)

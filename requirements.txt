@@ -1,4 +1,3 @@
-json
 openpyxl
 PyPDF2
 PyQt6

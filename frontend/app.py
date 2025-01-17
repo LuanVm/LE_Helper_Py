@@ -17,8 +17,8 @@ from AutoBlume import StopAutomation
 #Estilos e gerenciamento
 from templates.GerenJanela import ResizableWindow
 from templates.GerenEstilos import (
-    estilo_sheet_light, estilo_label_light, estilo_combo_box_light, estilo_hover_light,
-    campo_qline_light, estilo_log_light, estilo_sheet_dark, estilo_label_dark, estilo_combo_box_dark, estilo_hover_dark,
+    estilo_sheet_light, estilo_label_light, estilo_combo_box_light, estilo_hover,
+    campo_qline_light, estilo_log_light, estilo_sheet_dark, estilo_label_dark, estilo_combo_box_dark,
     campo_qline_dark, estilo_log_dark
 )
 
@@ -268,9 +268,6 @@ class MainApp(ResizableWindow):
         self.gui_auto_blume.operadora_combo.setStyleSheet(estilo_combo_box_light())
         self.gui_auto_blume.log_tecnico_area.setStyleSheet(estilo_log_light())
         self.gui_auto_blume.faturas_coletadas_area.setStyleSheet(estilo_log_light())
-        estilo_hover_light(self.gui_auto_blume.save_dir_button)
-        estilo_hover_light(self.gui_auto_blume.planilha_button)
-        estilo_hover_light(self.gui_auto_blume.confirm_button)
         
         # Aplicar estilo aos QLabel
         self.gui_auto_blume.label_salvamento.setStyleSheet(estilo_label_light())
@@ -321,9 +318,6 @@ class MainApp(ResizableWindow):
         self.gui_auto_blume.operadora_combo.setStyleSheet(estilo_combo_box_dark())
         self.gui_auto_blume.log_tecnico_area.setStyleSheet(estilo_log_dark())
         self.gui_auto_blume.faturas_coletadas_area.setStyleSheet(estilo_log_dark())
-        estilo_hover_dark(self.gui_auto_blume.save_dir_button)
-        estilo_hover_dark(self.gui_auto_blume.planilha_button)
-        estilo_hover_dark(self.gui_auto_blume.confirm_button)
         self.gui_auto_blume.label_salvamento.setStyleSheet(estilo_label_dark())
         self.gui_auto_blume.label_planilha.setStyleSheet(estilo_label_dark())
         self.gui_auto_blume.label_operadora.setStyleSheet(estilo_label_dark())
