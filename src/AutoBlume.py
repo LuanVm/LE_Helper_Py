@@ -73,6 +73,7 @@ class Blume:
             options = webdriver.ChromeOptions()
             options.add_argument("--disable-extensions")
             options.add_argument("--disable-popup-blocking")
+            options.add_argument("--headless")
 
             self.parent.log_message("Inicializando o navegador...")
             driver = webdriver.Chrome(
@@ -110,7 +111,7 @@ class Blume:
                 driver = self.initialize_browser()
                 wait = WebDriverWait(driver, 15)
                 driver.get("https://portal.blumetelecom.com.br")
-                time.sleep(2)
+                time.sleep(3)
                 self.parent.log_message("Página de login carregada, iniciando login...", area="tecnico")
                 self.login(driver, wait, user)
 

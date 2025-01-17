@@ -7,11 +7,10 @@ from PyQt6.QtCore import QThreadPool, Qt, QSettings
 from PyQt6.QtGui import QTextCursor
 from openpyxl import load_workbook
 
-#Backend
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'backend')))
+# Backend
 from AutoBlume import Blume, AutomationTask, StopAutomation
 
-#Estilos e gerenciamento
+# Estilos e gerenciamento
 from GerenEstilos import (
     estilo_label_light, estilo_combo_box_light, estilo_hover,
     campo_qline_light, estilo_log_light
@@ -28,6 +27,7 @@ class GuiAutoBlume(QWidget):
         self.save_directory = ""
         self.threadpool = QThreadPool()
         self.stopflag = False
+        self.load_settings()
         self.init_ui()
 
     def init_ui(self):
@@ -83,7 +83,7 @@ class GuiAutoBlume(QWidget):
         # Botão de Iniciar/Parar Automação
         self.confirm_button = QPushButton("Iniciar automação", self)
         estilo_hover(self.confirm_button)
-        self.confirm_button.clicked.connect(self.toggle_automation)  # Alterado para toggle_automation
+        self.confirm_button.clicked.connect(self.toggle_automation)
         top_layout.addWidget(self.confirm_button, 2, 2)
 
         self.layout.addLayout(top_layout)
@@ -105,35 +105,43 @@ class GuiAutoBlume(QWidget):
 
         self.layout.addLayout(logs_layout)
 
+    def load_settings(self):
+        settings = QSettings(self.parent.settings_path, QSettings.Format.IniFormat)
+        # self.save_directory = settings.value("save_directory", "")
+        # self.data_path = settings.value("data_path", "")
+
+    def save_settings(self):
+        settings = QSettings(self.parent.settings_path, QSettings.Format.IniFormat)
+        settings.setValue("save_directory", self.save_directory)
+        settings.setValue("data_path", self.data_path)
+        if self.data_path:
+            settings.setValue("last_open_dir", os.path.dirname(self.data_path))
+        if self.save_directory:
+            settings.setValue("last_save_dir", os.path.dirname(self.save_directory))
+
     def select_data_file(self):
         last_dir = QSettings(self.parent.settings_path, QSettings.Format.IniFormat).value("last_open_dir", "")
         file_path, _ = QFileDialog.getOpenFileName(self, "Selecionar Planilha de Dados", last_dir, "Arquivos Excel (*.xlsx *.xlsm)")
-
         if file_path:
-            if not os.path.isfile(file_path):
-                QMessageBox.critical(self, "Erro", "O arquivo selecionado não é válido.")
-            return
-        self.load_data_file(file_path)
+            self.load_data_file(file_path)
+        else:
+            self.data_path = ""
+            self.planilha_field.setText("")
 
     def load_data_file(self, file_path):
-        """Carrega a planilha de dados e atualiza a interface."""
         try:
             self.workbook = load_workbook(file_path)
             self.sheet = self.workbook.active
             self.data_path = file_path
             self.planilha_field.setText(file_path)
+            self.save_settings()
 
-            # Atualiza o combo de operadoras
             self.operadora_combo.clear()
             operadoras = set()
             for row in self.sheet.iter_rows(min_row=2, values_only=True):
-                if row[3]:  # Coluna 3: OPERADORA
+                if row[3]:
                     operadoras.add(row[3])
             self.operadora_combo.addItems(operadoras)
-
-            # Atualiza o caminho da planilha na instância de MainApp
-            self.parent.data_path = file_path
-            self.parent.save_settings()  # Salva as configurações
         except Exception as e:
             self.log_message(f"Erro: {str(e)}", area="tecnico")
             QMessageBox.critical(self, "Erro", f"Erro ao carregar a planilha: {e}")
@@ -141,32 +149,26 @@ class GuiAutoBlume(QWidget):
     def select_save_directory(self):
         last_save_dir = QSettings(self.parent.settings_path, QSettings.Format.IniFormat).value("last_save_dir", "")
         dir_path = QFileDialog.getExistingDirectory(self, "Selecionar Diretório de Salvamento", last_save_dir)
-
         if dir_path and os.path.isdir(dir_path):
             self.save_directory = dir_path
             self.save_dir_field.setText(dir_path)
-            
-            # Atualiza o diretório de salvamento na instância de MainApp
-            self.parent.save_directory = dir_path
-            self.parent.save_settings()  # Salva as configurações
+            self.save_settings()
         else:
             self.save_directory = ""
 
     def toggle_automation(self):
-        """Alterna entre iniciar e parar a automação."""
         if self.confirm_button.text() == "Iniciar automação":
             self.start_automation()
             self.confirm_button.setText("Parar automação")
-            self.confirm_button.clicked.disconnect()  # Remove o conector anterior
-            self.confirm_button.clicked.connect(self.toggle_automation)  # Reconecta ao mesmo método
+            self.confirm_button.clicked.disconnect()
+            self.confirm_button.clicked.connect(self.stop_automation)
         else:
             self.stop_automation()
             self.confirm_button.setText("Iniciar automação")
-            self.confirm_button.clicked.disconnect()  # Remove o conector anterior
-            self.confirm_button.clicked.connect(self.toggle_automation)  # Reconecta ao mesmo método
-        
+            self.confirm_button.clicked.disconnect()
+            self.confirm_button.clicked.connect(self.start_automation)
+
     def start_automation(self):
-        """Inicia o processo de automação."""
         selected_operadora = self.operadora_combo.currentText()
 
         if not self.save_directory or not os.path.isdir(self.save_directory):
@@ -183,7 +185,7 @@ class GuiAutoBlume(QWidget):
 
         if selected_operadora.upper() == "BLUME":
             try:
-                self.automator = Blume(self, self.data_path)  # Salva o automator como atributo da classe
+                self.automator = Blume(self, self.data_path)
             except Exception as e:
                 self.log_message(f"Erro: {str(e)}", area="tecnico")
                 QMessageBox.critical(self, "Erro", f"Erro ao criar o automator Blume: {e}")
@@ -193,29 +195,25 @@ class GuiAutoBlume(QWidget):
             return
 
         try:
-            # Cria a tarefa de automação
             task = AutomationTask(self.automator, self.get_user_data(selected_operadora), self.log_message)
-            
-            # Inicia a tarefa no thread pool
             self.threadpool.start(task)
         except Exception as e:
             self.log_message(f"Erro: {str(e)}", area="tecnico")
             QMessageBox.critical(self, "Erro", f"Erro ao iniciar a tarefa de automação: {e}")
 
     def stop_automation(self):
-        """Para a automação em execução."""
         if hasattr(self, 'automator'):
             stop_automation = StopAutomation(self.automator)
             stop_automation.stop()
-            self.confirm_button.setText("Iniciar automação")  # Garante que o botão volte ao estado inicial
+            self.confirm_button.setText("Iniciar automação")
+            self.confirm_button.clicked.connect(self.start_automation)
         else:
             QMessageBox.warning(self, "Erro", "Nenhuma automação em execução para interromper.")
 
     def get_user_data(self, selected_operadora):
-        """Filtra os dados da operadora selecionada."""
         user_data = []
         for row in self.sheet.iter_rows(min_row=2, values_only=True):
-            if row[3] == selected_operadora and row[11] != 'COLETADO IA':  # Coluna 3: OPERADORA, Coluna 11: STATUS
+            if row[3] == selected_operadora and row[11] != 'COLETADO IA':
                 user_data.append({
                     "FORNECEDOR": row[0],
                     "REFERÊNCIA": row[1],
@@ -234,22 +232,17 @@ class GuiAutoBlume(QWidget):
         return user_data
 
     def log_message(self, message, area="tecnico", color=None):
-        """Exibe mensagens nos logs adequados, com suporte para cores."""
         if area == "tecnico":
             log_area = self.log_tecnico_area
         elif area == "faturas":
             log_area = self.faturas_coletadas_area
         else:
-            return  # Área de log inválida
+            return
 
-        # Aplica a cor ao texto, se especificada
         if color:
             message = f'<span style="color: {color};">{message}</span>'
 
-        # Adiciona a mensagem ao log
         log_area.append(message)
-
-        # Move o cursor para o final do log
         cursor = log_area.textCursor()
         cursor.movePosition(QTextCursor.MoveOperation.End)
         log_area.setTextCursor(cursor)

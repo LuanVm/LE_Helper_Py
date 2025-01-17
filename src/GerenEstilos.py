@@ -120,7 +120,7 @@ def estilo_combo_box_light():
         }
 
         QComboBox::down-arrow {
-            image: url("resources/icons/ui_drop_down_light.png");
+            image: url("resources/ui_drop_down_light.png");
             width: 16px;
             height: 16px;
         }
@@ -315,7 +315,7 @@ def estilo_combo_box_dark():
         }
 
         QComboBox::down-arrow {
-            image: url("resources/icons/ui_drop_down_dark.png");
+            image: url("resources/ui_drop_down_dark.png");
             width: 16px;
             height: 16px;
         }
