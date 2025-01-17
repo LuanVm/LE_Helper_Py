@@ -8,11 +8,11 @@ from PyQt6.QtGui import QTextCursor
 from openpyxl import load_workbook
 
 #Backend
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'backend')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'backend')))
 from AutoBlume import Blume, AutomationTask, StopAutomation
 
 #Estilos e gerenciamento
-from templates.GerenEstilos import (
+from GerenEstilos import (
     estilo_label_light, estilo_combo_box_light, estilo_hover,
     campo_qline_light, estilo_log_light
 )

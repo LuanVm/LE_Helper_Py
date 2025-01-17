@@ -8,16 +8,16 @@ from PyQt6.QtCore import Qt, QSettings, QSize, QPropertyAnimation, QEasingCurve,
 from PyQt6.QtGui import QIcon, QPixmap
 
 #GUI das funções
-from pages.GuiAutoBlume import GuiAutoBlume
+from GuiAutoBlume import GuiAutoBlume
 
 #Backend
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'backend')))
 from AutoBlume import StopAutomation
 
 #Estilos e gerenciamento
-from templates.GerenJanela import ResizableWindow
-from templates.GerenEstilos import (
-    estilo_sheet_light, estilo_label_light, estilo_combo_box_light, estilo_hover,
+from GerenJanela import ResizableWindow
+from GerenEstilos import (
+    estilo_sheet_light, estilo_label_light, estilo_combo_box_light,
     campo_qline_light, estilo_log_light, estilo_sheet_dark, estilo_label_dark, estilo_combo_box_dark,
     campo_qline_dark, estilo_log_dark
 )
@@ -67,7 +67,7 @@ class MainApp(ResizableWindow):
         layout_titulo.setSpacing(5)
 
         # Ícone do título
-        caminho_base = os.path.join(os.path.dirname(__file__), "..", "frontend", "static", "icons")
+        caminho_base = os.path.join(os.path.dirname(__file__), "..", "resources", "icons")
         icone_titulo = QLabel()
         caminho_icone = os.path.join(caminho_base, "logo.png")
         if os.path.exists(caminho_icone):
@@ -92,7 +92,7 @@ class MainApp(ResizableWindow):
         # Botão de alternância de modo (dark/light)
         self.botao_modo = QPushButton(self.barra_titulo)
         self.botao_modo.setObjectName("botao_modo")
-        self.botao_modo.setIcon(QIcon("frontend/static/icons/ui_light.png"))
+        self.botao_modo.setIcon(QIcon("resources/icons/ui_light.png"))
         self.botao_modo.setFixedSize(QSize(20, 20))
         self.botao_modo.setStyleSheet("background-color: transparent; border: none;")  # Estilo transparente
         self.botao_modo.clicked.connect(self.alternar_modo)
@@ -101,7 +101,7 @@ class MainApp(ResizableWindow):
         # Botão de minimizar
         self.botao_minimizar = QPushButton(self.barra_titulo)
         self.botao_minimizar.setObjectName("botao_minimizar")
-        self.botao_minimizar.setIcon(QIcon("frontend/static/icons/ui_minimize_light.png"))
+        self.botao_minimizar.setIcon(QIcon("resources/icons/ui_minimize_light.png"))
         self.botao_minimizar.setFixedSize(QSize(20, 20))
         self.botao_minimizar.setStyleSheet("background-color: transparent; border: none;")  # Estilo transparente
         self.botao_minimizar.clicked.connect(self.showMinimized)
@@ -110,7 +110,7 @@ class MainApp(ResizableWindow):
         # Botão de fechar
         self.botao_fechar = QPushButton(self.barra_titulo)
         self.botao_fechar.setObjectName("botao_fechar")
-        self.botao_fechar.setIcon(QIcon("frontend/static/icons/ui_exit_light.png"))
+        self.botao_fechar.setIcon(QIcon("resources/icons/ui_exit_light.png"))
         self.botao_fechar.setFixedSize(QSize(20, 20))
         self.botao_fechar.setStyleSheet("background-color: transparent; border: none;")  # Estilo transparente
         self.botao_fechar.clicked.connect(self.close)
@@ -218,9 +218,9 @@ class MainApp(ResizableWindow):
         # Inverte o estado do modo
         self.modo_escuro = not self.modo_escuro
 
-        self.botao_modo.setIcon(QIcon("frontend/static/icons/ui_dark.png" if self.modo_escuro else "frontend/static/icons/ui_light.png"))
-        self.botao_minimizar.setIcon(QIcon("frontend/static/icons/ui_minimize_dark.png" if self.modo_escuro else "frontend/static/icons/ui_minimize_light.png"))
-        self.botao_fechar.setIcon(QIcon("frontend/static/icons/ui_exit_dark.png" if self.modo_escuro else "frontend/static/icons/ui_exit_light.png"))
+        self.botao_modo.setIcon(QIcon("resources/icons/ui_dark.png" if self.modo_escuro else "resources/icons/ui_light.png"))
+        self.botao_minimizar.setIcon(QIcon("resources/icons/ui_minimize_dark.png" if self.modo_escuro else "resources/icons/ui_minimize_light.png"))
+        self.botao_fechar.setIcon(QIcon("resources/icons/ui_exit_dark.png" if self.modo_escuro else "resources/icons/ui_exit_light.png"))
 
         # Anima o efeito de fade
         self.animar_fade()
