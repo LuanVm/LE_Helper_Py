@@ -1,4 +1,7 @@
+import gc
 import os
+import time
+import unicodedata
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QGridLayout, QPushButton, QLineEdit,
     QFileDialog, QProgressBar, QTextEdit, QCheckBox,
@@ -72,6 +75,8 @@ class PainelProcessamentoAgitel(QWidget):
         grid.addWidget(self.checkbox_equalize, 0, 3, 1, 1, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
 
         self.layout().addLayout(grid)
+        self.btn_select_file.clicked.connect(self.select_file)
+        self.btn_process.clicked.connect(self.process_file)
 
     def _create_progress_bar(self):
         """Cria a barra de progresso"""
@@ -163,6 +168,16 @@ class ProcessarArquivo(QThread):
     progress = pyqtSignal(int)
     finished = pyqtSignal(str)
 
+    # Constantes de colunas alinhadas com o Java
+    COLUNA_DATA = 0
+    COLUNA_ORIGEM = 1
+    COLUNA_SERVICO = 2
+    COLUNA_REGIAO = 3
+    COLUNA_DESTINO = 4
+    COLUNA_DURACAO = 5
+    COLUNA_DURACAO_MINUTOS = 6
+    COLUNA_VALOR = 7
+
     def __init__(self, file_path, equalize):
         super().__init__()
         self.file_path = file_path
@@ -170,85 +185,177 @@ class ProcessarArquivo(QThread):
         self.general_style = NamedStyle(name="general")
         self.date_style = NamedStyle(name="date")
         self.accounting_style = NamedStyle(name="accounting")
+        self.minutes_style = NamedStyle(name="minutes")
 
     def run(self):
-        """Processa o arquivo em segundo plano"""
         try:
-            wb = load_workbook(self.file_path)
-            total_sheets = len(wb.sheetnames)
+            wb = load_workbook(self.file_path, read_only=not self.equalize)
             output_wb = Workbook()
             output_sheet = output_wb.active
+            
             self.create_header(output_sheet)
             self.define_styles(output_wb)
 
+            total_sheets = len(wb.sheetnames)
             self.finished.emit("Iniciando processamento...")
 
-            # Processa cada aba do arquivo
             for idx, sheet_name in enumerate(wb.sheetnames[1:], 1):
                 sheet = wb[sheet_name]
-                self.finished.emit(f"Processando aba: {sheet_name}")
+                self.finished.emit(f"Processando: {sheet_name}")
                 self.process_sheet(sheet, output_sheet)
                 
-                if self.equalize:
-                    self.equalize_regiao(sheet)  # Padroniza valores da coluna Região
-                
-                # Atualiza progresso
-                progress = (idx / total_sheets) * 100
-                self.progress.emit(int(progress))
+                progress = int((idx / total_sheets) * 100)
+                self.progress.emit(progress)
 
-            # Salva o arquivo processado
+            if self.equalize:
+                self.equalize_regiao(output_sheet)
+
+            # Aplica o estilo de minutos após todo o processamento
+            for row in output_sheet.iter_rows(min_row=2):
+                row[self.COLUNA_DURACAO_MINUTOS].style = self.minutes_style
+
             output_path = os.path.splitext(self.file_path)[0] + "_leitura_agitel.xlsx"
             output_wb.save(output_path)
             self.progress.emit(100)
-            self.finished.emit("Processamento concluído.")
+            self.finished.emit("Processamento concluído com sucesso!")
 
         except Exception as e:
-            self.finished.emit(f"Erro durante o processamento: {str(e)}")
+            self.finished.emit(f"Erro crítico: {str(e)}")
+        finally:
+            if 'wb' in locals():
+                wb.close()
+            if 'output_wb' in locals():
+                output_wb.close()
+            gc.collect()
+
+    def convert_duration(self, time_val):
+        """Converte tempo no formato HH:MM:SS para minutos decimais com 1 casa decimal"""
+        try:
+            print(f"Valor recebido: {time_val}")  # Log para depuração
+            if isinstance(time_val, str):
+                partes = time_val.split(':')
+                if len(partes) != 3:
+                    return 0.0
+                horas = int(partes[0])
+                minutos = int(partes[1])
+                segundos = int(partes[2])
+            else:
+                return 0.0
+
+            total_minutos = (horas * 60) + minutos + (segundos / 60)
+            return round(total_minutos, 1)
+
+        except Exception as e:
+            self.finished.emit(f"Erro na conversão: {str(e)}")
+            return 0.0
 
     def create_header(self, sheet):
-        """Cria cabeçalho da planilha de saída"""
-        header = ["Horário", "Setor", "Identificador", "Região", "Número_Destino", "Duração", "Duração (minutos)", "Valor"]
+        """Cria cabeçalho alinhado com o Java"""
+        header = [
+            "Data", "Origem", "Servico", 
+            "Regiao", "Destino", "Duracao", 
+            "Duração (minutos)", "Valor"
+        ]
         sheet.append(header)
-        # Formata células do cabeçalho
+        
+        # Formatação do cabeçalho
         for cell in sheet[1]:
             cell.font = Font(bold=True)
             cell.alignment = Alignment(horizontal='center')
 
-    def define_styles(self, wb):
-        """Configura estilos numéricos"""
-        self.general_style.number_format = 'General'
-        self.date_style.number_format = 'hh:mm:ss'
-        self.accounting_style.number_format = 'R$ #,##0.00'
-        wb.add_named_style(self.general_style)
-        wb.add_named_style(self.date_style)
-        wb.add_named_style(self.accounting_style)
+    def normalize_header(self, header_name):
+        """Normalização robusta de nomes de coluna"""
+        normalized = unicodedata.normalize('NFKD', str(header_name).strip().lower())
+        return ''.join([c for c in normalized if not unicodedata.combining(c)])
+
+    def find_header_row(self, sheet):
+        """Encontra a linha de cabeçalho pela coluna Data"""
+        for row in sheet.iter_rows(min_row=1, max_row=10):
+            try:
+                if self.normalize_header(row[0].value) == "data":
+                    return row
+            except:
+                continue
+        return None
 
     def process_sheet(self, sheet, output_sheet):
-        """Extrai dados de cada aba"""
         header_row = self.find_header_row(sheet)
         if not header_row:
             return
 
+        headers = [self.normalize_header(cell.value) for cell in header_row]
+        column_map = {
+            "data": ["data"],
+            "origem": ["origem", "setor"],
+            "servico": ["servico", "identificador"],
+            "regiao": ["regiao", "região"],
+            "destino": ["destino", "numero_destino"],
+            "duracao": ["duracao", "duração"],
+            "preco": ["preco", "valor"]
+        }
+
+        indices = {}
+        for key, aliases in column_map.items():
+            for alias in aliases:
+                normalized = self.normalize_header(alias)
+                if normalized in headers:
+                    indices[key] = headers.index(normalized)
+                    break
+            else:
+                self.finished.emit(f"Coluna '{key}' não encontrada!")
+                return
+
         start_row = header_row[0].row + 1
         for row in sheet.iter_rows(min_row=start_row, values_only=True):
-            if not any(row[:4]):  # Pula linhas vazias
-                continue  
-            output_sheet.append(row)
+            if not any(row[:4]):
+                continue
 
-    def find_header_row(self, sheet):
-        """Localiza a linha do cabeçalho"""
-        for row in sheet.iter_rows(min_row=1, max_row=10):
-            if row[0].value == "Data":
-                return row
-        return None
+            try:
+                duracao = row[indices["duracao"]]
+                duracao_min = self.convert_duration(duracao)
+                valor = row[indices["preco"]]
+
+                output_row = [
+                    row[indices["data"]],
+                    row[indices["origem"]],
+                    row[indices["servico"]],
+                    row[indices["regiao"]],
+                    row[indices["destino"]],
+                    duracao,
+                    duracao_min,
+                    float(str(valor).replace(',', '.')) if valor else 0.0
+                ]
+                output_sheet.append(output_row)
+
+            except Exception as e:
+                self.finished.emit(f"Erro na linha: {str(e)[:50]}")
 
     def equalize_regiao(self, sheet):
-        """Padroniza valores da coluna Região"""
-        for cell in sheet['D'][1:]:  # Pula cabeçalho
-            value = cell.value.lower() if cell.value else ''
-            if "fixo" in value:
+        """Equalização da coluna Região"""
+        for row in sheet.iter_rows(min_row=2):  # Pula cabeçalho
+            cell = row[self.COLUNA_REGIAO]
+            if not cell.value:
+                continue
+                
+            valor = str(cell.value).lower()
+            if "fixo" in valor:
                 cell.value = "Fixo"
-            elif "movel" in value:
+            elif any(x in valor for x in ["movel", "móvel"]):
                 cell.value = "Movel"
-            elif not value.strip():
+            elif valor.strip() == "":
                 cell.value = "Intragrupo"
+
+    def define_styles(self, wb):
+        """Configura todos os estilos necessários"""
+        # Estilo para minutos decimais
+        self.minutes_style.number_format = '0.0'
+        
+        # Estilos existentes
+        self.general_style.number_format = 'General'
+        self.date_style.number_format = 'hh:mm:ss'
+        self.accounting_style.number_format = 'R$ #,##0.00'
+
+        wb.add_named_style(self.general_style)
+        wb.add_named_style(self.date_style)
+        wb.add_named_style(self.accounting_style)
+        wb.add_named_style(self.minutes_style)
