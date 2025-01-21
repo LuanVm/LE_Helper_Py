@@ -7,10 +7,11 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QPixmap, QIcon
 
-from AutomacaoColeta import PararAutomacao, InterfaceAutoBlume
+from PainelAutomacaoColeta import InterfaceAutoBlume
 from PainelProcessamentoAgitel import PainelProcessamentoAgitel
 from GerenJanela import ResizableWindow
 from GerenTema import GerenTema
+from AppHome import HomeScreen
 
 class MainApp(ResizableWindow):
     def __init__(self):
@@ -22,10 +23,10 @@ class MainApp(ResizableWindow):
         self.setWindowTitle("LE Helper")
         self.setGeometry(100, 100, 1200, 750)
         
-        # Configuração inicial do tema
+        # Configuração inicial da interface
         self._configure_ui_components()
-        self._setup_theme_manager()
         self._setup_content_panes()
+        self._setup_theme_manager()
         self._finalize_ui_setup()
 
     def _configure_ui_components(self):
@@ -53,14 +54,31 @@ class MainApp(ResizableWindow):
         layout_titulo.setContentsMargins(5, 0, 5, 0)
         layout_titulo.setSpacing(5)
         
-        # Ícone do aplicativo
-        self._add_app_icon(layout_titulo)
+        # Seção esquerda (ícone + combo + home)
+        left_section = QHBoxLayout()
+        left_section.setContentsMargins(0, 0, 0, 0)
+        left_section.setSpacing(5)
+        self._add_app_icon(left_section)
         
-        # Seletor de funcionalidades
         self.funcionalidades_combo = QComboBox(self.barra_titulo)
         self.funcionalidades_combo.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        self.funcionalidades_combo.addItems(["Automação coleta", "Processamento Agitel"])
-        layout_titulo.addWidget(self.funcionalidades_combo)
+        self.funcionalidades_combo.addItems([
+            "Home", 
+            "Automação coleta", 
+            "Processamento Agitel"
+        ])
+        left_section.addWidget(self.funcionalidades_combo)
+        
+        # Botão Home
+        self.botao_home = QPushButton(self.barra_titulo)
+        self.botao_home.setIcon(QIcon(os.path.join("resources", "home_light.png")))
+        self.botao_home.setFixedSize(QSize(20, 20))
+        self.botao_home.clicked.connect(self.mostrar_home)
+        left_section.addWidget(self.botao_home)
+        
+        layout_titulo.addLayout(left_section)
+        
+        # Stretch para empurrar os botões para a direita
         layout_titulo.addStretch()
         
         # Botões de controle
@@ -114,11 +132,12 @@ class MainApp(ResizableWindow):
             self.central_widget,
             self.barra_titulo,
             self.funcionalidades_combo,
-            None,  # Será atualizado após a criação dos painéis
-            None,  # Será atualizado após a criação dos painéis
+            self.automacao_coleta,
+            self.gui_processamento_agitel,
             self.botao_modo,
             self.botao_minimizar,
-            self.botao_fechar
+            self.botao_fechar,
+            self.botao_home
         )
 
     def _setup_content_panes(self):
@@ -126,25 +145,39 @@ class MainApp(ResizableWindow):
         # Área de conteúdo dinâmico
         self.central_content = QWidget(self.central_widget)
         self.content_layout = QVBoxLayout(self.central_content)
+        
+        # Criar QStackedWidget primeiro
         self.stacked_content = QStackedWidget(self.central_content)
         self.content_layout.addWidget(self.stacked_content)
         
         # Criação dos painéis
+        self.home_screen = HomeScreen()
         self.automacao_coleta = InterfaceAutoBlume(self)
         self.gui_processamento_agitel = PainelProcessamentoAgitel(self)
         
-        # Adição ao layout
+        # Adição ao layout NA ORDEM CORRETA
+        self.stacked_content.addWidget(self.home_screen)
         self.stacked_content.addWidget(self.automacao_coleta)
         self.stacked_content.addWidget(self.gui_processamento_agitel)
         
-        # Atualiza referências no theme_manager
-        self.theme_manager.automacao_coleta = self.automacao_coleta
-        self.theme_manager.gui_processamento_agitel = self.gui_processamento_agitel
-        
-        # Conexão do seletor
-        self.funcionalidades_combo.currentIndexChanged.connect(self.stacked_content.setCurrentIndex)
+        # Conexão dos sinais
+        self.funcionalidades_combo.currentIndexChanged.connect(
+        lambda index: self.stacked_content.setCurrentIndex(index)
+        )
+        self.home_screen.square_clicked.connect(self.on_square_clicked)
         
         self.layout.addWidget(self.central_content, stretch=1)
+    
+    def on_square_clicked(self, index):
+        ###### Index 0 = Primeiro quadrado (Automação) -> Stacked 1 / Combo 1
+        ###### Index 1 = Segundo quadrado (Planilhamento) -> Stacked 2 / Combo 2
+        self.stacked_content.setCurrentIndex(index + 1)
+        self.funcionalidades_combo.setCurrentIndex(index + 1)
+
+    def mostrar_home(self):
+        """Volta para a tela inicial"""
+        self.stacked_content.setCurrentIndex(0)
+        self.funcionalidades_combo.setCurrentIndex(0)
 
     def _finalize_ui_setup(self):
         """Finaliza a configuração da UI"""
@@ -154,7 +187,7 @@ class MainApp(ResizableWindow):
         
         # Atualização de temas
         self.theme_manager.update_icons()
-        self.theme_manager.refresh_full_theme()
+        self.theme_manager.aplicar_tema()
         
         # Conexões finais
         self.botao_modo.clicked.connect(self.theme_manager.alternar_modo)
