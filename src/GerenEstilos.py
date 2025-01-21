@@ -120,7 +120,7 @@ def estilo_combo_box_light():
         }
 
         QComboBox::down-arrow {
-            image: url("resources/ui_drop_down_light.png");
+            image: url("src/resources/ui_drop_down_light.png");
             width: 16px;
             height: 16px;
         }
@@ -284,6 +284,54 @@ def estilo_label_dark():
         }
     """
 
+def estilo_check_box_light():
+    return """
+        QCheckBox {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 13px;
+            color: #1c1c1c;
+            spacing: 5px;
+        }
+        QCheckBox::indicator {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+        QCheckBox::indicator:hover {
+            background-color: #ff8c00;
+        }
+        QCheckBox::indicator:checked {
+            image: url("src/resources/checkbox_checked.png");
+        }
+        QCheckBox::indicator:unchecked {
+            image: url("src/resources/checkbox_unchecked.png");
+        }
+    """
+
+def estilo_check_box_dark():
+    return """
+        QCheckBox {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 13px;
+            color: #e0e0e0;
+            spacing: 5px;
+        }
+        QCheckBox::indicator {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+        QCheckBox::indicator:hover {
+            background-color: #ff8c00;
+        }
+        QCheckBox::indicator:checked {
+            image: url("src/resources/checkbox_checked.png");
+        }
+        QCheckBox::indicator:unchecked {
+            image: url("src/resources/checkbox_unchecked.png");
+        }
+    """
+
 def estilo_combo_box_dark():
     return """
         QComboBox {
@@ -315,7 +363,7 @@ def estilo_combo_box_dark():
         }
 
         QComboBox::down-arrow {
-            image: url("resources/ui_drop_down_dark.png");
+            image: url("src/resources/ui_drop_down_dark.png");
             width: 16px;
             height: 16px;
         }
@@ -363,4 +411,42 @@ def estilo_log_dark():
         font-family: 'Open Sans', sans-serif;
         font-size: 12px;
         color: #e0e0e0;
+    """
+
+def estilo_progress_bar_light():
+    return """
+        QProgressBar {
+            background-color: #f0f0f0;
+            border: 1px solid #cccccc;
+            border-radius: 6px;
+            text-align: center;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 12px;
+            color: #333333;
+        }
+
+        QProgressBar::chunk {
+            background-color: #ff8c00;
+            border-radius: 5px;
+            border: 1px solid #e67e00;
+        }
+    """
+
+def estilo_progress_bar_dark():
+    return """
+        QProgressBar {
+            background-color: #3d3d3d;
+            border: 1px solid #555555;
+            border-radius: 6px;
+            text-align: center;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 12px;
+            color: #e0e0e0;
+        }
+
+        QProgressBar::chunk {
+            background-color: #ff8c00;
+            border-radius: 5px;
+            border: 1px solid #e67e00;
+        }
     """
