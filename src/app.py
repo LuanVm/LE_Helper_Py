@@ -64,7 +64,7 @@ class MainApp(ResizableWindow):
         self.funcionalidades_combo.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.funcionalidades_combo.addItems([
             "Home", 
-            "Automação coleta", 
+            "Coleta de faturas", 
             "Processamento Agitel"
         ])
         left_section.addWidget(self.funcionalidades_combo)

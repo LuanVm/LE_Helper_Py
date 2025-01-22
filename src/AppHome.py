@@ -1,3 +1,4 @@
+import colorsys
 import os
 import random
 from functools import partial
@@ -21,10 +22,10 @@ class HomeScreen(QWidget):
 
     def setup_logo(self):
         self.logo_label = QLabel(self)
-        caminho_logo = os.path.join(os.path.dirname(__file__), "resources", "logo.png")
+        caminho_logo = os.path.join(os.path.dirname(__file__), "resources", "logo_completa.png")
         pixmap = QPixmap(caminho_logo)
         if not pixmap.isNull():
-            scaled_pixmap = pixmap.scaled(240, 120, Qt.AspectRatioMode.KeepAspectRatio,
+            scaled_pixmap = pixmap.scaled(480, 240, Qt.AspectRatioMode.KeepAspectRatio,
                                           Qt.TransformationMode.SmoothTransformation)
             self.logo_label.setPixmap(scaled_pixmap)
             self.logo_label.setFixedSize(scaled_pixmap.size())
@@ -35,59 +36,77 @@ class HomeScreen(QWidget):
 
     def setup_squares(self):
         def get_base_orange():
-            # Gera valores base para tons de laranja
-            red = random.randint(200, 255)
-            green = random.randint(100, 200)
-            blue = random.randint(0, 50)
-            return (red, green, blue)
-
-        def lighten_orange(rgb, amount=40):
-            # Clareia a cor mantendo o tom alaranjado
+            # Gera tons quentes com predominância de laranja
             return (
-                min(rgb[0] + amount, 255),
-                min(rgb[1] + amount, 255),
-                max(rgb[2] - amount//2, 0)
+                random.randint(200, 255),  # Red
+                random.randint(50, 150),   # Green
+                random.randint(0, 50)      # Blue
+            )
+
+        def adjust_hsl(rgb, h_delta=0, s_delta=0, l_delta=0):
+            # Converte RGB para HSL
+            r, g, b = [x/255.0 for x in rgb]
+            h, l, s = colorsys.rgb_to_hls(r, g, b)
+            
+            # Ajusta os valores
+            h = (h + h_delta) % 1.0
+            s = max(min(s + s_delta, 1.0), 0.4)
+            l = max(min(l + l_delta, 1.0), 0.3)
+            
+            # Converte de volta para RGB
+            r, g, b = colorsys.hls_to_rgb(h, l, s)
+            return (
+                int(r * 255),
+                int(g * 255),
+                int(b * 255)
             )
 
         def create_gradient(base_rgb):
-            # Cria variações para o gradiente
-            variation = random.randint(20, 60)
-            start_r = min(base_rgb[0] + variation, 255)
-            start_g = min(base_rgb[1] + variation//2, 255)
-            start_b = max(base_rgb[2] - variation//3, 0)
+            # Cria gradiente análogo com variação controlada
+            color1 = adjust_hsl(base_rgb, h_delta=0.02, s_delta=-0.1, l_delta=0.05)
+            color2 = adjust_hsl(base_rgb, h_delta=-0.02, s_delta=0.1, l_delta=-0.05)
+            return (
+                f"#{color1[0]:02x}{color1[1]:02x}{color1[2]:02x}",
+                f"#{color2[0]:02x}{color2[1]:02x}{color2[2]:02x}"
+            )
+
+        def create_hover_gradient(base_rgb):
+            # Gradiente complementar suave
+            base_h = colorsys.rgb_to_hls(*[x/255.0 for x in base_rgb])[0]
+            complement_h = (base_h + 0.1) % 1.0  # Deslocamento de 36 graus
+            
+            # Converte para RGB
+            r1, g1, b1 = colorsys.hls_to_rgb(complement_h, 0.7, 0.6)
+            r2, g2, b2 = colorsys.hls_to_rgb(base_h, 0.8, 0.4)
             
             return (
-                f"#{base_rgb[0]:02x}{base_rgb[1]:02x}{base_rgb[2]:02x}",
-                f"#{start_r:02x}{start_g:02x}{start_b:02x}"
+                f"#{int(r1*255):02x}{int(g1*255):02x}{int(b1*255):02x}",
+                f"#{int(r2*255):02x}{int(g2*255):02x}{int(b2*255):02x}"
             )
 
         setores = [
-            "Automação", "Planilhamento", "Financeiro",
-            "Setor 4", "Setor 5", "Setor 6"
+            "Coleta de faturas", "Planilhamento", "Financeiro",
+            "Indisponível", "Indisponível", "Indisponível"
         ]
         
         self.squares = []
-        self.button_effects = []  # Nova lista para armazenar os efeitos de opacidade
+        self.button_effects = []
         
         for i, setor in enumerate(setores):
             btn = QPushButton(setor, self)
             btn.setFixedSize(150, 150)
             btn.setObjectName("sector_button")
 
-            # Configura efeito de opacidade igual à logo
+            # Efeito de opacidade
             btn_opacity = QGraphicsOpacityEffect(btn)
             btn.setGraphicsEffect(btn_opacity)
-            btn_opacity.setOpacity(0)  # Inicia invisível
+            btn_opacity.setOpacity(0)
             self.button_effects.append(btn_opacity)
 
-            # Gera cores base
+            # Geração de cores
             base_orange = get_base_orange()
             start_color, end_color = create_gradient(base_orange)
-            
-            # Cores para hover
-            hover_rgb = lighten_orange(base_orange, 60)
-            hover_start = f"#{hover_rgb[0]:02x}{hover_rgb[1]:02x}{hover_rgb[2]:02x}"
-            hover_end = f"#{min(hover_rgb[0]+30,255):02x}{min(hover_rgb[1]+30,255):02x}{max(hover_rgb[2]-20,0):02x}"
+            hover_start, hover_end = create_hover_gradient(base_orange)
 
             style = f"""
                 QPushButton {{
@@ -105,7 +124,7 @@ class HomeScreen(QWidget):
                 QPushButton:hover {{
                     background: qlineargradient(spread:pad, x1:0.5, y1:0.5, x2:1, y2:1,
                         stop:0 {hover_start}, stop:1 {hover_end});
-                    border: 1px solid rgba(255, 255, 255, 0.6);
+                    border: 1px solid rgba(255, 255, 255, 0.8);
                 }}
                 QPushButton:focus {{
                     outline: none;
