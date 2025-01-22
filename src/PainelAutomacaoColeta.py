@@ -418,10 +418,12 @@ class InterfaceAutoBlume(QWidget):
         # Área de logs
         self.log_tecnico = QTextEdit()
         self.log_tecnico.setPlaceholderText("Logs técnicos...")
+        self.log_tecnico.setReadOnly(True)
         self.log_tecnico.setStyleSheet(estilo_log_light())
         
         self.log_faturas = QTextEdit()
         self.log_faturas.setPlaceholderText("Faturas coletadas...")
+        self.log_faturas.setReadOnly(True)
         self.log_faturas.setStyleSheet(estilo_log_light())
 
         # Montagem final
@@ -551,6 +553,7 @@ class InterfaceAutoBlume(QWidget):
     def log_mensagem(self, mensagem, area="tecnico", cor=None):
         """Exibe mensagens nas áreas de log correspondentes"""
         area_log = self.log_tecnico if area == "tecnico" else self.log_faturas
+
         if cor:
             mensagem = f'<span style="color: {cor};">{mensagem}</span>'
         area_log.append(mensagem)

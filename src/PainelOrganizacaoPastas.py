@@ -307,6 +307,12 @@ class PainelOrganizacaoPastas(QWidget):
 
     def editar_clientes(self):
         editor = EditorClientes(self.clientes, self)
+
+        caminho_base = os.path.join(os.path.dirname(__file__), "resources")
+        caminho_icone = os.path.join(caminho_base, "logo.ico")
+        if os.path.exists(caminho_icone):
+            self.setWindowIcon(QIcon(caminho_icone))
+            
         if editor.exec() == QDialog.DialogCode.Accepted:
             self.salvar_clientes()
             self.clientes_updated.emit()

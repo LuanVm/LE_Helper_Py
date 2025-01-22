@@ -4,7 +4,7 @@ from PyQt6.QtWidgets import (
     QApplication, QLabel, QComboBox,
     QWidget, QVBoxLayout, QPushButton, QHBoxLayout, QStackedWidget
 )
-from PyQt6.QtCore import Qt, QSize
+from PyQt6.QtCore import Qt, QSize, QTimer
 from PyQt6.QtGui import QPixmap, QIcon
 
 from PainelAutomacaoColeta import InterfaceAutoBlume
@@ -24,6 +24,10 @@ class MainApp(ResizableWindow):
         self.settings_path = "config.ini"
         self.setWindowTitle("LE Helper")
         self.setGeometry(100, 100, 1200, 750)
+        caminho_base = os.path.join(os.path.dirname(__file__), "resources")
+        caminho_icone = os.path.join(caminho_base, "logo.ico")
+        if os.path.exists(caminho_icone):
+            self.setWindowIcon(QIcon(caminho_icone))
         
         self.function_groupsping = {
             "Home": 0,
@@ -37,15 +41,22 @@ class MainApp(ResizableWindow):
         self._setup_theme_manager()
         self._finalize_ui_setup()
 
-        self.main_window.setAttribute(Qt.WidgetAttribute.WA_Hover)
+        self.setAttribute(Qt.WidgetAttribute.WA_Hover)
         self.central_widget.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
+        QApplication.processEvents()
 
     def showEvent(self, event):
         """Garante a renderização correta na primeira exibição"""
         super().showEvent(event)
-        self.theme_manager._force_layout_update()
-        self.resize(self.size() + QSize(1, 1))
-        self.resize(self.size() - QSize(1, 1))
+        
+        if hasattr(self, 'theme_manager') and self.theme_manager is not None:
+            self.theme_manager._force_layout_update()
+            self.resize(self.size() + QSize(1, 1))
+            self.resize(self.size() - QSize(1, 1))
+        else:
+            # Adia o ajuste inicial se o theme_manager não estiver pronto
+            QTimer.singleShot(100, lambda: self.resize(self.size() + QSize(1, 1)))
+            QTimer.singleShot(150, lambda: self.resize(self.size() - QSize(1, 1)))
 
     def _configure_ui_components(self):
         self.central_widget = QWidget(self)
