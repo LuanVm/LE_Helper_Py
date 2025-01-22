@@ -1,5 +1,5 @@
 from PyQt6.QtCore import Qt, QPoint
-from PyQt6.QtWidgets import QMainWindow
+from PyQt6.QtWidgets import QMainWindow, QApplication
 
 class ResizableWindow(QMainWindow):
     def __init__(self, barra_titulo=None, *args, **kwargs):
@@ -99,6 +99,11 @@ class ResizableWindow(QMainWindow):
             )
         elif self.resize_direction == "bottom":
             self.resize(rect.width(), global_pos.y() - self.pos().y())
+
+        # Força a atualização do layout e elementos visuais
+        self.centralWidget().updateGeometry()
+        self.centralWidget().repaint()
+        QApplication.processEvents()
 
     def update_cursor(self, pos):
         """Atualiza o cursor do mouse com base na posição."""

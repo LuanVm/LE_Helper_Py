@@ -10,6 +10,7 @@ from PyQt6.QtGui import QPixmap, QIcon
 from PainelAutomacaoColeta import InterfaceAutoBlume
 from PainelProcessamentoAgitel import PainelProcessamentoAgitel
 from PainelOrganizacaoPastas import PainelOrganizacaoPastas
+from PainelMesclaPlanilhas import PainelMesclaPlanilha
 from GerenJanela import ResizableWindow
 from GerenTema import GerenTema
 from AppHome import HomeScreen
@@ -18,7 +19,7 @@ class MainApp(ResizableWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
+        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         
         self.settings_path = "config.ini"
@@ -34,6 +35,7 @@ class MainApp(ResizableWindow):
             "Automação da Coleta": 1,
             "Organização de Pastas": 2,
             "Processamento Agitel": 3,
+            "Mesclagem de Planilhas": 4
         }
         
         self._configure_ui_components()
@@ -48,6 +50,7 @@ class MainApp(ResizableWindow):
     def showEvent(self, event):
         """Garante a renderização correta na primeira exibição"""
         super().showEvent(event)
+        self._refresh_layout()
         
         if hasattr(self, 'theme_manager') and self.theme_manager is not None:
             self.theme_manager._force_layout_update()
@@ -57,6 +60,17 @@ class MainApp(ResizableWindow):
             # Adia o ajuste inicial se o theme_manager não estiver pronto
             QTimer.singleShot(100, lambda: self.resize(self.size() + QSize(1, 1)))
             QTimer.singleShot(150, lambda: self.resize(self.size() - QSize(1, 1)))
+
+    def _refresh_layout(self):
+        """Atualiza e força o redesenho dos elementos visuais"""
+        self.central_widget.updateGeometry()  # Atualiza o layout do widget central
+        self.stacked_content.updateGeometry()  # Garante que o conteúdo empilhado seja redesenhado
+        for i in range(self.stacked_content.count()):
+            widget = self.stacked_content.widget(i)
+            if widget:
+                widget.updateGeometry()  # Atualiza o layout de cada widget empilhado
+                widget.repaint()  # Força a re-renderização
+        QApplication.processEvents()  # Garante que as mudanças sejam aplicadas imediatamente
 
     def _configure_ui_components(self):
         self.central_widget = QWidget(self)
@@ -166,11 +180,13 @@ class MainApp(ResizableWindow):
         self.automacao_coleta = InterfaceAutoBlume(self)
         self.organizacao_pastas = PainelOrganizacaoPastas(self)
         self.gui_processamento_agitel = PainelProcessamentoAgitel(self)
+        self.painel_mesclagem = PainelMesclaPlanilha(self)
         
-        self.stacked_content.addWidget(self.home_screen)              #Índice 0
-        self.stacked_content.addWidget(self.automacao_coleta)         #Índice 1
-        self.stacked_content.addWidget(self.organizacao_pastas)       #Índice 2
-        self.stacked_content.addWidget(self.gui_processamento_agitel) #Índice 3
+        self.stacked_content.addWidget(self.home_screen)              # Índice 0
+        self.stacked_content.addWidget(self.automacao_coleta)         # Índice 1
+        self.stacked_content.addWidget(self.organizacao_pastas)       # Índice 2
+        self.stacked_content.addWidget(self.gui_processamento_agitel) # Índice 3
+        self.stacked_content.addWidget(self.painel_mesclagem)         # Índice 4
         
         
         self.funcionalidades_combo.currentTextChanged.connect(self.on_combo_text_changed)
@@ -181,13 +197,19 @@ class MainApp(ResizableWindow):
     def on_combo_text_changed(self, text):
         index = self.function_groupsping.get(text, 0)
         self.stacked_content.setCurrentIndex(index)
+        self._refresh_layout() 
 
     def on_square_clicked(self, index):
         function_groups = {
             0: ["Automação da Coleta"],  # Grupo Coleta
-            1: ["Organização de Pastas", "Processamento Agitel"],  # Grupo Planilhamento
-            2: []  # Grupo Financeiro (vazio por enquanto)
+            1: [
+                "Organização de Pastas", # Grupo Planilhamento
+                "Processamento Agitel",
+                "Mesclagem de Planilhas"
+            ],                    
+            2: []                        # Grupo Financeiro
         }
+
         if index in function_groups:
             self.funcionalidades_combo.clear()
             if index == 1:  # Se for Planilhamento
@@ -212,6 +234,7 @@ class MainApp(ResizableWindow):
         self.theme_manager.register_widget(self.automacao_coleta)
         self.theme_manager.register_widget(self.gui_processamento_agitel)
         self.theme_manager.register_widget(self.organizacao_pastas)
+        self.theme_manager.register_widget(self.painel_mesclagem)
         self.theme_manager.update_icons()
         self.theme_manager.aplicar_tema()
         self.botao_modo.clicked.connect(self.theme_manager.alternar_modo)

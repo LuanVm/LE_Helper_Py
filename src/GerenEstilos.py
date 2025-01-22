@@ -490,3 +490,91 @@ def estilo_sector_button_light():
             background-color: #FFF3E0;
         }
     """
+
+def estilo_tabela_dark():
+    return """
+        QTableWidget {
+            background-color: #2d2d2d;
+            color: #e0e0e0;
+            border: 1px solid #444444;
+            border-radius: 5px;
+            gridline-color: #444444;
+            font-family: 'Open Sans';
+            font-size: 12px;
+        }
+
+        QTableWidget::item {
+            border-bottom: 1px solid #444444;
+            padding: 5px;
+        }
+
+        QTableWidget::item:selected {
+            background-color: #ff8c00;
+            color: #ffffff;
+        }
+
+        QHeaderView::section {
+            background-color: #3d3d3d;
+            color: #e0e0e0;
+            border: 1px solid #444444;
+            padding: 5px;
+            font-weight: bold;
+        }
+
+        QHeaderView::section:hover {
+            background-color: #4d4d4d;
+        }
+
+        QHeaderView::section:checked {
+            background-color: #ff8c00;
+        }
+
+        QTableCornerButton::section {
+            background-color: #3d3d3d;
+            border: 1px solid #444444;
+        }
+    """
+
+def estilo_tabela_light():
+    return """
+        QTableWidget {
+            background-color: #ffffff;
+            color: #1c1c1c;
+            border: 1px solid #cccccc;
+            border-radius: 5px;
+            gridline-color: #e0e0e0;
+            font-family: 'Open Sans';
+            font-size: 12px;
+        }
+
+        QTableWidget::item {
+            border-bottom: 1px solid #e0e0e0;
+            padding: 5px;
+        }
+
+        QTableWidget::item:selected {
+            background-color: #ffd699;
+            color: #1c1c1c;
+        }
+
+        QHeaderView::section {
+            background-color: #f4f4f4;
+            color: #1c1c1c;
+            border: 1px solid #cccccc;
+            padding: 5px;
+            font-weight: bold;
+        }
+
+        QHeaderView::section:hover {
+            background-color: #fff3e0;
+        }
+
+        QHeaderView::section:checked {
+            background-color: #ffd699;
+        }
+
+        QTableCornerButton::section {
+            background-color: #f4f4f4;
+            border: 1px solid #cccccc;
+        }
+    """
