@@ -345,6 +345,9 @@ class InterfaceAutoBlume(QWidget):
         estilo_log = estilo_log_dark() if dark_mode else estilo_log_light()
         estilo_label = estilo_label_dark() if dark_mode else estilo_label_light()
 
+        for btn in [self.botao_pasta, self.botao_planilha, self.botao_iniciar]:
+            estilo_hover(btn, dark_mode)
+
         # Aplica estilos nos componentes
         self.combo_operadora.setStyleSheet(estilo_combo)
         self.campo_pasta.setStyleSheet(estilo_campo)
@@ -554,9 +557,3 @@ class InterfaceAutoBlume(QWidget):
         cursor = area_log.textCursor()
         cursor.movePosition(QTextCursor.MoveOperation.End)
         area_log.setTextCursor(cursor)
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    janela = InterfaceAutoBlume()
-    janela.show()
-    sys.exit(app.exec())

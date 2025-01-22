@@ -27,7 +27,7 @@ def campo_qline_dark():
         }
 
         QLineEdit:disabled {
-            background-color: #2d2d2d;
+            background-color: #242323;
             color: #808080;
             border: 1px solid #444444;
         }
@@ -180,7 +180,7 @@ def estilo_combo_box_dark():
         }
 
         QComboBox:disabled {
-            background-color: #2d2d2d;
+            background-color: #242323;
             color: #808080;
             border: 1px solid #444444;
         }
@@ -256,27 +256,37 @@ def estilo_combo_box_light():
         }
     """
 
-def estilo_hover(button):
-    """Aplica o estilo de hover a um QPushButton."""
-    button.setStyleSheet("""
-        QPushButton {
-            background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #EF4765, stop:1 #f58634);
+def estilo_hover(button, dark_mode=False):
+    """Aplica estilo de hover com suporte a dark/light mode"""
+    cor_base = "#2D2D2D" if dark_mode else "#EF4765"
+    cor_secundaria = "#404040" if dark_mode else "#f58634"
+    cor_hover = "#606060" if dark_mode else "#FFC2A3"
+    cor_borda = "rgba(255, 255, 255, 0.2)" if dark_mode else "rgba(255, 255, 255, 0.6)"
+    cor_texto = "#FFFFFF" if dark_mode else "#FFFFFF"
+
+    button.setStyleSheet(f"""
+        QPushButton {{
+            background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, 
+                stop:0 {cor_base}, 
+                stop:1 {cor_secundaria});
             border: 0;
             border-radius: 12px;
-            color: #FFFFFF;
+            color: {cor_texto};
             font-family: 'Segoe UI Black', Roboto, Helvetica, Arial, sans-serif;
             font-size: 12px;
             font-weight: 500;
             padding: 8px 24px;
             text-align: center;
-        }
-        QPushButton:hover {
-            background: qlineargradient(spread:pad, x1:0.5, y1:0.5, x2:1, y2:1, stop:0 #FFC2A3, stop:1 #FFB089);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-        }
-        QPushButton:focus {
+        }}
+        QPushButton:hover {{
+            background: qlineargradient(spread:pad, x1:0.5, y1:0.5, x2:1, y2:1, 
+                stop:0 {cor_hover}, 
+                stop:1 {cor_secundaria});
+            border: 1px solid {cor_borda};
+        }}
+        QPushButton:focus {{
             outline: none;
-        }
+        }}
     """)
 
 def estilo_label_dark():
@@ -299,26 +309,30 @@ def estilo_label_light():
         }
     """
 
-def estilo_log_dark():
-    return """
-        background-color: #3d3d3d;
-        border: 1px solid #555555;
-        border-radius: 8px;
-        padding: 10px;
-        font-family: 'Open Sans', sans-serif;
-        font-size: 12px;
-        color: #e0e0e0;
-    """
-
 def estilo_log_light():
     return """
-        background-color: #f4f4f4;
-        border: 1px solid #cccccc;
-        border-radius: 8px;
-        padding: 10px;
-        font-family: 'Open Sans', sans-serif;
-        font-size: 12px;
-        color: #333333;
+        QTextEdit {
+            background-color: #ffffff;
+            color: #333333;
+            border: 1px solid #cccccc;
+            border-radius: 5px;
+            padding: 10px;
+            font-family: 'Consolas';
+            font-size: 12px;
+        }
+    """
+
+def estilo_log_dark():
+    return """
+        QTextEdit {
+            background-color: #2d2d2d;
+            color: #e0e0e0;
+            border: 1px solid #404040;
+            border-radius: 5px;
+            padding: 10px;
+            font-family: 'Consolas';
+            font-size: 12px;
+        }
     """
 
 def estilo_progress_bar_dark():
@@ -366,13 +380,13 @@ def estilo_sheet_dark():
         }
 
         QWidget#central_widget {
-            background-color: #2d2d2d;
+            background-color: #242323;
             border-radius: 12px;
             border: 1px solid #444444;
         }
 
         QWidget#barra_titulo {
-            background-color: #2d2d2d;
+            background-color: #242323;
             border-top-left-radius: 12px;
             border-top-right-radius: 12px;
         }

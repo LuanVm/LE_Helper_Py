@@ -9,6 +9,7 @@ from PyQt6.QtGui import QPixmap, QIcon
 
 from PainelAutomacaoColeta import InterfaceAutoBlume
 from PainelProcessamentoAgitel import PainelProcessamentoAgitel
+from PainelOrganizacaoPastas import PainelOrganizacaoPastas
 from GerenJanela import ResizableWindow
 from GerenTema import GerenTema
 from AppHome import HomeScreen
@@ -22,12 +23,11 @@ class MainApp(ResizableWindow):
         self.setWindowTitle("LE Helper")
         self.setGeometry(100, 100, 1200, 750)
         
-        self.function_mapping = {
+        self.function_groupsping = {
             "Home": 0,
-            "Coleta de faturas": 1,
-            "Processamento Agitel": 2,
-            "Coleta de faturas": 1,
-            "Processamento Agitel": 2
+            "Automação da Coleta": 1,
+            "Organização de Pastas": 2,
+            "Processamento Agitel": 3,
         }
         
         self._configure_ui_components()
@@ -64,7 +64,8 @@ class MainApp(ResizableWindow):
         self.funcionalidades_combo.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.funcionalidades_combo.addItems([
             "Home", 
-            "Coleta de faturas", 
+            "Automação da Coleta", 
+            "Organização de Pastas",
             "Processamento Agitel"
         ])
         left_section.addWidget(self.funcionalidades_combo)
@@ -116,12 +117,14 @@ class MainApp(ResizableWindow):
         layout.addWidget(self.botao_fechar)
 
     def _setup_theme_manager(self):
+        """Atualizado para incluir o novo painel"""
         self.theme_manager = GerenTema(
             self,
             self.central_widget,
             self.barra_titulo,
             self.funcionalidades_combo,
             self.automacao_coleta,
+            self.organizacao_pastas,
             self.gui_processamento_agitel,
             self.botao_modo,
             self.botao_minimizar,
@@ -138,11 +141,14 @@ class MainApp(ResizableWindow):
         
         self.home_screen = HomeScreen()
         self.automacao_coleta = InterfaceAutoBlume(self)
+        self.organizacao_pastas = PainelOrganizacaoPastas(self)
         self.gui_processamento_agitel = PainelProcessamentoAgitel(self)
         
-        self.stacked_content.addWidget(self.home_screen)
-        self.stacked_content.addWidget(self.automacao_coleta)
-        self.stacked_content.addWidget(self.gui_processamento_agitel)
+        self.stacked_content.addWidget(self.home_screen)              #Índice 0
+        self.stacked_content.addWidget(self.automacao_coleta)         #Índice 1
+        self.stacked_content.addWidget(self.organizacao_pastas)       #Índice 2
+        self.stacked_content.addWidget(self.gui_processamento_agitel) #Índice 3
+        
         
         self.funcionalidades_combo.currentTextChanged.connect(self.on_combo_text_changed)
         self.home_screen.square_clicked.connect(self.on_square_clicked)
@@ -150,32 +156,39 @@ class MainApp(ResizableWindow):
         self.layout.addWidget(self.central_content, stretch=1)
     
     def on_combo_text_changed(self, text):
-        index = self.function_mapping.get(text, 0)
+        index = self.function_groupsping.get(text, 0)
         self.stacked_content.setCurrentIndex(index)
 
     def on_square_clicked(self, index):
-        function_map = {
-            0: "Coleta de faturas",
-            1: "Processamento Agitel",
-            2: "financeiro_function"
+        function_groups = {
+            0: ["Automação da Coleta"],  # Grupo Coleta
+            1: ["Organização de Pastas", "Processamento Agitel"],  # Grupo Planilhamento
+            2: []  # Grupo Financeiro (vazio por enquanto)
         }
-        if index in function_map:
+        if index in function_groups:
             self.funcionalidades_combo.clear()
-            self.funcionalidades_combo.addItem(function_map[index])
+            if index == 1:  # Se for Planilhamento
+                self.funcionalidades_combo.addItems(function_groups[index])
+            else:
+                self.funcionalidades_combo.addItem(function_groups[index][0] if function_groups[index] else "Home")
 
     def mostrar_home(self):
+        """Volta para a tela inicial com todas as opções"""
         self.stacked_content.setCurrentIndex(0)
         self.funcionalidades_combo.clear()
         self.funcionalidades_combo.addItems([
             "Home", 
-            "Coleta de faturas", 
+            "Automação da Coleta", 
+            "Organização de Pastas",
             "Processamento Agitel"
         ])
         self.funcionalidades_combo.setCurrentIndex(0)
 
     def _finalize_ui_setup(self):
+        """Atualizado para registrar o novo painel"""
         self.theme_manager.register_widget(self.automacao_coleta)
         self.theme_manager.register_widget(self.gui_processamento_agitel)
+        self.theme_manager.register_widget(self.organizacao_pastas)
         self.theme_manager.update_icons()
         self.theme_manager.aplicar_tema()
         self.botao_modo.clicked.connect(self.theme_manager.alternar_modo)

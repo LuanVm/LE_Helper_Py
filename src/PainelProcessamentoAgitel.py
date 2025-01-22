@@ -1,6 +1,5 @@
 import gc
 import os
-import time
 import unicodedata
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QGridLayout, QPushButton, QLineEdit,
@@ -18,7 +17,7 @@ from GerenEstilos import (
     estilo_check_box_light, estilo_check_box_dark,
     estilo_log_light, estilo_log_dark,
     estilo_progress_bar_light, estilo_progress_bar_dark,
-    estilo_hover, estilo_sheet_light, estilo_sheet_dark
+    estilo_hover
 )
 
 class PainelProcessamentoAgitel(QWidget):
@@ -112,7 +111,7 @@ class PainelProcessamentoAgitel(QWidget):
 
         # Efeito hover nos botões
         for button in [self.btn_select_file, self.btn_process]:
-            estilo_hover(button)
+            estilo_hover(button, is_dark_mode)
 
     def select_file(self):
         """Abre o diálogo para escolher arquivo"""
