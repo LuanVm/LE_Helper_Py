@@ -36,24 +36,20 @@ class HomeScreen(QWidget):
 
     def setup_squares(self):
         def get_base_orange():
-            # Gera tons quentes com predominância de laranja
             return (
-                random.randint(200, 255),  # Red
-                random.randint(50, 150),   # Green
-                random.randint(0, 50)      # Blue
+                random.randint(200, 255),
+                random.randint(50, 150),
+                random.randint(0, 50)
             )
 
         def adjust_hsl(rgb, h_delta=0, s_delta=0, l_delta=0):
-            # Converte RGB para HSL
             r, g, b = [x/255.0 for x in rgb]
             h, l, s = colorsys.rgb_to_hls(r, g, b)
             
-            # Ajusta os valores
             h = (h + h_delta) % 1.0
             s = max(min(s + s_delta, 1.0), 0.4)
             l = max(min(l + l_delta, 1.0), 0.3)
             
-            # Converte de volta para RGB
             r, g, b = colorsys.hls_to_rgb(h, l, s)
             return (
                 int(r * 255),
@@ -62,7 +58,6 @@ class HomeScreen(QWidget):
             )
 
         def create_gradient(base_rgb):
-            # Cria gradiente análogo com variação controlada
             color1 = adjust_hsl(base_rgb, h_delta=0.02, s_delta=-0.1, l_delta=0.05)
             color2 = adjust_hsl(base_rgb, h_delta=-0.02, s_delta=0.1, l_delta=-0.05)
             return (
@@ -71,11 +66,9 @@ class HomeScreen(QWidget):
             )
 
         def create_hover_gradient(base_rgb):
-            # Gradiente complementar suave
             base_h = colorsys.rgb_to_hls(*[x/255.0 for x in base_rgb])[0]
-            complement_h = (base_h + 0.1) % 1.0  # Deslocamento de 36 graus
+            complement_h = (base_h + 0.1) % 1.0
             
-            # Converte para RGB
             r1, g1, b1 = colorsys.hls_to_rgb(complement_h, 0.7, 0.6)
             r2, g2, b2 = colorsys.hls_to_rgb(base_h, 0.8, 0.4)
             
@@ -97,13 +90,11 @@ class HomeScreen(QWidget):
             btn.setFixedSize(150, 150)
             btn.setObjectName("sector_button")
 
-            # Efeito de opacidade
             btn_opacity = QGraphicsOpacityEffect(btn)
             btn.setGraphicsEffect(btn_opacity)
             btn_opacity.setOpacity(0)
             self.button_effects.append(btn_opacity)
 
-            # Geração de cores
             base_orange = get_base_orange()
             start_color, end_color = create_gradient(base_orange)
             hover_start, hover_end = create_hover_gradient(base_orange)
@@ -155,17 +146,15 @@ class HomeScreen(QWidget):
         self.logo_anim.setStartValue(0)
         self.logo_anim.setEndValue(1)
 
-        # Novas animações para os botões
         self.button_anims = []
         for effect in self.button_effects:
             anim = QPropertyAnimation(effect, b"opacity")
             anim.setDuration(1500)
             anim.setStartValue(0)
             anim.setEndValue(1)
-            anim.setEasingCurve(QEasingCurve.Type.OutQuad)  # Suaviza a curva de animação
+            anim.setEasingCurve(QEasingCurve.Type.OutQuad)
             self.button_anims.append(anim)
         
-        # Grupo de animações para sincronizar
         self.parallel_anim = QParallelAnimationGroup()
         self.parallel_anim.addAnimation(self.logo_anim)
         for anim in self.button_anims:
