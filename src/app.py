@@ -17,8 +17,10 @@ from AppHome import HomeScreen
 class MainApp(ResizableWindow):
     def __init__(self):
         super().__init__()
+
+        self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         
-        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         self.settings_path = "config.ini"
         self.setWindowTitle("LE Helper")
         self.setGeometry(100, 100, 1200, 750)
@@ -34,6 +36,16 @@ class MainApp(ResizableWindow):
         self._setup_content_panes()
         self._setup_theme_manager()
         self._finalize_ui_setup()
+
+        self.main_window.setAttribute(Qt.WidgetAttribute.WA_Hover)
+        self.central_widget.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
+
+    def showEvent(self, event):
+        """Garante a renderização correta na primeira exibição"""
+        super().showEvent(event)
+        self.theme_manager._force_layout_update()
+        self.resize(self.size() + QSize(1, 1))
+        self.resize(self.size() - QSize(1, 1))
 
     def _configure_ui_components(self):
         self.central_widget = QWidget(self)

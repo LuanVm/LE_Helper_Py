@@ -12,6 +12,7 @@ class ResizableWindow(QMainWindow):
 
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
+            self.setAttribute(Qt.WidgetAttribute.WA_Hover, True)
             if self.barra_titulo and self.barra_titulo.geometry().contains(event.pos()):
                 self.dragging = True
                 self.offset = event.pos()  # Usa event.pos() em vez de event.position().toPoint()

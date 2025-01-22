@@ -377,18 +377,21 @@ def estilo_sheet_dark():
     return """
         QMainWindow {
             background-color: transparent;
+            border: none;
         }
 
         QWidget#central_widget {
             background-color: #242323;
             border-radius: 12px;
             border: 1px solid #444444;
+            margin: 1px;  /* Adiciona margem para evitar artefatos */
         }
 
         QWidget#barra_titulo {
             background-color: #242323;
             border-top-left-radius: 12px;
             border-top-right-radius: 12px;
+            margin: 0px 1px 0px 1px;  /* Alinhamento com a borda arredondada */
         }
 
         QLabel#titulo {
@@ -421,18 +424,21 @@ def estilo_sheet_light():
     return """
         QMainWindow {
             background-color: transparent;
+            border: none;
         }
 
         QWidget#central_widget {
             background-color: #f4f4f4;
             border-radius: 12px;
             border: 1px solid #cccccc;
+            margin: 1px;  /* Adiciona margem para evitar artefatos */
         }
 
         QWidget#barra_titulo {
             background-color: #f4f4f4;
             border-top-left-radius: 12px;
             border-top-right-radius: 12px;
+            margin: 0px 1px 0px 1px;  /* Alinhamento com a borda arredondada */
         }
 
         QLabel#titulo {

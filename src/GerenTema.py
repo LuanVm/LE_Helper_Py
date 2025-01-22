@@ -1,5 +1,6 @@
 import os
-from PyQt6.QtCore import QSettings
+from PyQt6.QtCore import QSettings, Qt, QSize, QEvent
+from PyQt6.QtWidgets import QApplication
 from PyQt6.QtGui import QIcon
 from GerenEstilos import (
     estilo_sheet_light, estilo_combo_box_light,
@@ -29,6 +30,13 @@ class GerenTema:
         self.load_settings()
         self.update_icons()
 
+        self.main_window.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        self.main_window.setAttribute(Qt.WidgetAttribute.WA_Hover)
+        self.central_widget.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
+
+        # Forçar atualização inicial do layout
+        self._force_layout_update()
+
         # Registrar componentes de forma genérica
         components = [
             central_widget, barra_titulo, funcionalidades_combo,
@@ -39,6 +47,15 @@ class GerenTema:
             self.register_widget(component)
 
         self.aplicar_tema_inicial()
+
+    def _force_layout_update(self):
+        """Atualiza o layout imediatamente após mudanças de tema"""
+        self.main_window.setUpdatesEnabled(False)
+        self.central_widget.updateGeometry()
+        self.main_window.updateGeometry()
+        self.main_window.setUpdatesEnabled(True)
+        QApplication.sendEvent(self.main_window, QEvent(QEvent.Type.LayoutRequest))
+        QApplication.processEvents()
 
     @property
     def modo_escuro(self):
@@ -99,6 +116,11 @@ class GerenTema:
         for widget in self.widgets:
             if hasattr(widget, 'apply_styles'):
                 widget.apply_styles(self.modo_escuro)
+        
+        # Adicionar estas linhas para atualização imediata
+        self._force_layout_update()
+        self.main_window.resize(self.main_window.size() + QSize(1, 1))
+        self.main_window.resize(self.main_window.size() - QSize(1, 1))
 
     def _aplicar_estilo_base(self, dark_mode):
         # Método base para evitar duplicação de código
