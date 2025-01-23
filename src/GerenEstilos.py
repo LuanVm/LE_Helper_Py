@@ -3,7 +3,7 @@ def campo_qline_dark():
         QLineEdit {
             font-family: 'Open Sans', sans-serif;
             font-size: 12px;
-            color: #e0e0e0;
+            color: #e6e3e3;
             background-color: #3d3d3d;
             border: 1px solid #555555;
             border-radius: 5px;
@@ -73,7 +73,7 @@ def estilo_check_box_dark():
         QCheckBox {
             font-family: 'Open Sans', sans-serif;
             font-size: 13px;
-            color: #e0e0e0;
+            color: #e6e3e3;
             spacing: 5px;
         }
         QCheckBox::indicator {
@@ -120,7 +120,7 @@ def estilo_combo_box_dark():
     return """
         QComboBox {
             background-color: #3d3d3d;
-            color: #e0e0e0;
+            color: #e6e3e3;
             border: 1px solid #555555;
             padding: 6px 10px;
             border-radius: 6px;
@@ -165,13 +165,13 @@ def estilo_combo_box_dark():
 
         QComboBox QAbstractItemView::item {
             padding: 4px 8px;
-            color: #e0e0e0;
+            color: #e6e3e3;
             border-radius: 4px;
         }
 
         QComboBox QAbstractItemView::item:hover {
             background-color: #4d4d4d;
-            color: #e0e0e0;
+            color: #e6e3e3;
         }
 
         QComboBox QAbstractItemView::item:selected {
@@ -295,7 +295,7 @@ def estilo_label_dark():
             font-family: 'Open Sans';
             padding-left: 0.5em;
             font-size: 13px;
-            color: #e0e0e0;
+            color: #e6e3e3;
         }
     """
 
@@ -326,7 +326,7 @@ def estilo_log_dark():
     return """
         QTextEdit {
             background-color: #2d2d2d;
-            color: #e0e0e0;
+            color: #e6e3e3;
             border: 1px solid #404040;
             border-radius: 5px;
             padding: 10px;
@@ -344,7 +344,7 @@ def estilo_progress_bar_dark():
             text-align: center;
             font-family: 'Open Sans', sans-serif;
             font-size: 12px;
-            color: #e0e0e0;
+            color: #e6e3e3;
         }
 
         QProgressBar::chunk {
@@ -397,7 +397,7 @@ def estilo_sheet_dark():
         QLabel#titulo {
             font-size: 16px;
             font-family: 'Segoe UI', sans-serif;
-            color: #e0e0e0;
+            color: #e6e3e3;
             font-weight: bold;
             padding-left: 4px;
             background-color: transparent;
@@ -457,7 +457,7 @@ def estilo_sheet_light():
         }
 
         QPushButton#botao_minimizar:hover, QPushButton#botao_maximizar:hover {
-            background-color: #e0e0e0;
+            background-color: #e6e3e3;
             border-radius: 5px;
         }
 
@@ -472,7 +472,7 @@ def estilo_sector_button_dark():
         QPushButton {
             background-color: #3d3d3d;
             border: 2px solid #555555;
-            color: #e0e0e0;
+            color: #e6e3e3;
         }
         QPushButton:hover {
             background-color: #4d4d4d;
@@ -495,7 +495,7 @@ def estilo_tabela_dark():
     return """
         QTableWidget {
             background-color: #2d2d2d;
-            color: #e0e0e0;
+            color: #e6e3e3;
             border: 1px solid #444444;
             border-radius: 5px;
             gridline-color: #444444;
@@ -515,7 +515,7 @@ def estilo_tabela_dark():
 
         QHeaderView::section {
             background-color: #3d3d3d;
-            color: #e0e0e0;
+            color: #e6e3e3;
             border: 1px solid #444444;
             padding: 5px;
             font-weight: bold;
@@ -542,13 +542,13 @@ def estilo_tabela_light():
             color: #1c1c1c;
             border: 1px solid #cccccc;
             border-radius: 5px;
-            gridline-color: #e0e0e0;
+            gridline-color: #e6e3e3;
             font-family: 'Open Sans';
             font-size: 12px;
         }
 
         QTableWidget::item {
-            border-bottom: 1px solid #e0e0e0;
+            border-bottom: 1px solid #e6e3e3;
             padding: 5px;
         }
 
