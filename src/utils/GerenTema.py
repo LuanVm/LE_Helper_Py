@@ -9,6 +9,7 @@ from utils.GerenEstilos import (
 )
 
 from modules.PainelOrganizacaoPastas import PainelOrganizacaoPastas
+from modules.PainelSubstituicaoSimples import PainelSubstituicaoSimples
 
 class GerenTema:
     def __init__(self, main_window, central_widget, barra_titulo, funcionalidades_combo,
@@ -43,6 +44,7 @@ class GerenTema:
         components = [
             central_widget, barra_titulo, funcionalidades_combo,
             automacao_coleta, gui_processamento_agitel, organizacao_pastas,
+            substituicao_simples,
             botao_modo, botao_minimizar, botao_fechar, botao_home
         ]
         for component in components:
@@ -86,6 +88,8 @@ class GerenTema:
         """Registra widgets e aplica estilos imediatamente"""
         self.widgets.append(widget)
         if isinstance(widget, PainelOrganizacaoPastas):
+            widget.apply_styles(self.modo_escuro)
+        elif isinstance(widget, PainelSubstituicaoSimples):
             widget.apply_styles(self.modo_escuro)
         elif hasattr(widget, 'apply_styles'):
             widget.apply_styles(self.modo_escuro)

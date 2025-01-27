@@ -1,12 +1,12 @@
 import os
+from pathlib import Path
 from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton,
-    QTextEdit, QFileDialog, QMessageBox, QScrollArea, QGridLayout
+    QWidget, QVBoxLayout, QGridLayout, QLabel, QLineEdit, QPushButton,
+    QTextEdit, QFileDialog, QMessageBox, QScrollArea
 )
-
+from PyQt6.QtGui import QIcon
 from utils.GerenEstilos import (
-    estilo_label_light, estilo_label_dark,
-    campo_qline_light, campo_qline_dark,
+    estilo_label_light, estilo_label_dark, campo_qline_light, campo_qline_dark,
     estilo_hover, estilo_log_light, estilo_log_dark
 )
 
@@ -18,45 +18,51 @@ class PainelSubstituicaoSimples(QWidget):
 
     def init_ui(self):
         self.setLayout(QVBoxLayout())
-        self.layout().setContentsMargins(20, 20, 20, 20)
-        self.layout().setSpacing(10)
+        self.layout().setContentsMargins(15, 15, 15, 15)
+        self.layout().setSpacing(15)
 
-        self._create_input_panel()
+        self._create_input_controls()
         self._create_file_view()
 
-    def _create_input_panel(self):
-        input_panel = QWidget()
-        input_layout = QGridLayout(input_panel)
-        input_layout.setContentsMargins(10, 10, 10, 10)
-        input_layout.setSpacing(10)
+    def _create_input_controls(self):
+        grid = QGridLayout()
+        grid.setVerticalSpacing(10)
+        grid.setHorizontalSpacing(15)
+        grid.setColumnStretch(1, 1)
 
-        self.text_pasta = self._create_input_line("Pasta:", input_layout, 0)
-        self.text_original = self._create_input_line("Nome Original:", input_layout, 1)
-        self.text_nova = self._create_input_line("Alterar Para:", input_layout, 2)
-
+        # Pasta de entrada
+        self.label_pasta = QLabel("Pasta:")
+        self.text_pasta = QLineEdit()
+        self.text_pasta.setReadOnly(True)
         self.btn_selecionar = QPushButton("Selecionar Pasta")
-        self.btn_renomear = QPushButton("Renomear")
-
-        input_layout.addWidget(self.btn_selecionar, 3, 0)
-        input_layout.addWidget(self.btn_renomear, 3, 2)
-
+        self.btn_selecionar.setFixedSize(160, 32)
         self.btn_selecionar.clicked.connect(self.selecionar_pasta)
+
+        # Nome do arquivo original
+        self.label_original = QLabel("Nome Original:")
+        self.text_original = QLineEdit()
+
+        self.btn_renomear = QPushButton("Renomear")
+        self.btn_renomear.setFixedSize(160, 32)
         self.btn_renomear.clicked.connect(self.renomear_arquivos)
 
-        info_label = QLabel("Lembrando que a aplicação respeita caracteres em caixa alta.")
-        info_label.setStyleSheet("color: gray;")
-        input_layout.addWidget(info_label, 4, 0, 1, 3)
+        # Nome do arquivo alterado
+        self.label_nova = QLabel("Alterar Para:")
+        self.text_nova = QLineEdit()
 
-        self.layout().addWidget(input_panel)
+        # Adicionando elementos ao layout
+        grid.addWidget(self.label_pasta, 0, 0)
+        grid.addWidget(self.text_pasta, 0, 1)
+        grid.addWidget(self.btn_selecionar, 0, 2)
 
-    def _create_input_line(self, label_text, layout, row):
-        label = QLabel(label_text)
-        label.setStyleSheet(estilo_label_light() if not self.is_dark_mode else estilo_label_dark())  # Aplicando o estilo do label
-        text_field = QLineEdit()
-        text_field.setStyleSheet(campo_qline_light() if not self.is_dark_mode else campo_qline_dark())  # Aplicando o estilo do campo
-        layout.addWidget(label, row, 0)
-        layout.addWidget(text_field, row, 1, 1, 2)
-        return text_field
+        grid.addWidget(self.label_original, 1, 0)
+        grid.addWidget(self.text_original, 1, 1)
+        grid.addWidget(self.btn_renomear, 1, 2)
+
+        grid.addWidget(self.label_nova, 2, 0, 1, 1)
+        grid.addWidget(self.text_nova, 2, 1)
+
+        self.layout().addLayout(grid)
 
     def _create_file_view(self):
         scroll_area = QScrollArea()
@@ -64,26 +70,26 @@ class PainelSubstituicaoSimples(QWidget):
 
         self.text_area_arquivos = QTextEdit()
         self.text_area_arquivos.setReadOnly(True)
-        self.text_area_arquivos.setStyleSheet(estilo_log_light() if not self.is_dark_mode else estilo_log_dark())  # Estilo para a área de texto
         scroll_area.setWidget(self.text_area_arquivos)
 
         self.layout().addWidget(scroll_area)
 
     def apply_styles(self, is_dark_mode):
         self.is_dark_mode = is_dark_mode
-        styles = {
-            'label': estilo_label_dark() if is_dark_mode else estilo_label_light(),
-            'line': campo_qline_dark() if is_dark_mode else campo_qline_light(),
-        }
+        label_style = estilo_label_dark() if is_dark_mode else estilo_label_light()
+        line_style = campo_qline_dark() if is_dark_mode else campo_qline_light()
+        log_style = estilo_log_dark() if is_dark_mode else estilo_log_light()
 
-        for label in self.findChildren(QLabel):
-            label.setStyleSheet(styles['label'])
+        for label in [self.label_pasta, self.label_original, self.label_nova]:
+            label.setStyleSheet(label_style)
+        for line_edit in [self.text_pasta, self.text_original, self.text_nova]:
+            line_edit.setStyleSheet(line_style)
+        for log_area in [self.text_area_arquivos]:
+            log_area.setStyleSheet(log_style)
 
-        for line_edit in self.findChildren(QLineEdit):
-            line_edit.setStyleSheet(styles['line'])
-
-        for btn in [self.btn_selecionar, self.btn_renomear]:
-            estilo_hover(btn, is_dark_mode)
+        # Aplica estilo nos botões
+        estilo_hover(self.btn_selecionar, is_dark_mode)
+        estilo_hover(self.btn_renomear, is_dark_mode)
 
     def selecionar_pasta(self):
         pasta = QFileDialog.getExistingDirectory(self, "Selecionar Pasta")
@@ -93,8 +99,9 @@ class PainelSubstituicaoSimples(QWidget):
 
     def renomear_arquivos(self):
         pasta = self.text_pasta.text()
+
         if not os.path.isdir(pasta):
-            self.exibir_mensagem("Pasta inválida ou vazia.", QMessageBox.Icon.Critical)
+            self.exibir_mensagem("Pasta inválida ou vazia.", QMessageBox.Icon.Information)
             return
 
         palavra_antiga = self.text_original.text()

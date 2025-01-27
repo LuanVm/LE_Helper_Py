@@ -244,7 +244,7 @@ class PainelMesclaPlanilha(QWidget):
         grid.addWidget(self.btn_selecionar_base, 1, 2)
         
         grid.addWidget(self.label_saida, 2, 0)
-        grid.addWidget(self.text_nome_saida, 2, 1, 1, 2)
+        grid.addWidget(self.text_nome_saida, 2, 1, 1, 1)
 
         self.layout().addLayout(grid)
 

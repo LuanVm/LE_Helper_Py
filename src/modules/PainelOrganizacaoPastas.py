@@ -27,7 +27,7 @@ class EditorClientes(QDialog):
         self.setWindowTitle("Editor de Clientes")
         self.setFixedSize(400, 300)
         
-        caminho_base = os.path.join(os.path.dirname(__file__), "resources")
+        caminho_base = os.path.join(os.path.dirname(__file__), "resources", "icons")
         caminho_icone = os.path.join(caminho_base, "logo.ico")
         if os.path.exists(caminho_icone):
             self.setWindowIcon(QIcon(caminho_icone))
@@ -308,7 +308,7 @@ class PainelOrganizacaoPastas(QWidget):
     def editar_clientes(self):
         editor = EditorClientes(self.clientes, self)
 
-        caminho_base = os.path.join(os.path.dirname(__file__), "resources")
+        caminho_base = os.path.join(os.path.dirname(__file__), "resources", "icons")
         caminho_icone = os.path.join(caminho_base, "logo.ico")
         if os.path.exists(caminho_icone):
             self.setWindowIcon(QIcon(caminho_icone))
@@ -333,7 +333,7 @@ class PainelOrganizacaoPastas(QWidget):
         return ""
 
     def organizar_arquivos(self):
-        caminho_base = os.path.join(os.path.dirname(__file__), "resources")
+        caminho_base = os.path.join(os.path.dirname(__file__), "resources", "icons")
         caminho_icone = os.path.join(caminho_base, "logo.ico")
         if os.path.exists(caminho_icone):
             self.setWindowIcon(QIcon(caminho_icone))
