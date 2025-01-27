@@ -85,10 +85,10 @@ def estilo_check_box_dark():
             background-color: #ff8c00;
         }
         QCheckBox::indicator:checked {
-            image: url("src/resources/checkbox_checked.png");
+            image: url("src/resources/icons/checkbox_checked.png");
         }
         QCheckBox::indicator:unchecked {
-            image: url("src/resources/checkbox_unchecked.png");
+            image: url("src/resources/icons/checkbox_unchecked.png");
         }
     """
 
@@ -109,10 +109,10 @@ def estilo_check_box_light():
             background-color: #ff8c00;
         }
         QCheckBox::indicator:checked {
-            image: url("src/resources/checkbox_checked.png");
+            image: url("src/resources/icons/checkbox_checked.png");
         }
         QCheckBox::indicator:unchecked {
-            image: url("src/resources/checkbox_unchecked.png");
+            image: url("src/resources/icons/checkbox_unchecked.png");
         }
     """
 
@@ -126,6 +126,7 @@ def estilo_combo_box_dark():
             border-radius: 6px;
             font-family: 'Open Sans', sans-serif;
             font-size: 13px;
+            text-align: center;
             selection-background-color: #ff8c00;
             selection-color: #ffffff;
         }
@@ -147,7 +148,7 @@ def estilo_combo_box_dark():
         }
 
         QComboBox::down-arrow {
-            image: url("src/resources/ui_drop_down_dark.png");
+            image: url("src/resources/icons/ui_drop_down_dark.png");
             width: 16px;
             height: 16px;
         }
@@ -196,6 +197,7 @@ def estilo_combo_box_light():
             border-radius: 6px;
             font-family: 'Open Sans', sans-serif;
             font-size: 13px;
+            text-align: center;
             selection-background-color: #FFD699;
             selection-color: #1C1C1C;
         }
@@ -217,7 +219,7 @@ def estilo_combo_box_light():
         }
 
         QComboBox::down-arrow {
-            image: url("src/resources/ui_drop_down_light.png");
+            image: url("src/resources/icons/ui_drop_down_light.png");
             width: 16px;
             height: 16px;
         }

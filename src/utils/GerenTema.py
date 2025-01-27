@@ -1,18 +1,19 @@
 import os
+from pathlib import Path
 from PyQt6.QtCore import QSettings, Qt, QSize, QEvent
 from PyQt6.QtWidgets import QApplication
 from PyQt6.QtGui import QIcon
-from GerenEstilos import (
+from utils.GerenEstilos import (
     estilo_sheet_light, estilo_combo_box_light,
     estilo_sheet_dark, estilo_combo_box_dark
 )
 
-from PainelOrganizacaoPastas import PainelOrganizacaoPastas
+from modules.PainelOrganizacaoPastas import PainelOrganizacaoPastas
 
 class GerenTema:
     def __init__(self, main_window, central_widget, barra_titulo, funcionalidades_combo,
                  automacao_coleta, gui_processamento_agitel, organizacao_pastas,
-                 botao_modo, botao_minimizar, botao_fechar, botao_home):
+                 substituicao_simples, botao_modo, botao_minimizar, botao_fechar, botao_home):
         self.main_window = main_window
         self.central_widget = central_widget
         self.barra_titulo = barra_titulo
@@ -20,6 +21,7 @@ class GerenTema:
         self.automacao_coleta = automacao_coleta
         self.gui_processamento_agitel = gui_processamento_agitel
         self.organizacao_pastas = organizacao_pastas
+        self.substituicao_simples = substituicao_simples
         self.botao_modo = botao_modo
         self.botao_minimizar = botao_minimizar
         self.botao_fechar = botao_fechar
@@ -89,7 +91,7 @@ class GerenTema:
             widget.apply_styles(self.modo_escuro)
 
     def update_icons(self):
-        base_path = os.path.join(os.path.dirname(__file__), "resources")
+        base_path = str(Path(__file__).resolve().parent.parent / "resources" / "icons")
         theme_suffix = "dark" if self.modo_escuro else "light"
         
         # Atualizar ícones principais

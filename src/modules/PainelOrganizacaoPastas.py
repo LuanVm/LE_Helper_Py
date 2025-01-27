@@ -11,7 +11,7 @@ from PyQt6.QtWidgets import (
     QHeaderView, QAbstractItemView
 )
 from PyQt6.QtGui import QFont, QTextCursor, QIcon
-from GerenEstilos import (
+from utils.GerenEstilos import (
     estilo_label_light, estilo_label_dark,
     campo_qline_light, campo_qline_dark,
     estilo_check_box_light, estilo_check_box_dark,

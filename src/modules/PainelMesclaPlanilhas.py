@@ -11,7 +11,7 @@ from PyQt6.QtCore import QThread, pyqtSignal, pyqtSlot, QSettings, QObject
 from openpyxl import load_workbook, Workbook
 from openpyxl.utils import get_column_letter
 
-from GerenEstilos import (
+from utils.GerenEstilos import (
     estilo_label_light, estilo_label_dark,
     campo_qline_light, campo_qline_dark,
     estilo_tabela_dark, estilo_tabela_light,
@@ -20,7 +20,6 @@ from GerenEstilos import (
 )
 
 #### TASKS ####
-
 #### O app está em um loop infinito após finalizar, não se sabe se concluiu a mesclagem
 #### melhorar design da tabela
 

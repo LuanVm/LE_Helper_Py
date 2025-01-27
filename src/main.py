@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import sys
 from PyQt6.QtWidgets import (
     QApplication, QLabel, QComboBox,
@@ -7,13 +8,14 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, QSize, QTimer
 from PyQt6.QtGui import QPixmap, QIcon
 
-from PainelAutomacaoColeta import InterfaceAutoBlume
-from PainelProcessamentoAgitel import PainelProcessamentoAgitel
-from PainelOrganizacaoPastas import PainelOrganizacaoPastas
-from PainelMesclaPlanilhas import PainelMesclaPlanilha
-from GerenJanela import ResizableWindow
-from GerenTema import GerenTema
-from AppHome import HomeScreen
+from modules.PainelAutomacaoColeta import InterfaceAutoBlume
+from modules.PainelOrganizacaoPastas import PainelOrganizacaoPastas
+from modules.PainelProcessamentoAgitel import PainelProcessamentoAgitel
+from modules.PainelMesclaPlanilhas import PainelMesclaPlanilha
+from modules.PainelSubstituicaoSimples import PainelSubstituicaoSimples
+from modules.HomeScreen import HomeScreen
+from utils.GerenJanela import ResizableWindow
+from utils.GerenTema import GerenTema
 
 class MainApp(ResizableWindow):
     def __init__(self):
@@ -25,8 +27,8 @@ class MainApp(ResizableWindow):
         self.settings_path = "config.ini"
         self.setWindowTitle("LE Helper")
         self.setGeometry(100, 100, 1200, 750)
-        caminho_base = os.path.join(os.path.dirname(__file__), "resources")
-        caminho_icone = os.path.join(caminho_base, "logo.ico")
+        caminho_base = Path(__file__).resolve().parent.parent / "resources" / "icons"
+        caminho_icone = caminho_base / "logo.ico"
         if os.path.exists(caminho_icone):
             self.setWindowIcon(QIcon(caminho_icone))
         
@@ -35,7 +37,8 @@ class MainApp(ResizableWindow):
             "Automação da Coleta": 1,
             "Organização de Pastas": 2,
             "Processamento Agitel": 3,
-            "Mesclagem de Planilhas": 4
+            "Mesclagem de Planilhas": 4,
+            "Substituição Simples": 5
         }
         
         self._configure_ui_components()
@@ -99,16 +102,14 @@ class MainApp(ResizableWindow):
         
         self.funcionalidades_combo = QComboBox(self.barra_titulo)
         self.funcionalidades_combo.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.funcionalidades_combo.setFixedWidth(200)
         self.funcionalidades_combo.addItems([
-            "Home", 
-            "Automação da Coleta", 
-            "Organização de Pastas",
-            "Processamento Agitel"
+            "Home"
         ])
         left_section.addWidget(self.funcionalidades_combo)
         
         self.botao_home = QPushButton(self.barra_titulo)
-        self.botao_home.setIcon(QIcon(os.path.join("resources", "home_light.png")))
+        self.botao_home.setIcon(QIcon(os.path.join("resources","icons", "home_light.png")))
         self.botao_home.setFixedSize(QSize(20, 20))
         self.botao_home.clicked.connect(self.mostrar_home)
         left_section.addWidget(self.botao_home)
@@ -120,8 +121,8 @@ class MainApp(ResizableWindow):
         self.layout.addWidget(self.barra_titulo)
 
     def _add_app_icon(self, layout):
-        caminho_base = os.path.join(os.path.dirname(__file__), "resources")
-        caminho_icone = os.path.join(caminho_base, "logo.png")
+        caminho_base = Path(__file__).resolve().parent.parent / "resources" / "icons"
+        caminho_icone = caminho_base / "logo.ico"
         
         icone_titulo = QLabel()
         if os.path.exists(caminho_icone):
@@ -133,7 +134,7 @@ class MainApp(ResizableWindow):
         layout.addWidget(icone_titulo)
 
     def _add_control_buttons(self, layout):
-        caminho_base = os.path.join(os.path.dirname(__file__), "resources")
+        caminho_base = Path(__file__).resolve().parent.parent / "resources" / "icons"
         
         self.botao_modo = QPushButton(self.barra_titulo)
         self.botao_modo.setIcon(QIcon(os.path.join(caminho_base, "ui_light.png")))
@@ -163,6 +164,7 @@ class MainApp(ResizableWindow):
             self.automacao_coleta,
             self.organizacao_pastas,
             self.gui_processamento_agitel,
+            self.substituicao_simples,
             self.botao_modo,
             self.botao_minimizar,
             self.botao_fechar,
@@ -181,12 +183,14 @@ class MainApp(ResizableWindow):
         self.organizacao_pastas = PainelOrganizacaoPastas(self)
         self.gui_processamento_agitel = PainelProcessamentoAgitel(self)
         self.painel_mesclagem = PainelMesclaPlanilha(self)
+        self.substituicao_simples = PainelSubstituicaoSimples(self)
         
         self.stacked_content.addWidget(self.home_screen)              # Índice 0
         self.stacked_content.addWidget(self.automacao_coleta)         # Índice 1
         self.stacked_content.addWidget(self.organizacao_pastas)       # Índice 2
         self.stacked_content.addWidget(self.gui_processamento_agitel) # Índice 3
         self.stacked_content.addWidget(self.painel_mesclagem)         # Índice 4
+        self.stacked_content.addWidget(self.substituicao_simples)     # Índice 5
         
         
         self.funcionalidades_combo.currentTextChanged.connect(self.on_combo_text_changed)
@@ -205,7 +209,8 @@ class MainApp(ResizableWindow):
             1: [
                 "Organização de Pastas", # Grupo Planilhamento
                 "Processamento Agitel",
-                "Mesclagem de Planilhas"
+                "Mesclagem de Planilhas",
+                "Substituição Simples"
             ],                    
             2: []                        # Grupo Financeiro
         }
@@ -222,10 +227,7 @@ class MainApp(ResizableWindow):
         self.stacked_content.setCurrentIndex(0)
         self.funcionalidades_combo.clear()
         self.funcionalidades_combo.addItems([
-            "Home", 
-            "Automação da Coleta", 
-            "Organização de Pastas",
-            "Processamento Agitel"
+            "Home"         
         ])
         self.funcionalidades_combo.setCurrentIndex(0)
 

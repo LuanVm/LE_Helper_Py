@@ -5,9 +5,9 @@ import shutil
 import re
 from PyQt6.QtWidgets import (
     QLabel, QComboBox, QWidget, QGridLayout, QMessageBox,
-    QTextEdit, QFileDialog, QLineEdit, QVBoxLayout, QPushButton, QApplication
+    QTextEdit, QFileDialog, QLineEdit, QVBoxLayout, QPushButton 
 )
-from PyQt6.QtCore import QThreadPool, Qt, QSettings, QRunnable, QMutex
+from PyQt6.QtCore import QThreadPool, QSettings, QRunnable, QMutex
 from PyQt6.QtGui import QTextCursor
 from openpyxl import load_workbook
 from selenium import webdriver
@@ -19,16 +19,16 @@ from webdriver_manager.chrome import ChromeDriverManager
 from PyPDF2 import PdfReader
 
 # Configurações de estilo
-from GerenEstilos import (
+from utils.GerenEstilos import (
     estilo_combo_box_light, estilo_hover,
     estilo_log_light, estilo_label_light, campo_qline_light, 
     estilo_log_dark, campo_qline_dark, estilo_combo_box_dark,
     estilo_label_dark
 )
 
-###############################################
-# PARTE 1: LÓGICA DE PROCESSAMENTO (BACKEND)
-###############################################
+###################################
+#LÓGICA DE PROCESSAMENTO (BACKEND)#
+###################################
 
 class TarefaAutomacao(QRunnable):
     """Classe que executa a automação em uma thread separada"""
@@ -96,7 +96,7 @@ class Blume:
             opcoes = webdriver.ChromeOptions()
             opcoes.add_argument("--disable-extensions")
             opcoes.add_argument("--disable-popup-blocking")
-            #opcoes.add_argument("--headless")
+            opcoes.add_argument("--headless")
 
             self.parent.log_mensagem("Abrindo navegador...", area="tecnico")
             driver = webdriver.Chrome(
@@ -321,9 +321,9 @@ class Blume:
                 pass
         self.drivers.clear()
 
-###############################################
-# PARTE 2: INTERFACE DO USUÁRIO (FRONTEND)
-###############################################
+#################################
+#INTERFACE DO USUÁRIO (FRONTEND)#
+#################################
 
 class InterfaceAutoBlume(QWidget):
     """Classe que constrói e gerencia a interface gráfica"""

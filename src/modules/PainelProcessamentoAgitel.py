@@ -15,7 +15,7 @@ from openpyxl import load_workbook, Workbook
 from openpyxl.styles import Font, Alignment, NamedStyle
 
 # Importa os estilos visuais
-from GerenEstilos import (
+from utils.GerenEstilos import (
     estilo_label_light, estilo_label_dark,
     campo_qline_light, campo_qline_dark,
     estilo_check_box_light, estilo_check_box_dark,

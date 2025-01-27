@@ -1,5 +1,6 @@
 import colorsys
 import os
+from pathlib import Path
 import random
 from functools import partial
 from PyQt6.QtCore import Qt, QPropertyAnimation, pyqtSignal, QParallelAnimationGroup, QEasingCurve
@@ -22,7 +23,7 @@ class HomeScreen(QWidget):
 
     def setup_logo(self):
         self.logo_label = QLabel(self)
-        caminho_logo = os.path.join(os.path.dirname(__file__), "resources", "logo_completa.png")
+        caminho_logo = str(Path(__file__).resolve().parent.parent / "resources" / "icons" / "logo_completa.png")
         pixmap = QPixmap(caminho_logo)
         if not pixmap.isNull():
             scaled_pixmap = pixmap.scaled(480, 240, Qt.AspectRatioMode.KeepAspectRatio,
