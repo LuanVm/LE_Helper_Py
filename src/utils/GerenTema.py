@@ -8,8 +8,8 @@ from utils.GerenEstilos import (
     estilo_sheet_dark, estilo_combo_box_dark
 )
 
-from modules.PainelOrganizacaoPastas import PainelOrganizacaoPastas
-from modules.PainelSubstituicaoSimples import PainelSubstituicaoSimples
+from modules.planilhamento.OrganizacaoPastas import PainelOrganizacaoPastas
+from modules.planilhamento.SubstituicaoSimples import PainelSubstituicaoSimples
 
 class GerenTema:
     def __init__(self, main_window, central_widget, barra_titulo, funcionalidades_combo,

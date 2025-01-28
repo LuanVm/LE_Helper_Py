@@ -8,12 +8,12 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, QSize, QTimer
 from PyQt6.QtGui import QPixmap, QIcon
 
-from modules.PainelAutomacaoColeta import InterfaceAutoBlume
-from modules.PainelOrganizacaoPastas import PainelOrganizacaoPastas
-from modules.PainelProcessamentoAgitel import PainelProcessamentoAgitel
-from modules.PainelMesclaPlanilhas import PainelMesclaPlanilha
-from modules.PainelSubstituicaoSimples import PainelSubstituicaoSimples
-from modules.HomeScreen import HomeScreen
+from modules.coleta.AutomacaoColeta import InterfaceAutoBlume
+from modules.planilhamento.OrganizacaoPastas import PainelOrganizacaoPastas
+from modules.planilhamento.ProcessamentoAgitel import PainelProcessamentoAgitel
+from modules.planilhamento.MesclaPlanilhas import PainelMesclaPlanilha
+from modules.planilhamento.SubstituicaoSimples import PainelSubstituicaoSimples
+from home import HomeScreen
 from utils.GerenJanela import ResizableWindow
 from utils.GerenTema import GerenTema
 
@@ -212,7 +212,7 @@ class MainApp(ResizableWindow):
                 "Mesclagem de Planilhas",
                 "Substituição Simples"
             ],                    
-            2: []                        # Grupo Financeiro
+            2: ["Organização de notas Sicoob"],   # Grupo Financeiro
         }
 
         if index in function_groups:

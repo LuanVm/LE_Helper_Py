@@ -1,6 +1,5 @@
 from collections import defaultdict
 import os
-import logging
 import configparser
 import shutil
 from PyQt6.QtCore import QThread, pyqtSignal

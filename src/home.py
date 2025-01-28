@@ -23,7 +23,7 @@ class HomeScreen(QWidget):
 
     def setup_logo(self):
         self.logo_label = QLabel(self)
-        caminho_logo = str(Path(__file__).resolve().parent.parent / "resources" / "icons" / "logo_completa.png")
+        caminho_logo = str(Path(__file__).resolve().parent / "resources" / "icons" / "logo_completa.png")
         pixmap = QPixmap(caminho_logo)
         if not pixmap.isNull():
             scaled_pixmap = pixmap.scaled(480, 240, Qt.AspectRatioMode.KeepAspectRatio,
