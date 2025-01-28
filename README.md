@@ -11,7 +11,7 @@
 - **Design adaptável**: Inclui gerenciador de temas (“light” e “dark”).
 - **Barra de título personalizada**, com botões para minimizar e fechar o aplicativo.
 
-### 2. Painel de Automação da Coleta
+### 2. Painel de Automação para Coleta de Faturas
 - Automatiza a coleta de faturas via web scraping utilizando **Selenium** e **webdriver_manager**.
 - Inclui funcionalidade de login automático em portais.
 - Realiza downloads e processa PDFs para extrair informações específicas.
