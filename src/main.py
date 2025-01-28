@@ -1,6 +1,6 @@
 import os
-from pathlib import Path
 import sys
+from pathlib import Path
 from PyQt6.QtWidgets import (
     QApplication, QLabel, QComboBox,
     QWidget, QVBoxLayout, QPushButton, QHBoxLayout, QStackedWidget
@@ -8,12 +8,17 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, QSize, QTimer
 from PyQt6.QtGui import QPixmap, QIcon
 
-from UI.IAutomacaoColeta import InterfaceAutoBlume
-from modules.planilhamento.OrganizacaoPastas import PainelOrganizacaoPastas
-from modules.planilhamento.ProcessamentoAgitel import PainelProcessamentoAgitel
-from modules.planilhamento.MesclaPlanilhas import PainelMesclaPlanilha
-from modules.planilhamento.SubstituicaoSimples import PainelSubstituicaoSimples
+#Business/Logic
+from services.ProcessamentoAgitel import PainelProcessamentoAgitel
+from services.SubstituicaoSimples import PainelSubstituicaoSimples
+
+#UI/Interface
 from UI.HomeScreen import HomeScreen
+from UI.IAutomacaoColeta import InterfaceAutoBlume
+from UI.IMesclaPlanilhas import PainelMesclaPlanilha
+from UI.IOrganizacaoPastas import PainelOrganizacaoPastas
+
+#Utils/Modules
 from utils.GerenJanela import ResizableWindow
 from utils.GerenTema import GerenTema
 

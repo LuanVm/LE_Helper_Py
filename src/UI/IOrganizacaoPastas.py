@@ -1,12 +1,12 @@
-from collections import defaultdict
-import os
 import configparser
-import shutil
-from PyQt6.QtCore import QThread, pyqtSignal
+import os
+from collections import defaultdict
+from pathlib import Path
+from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
     QWidget, QLabel, QTextEdit, QLineEdit, QPushButton, QCheckBox,
-    QGridLayout, QVBoxLayout, QHBoxLayout, QFileDialog, QProgressBar,
-    QScrollArea, QMessageBox, QDialog, QTableWidget, QTableWidgetItem,
+    QGridLayout, QVBoxLayout, QHBoxLayout, QFileDialog,
+    QScrollArea, QDialog, QTableWidget, QTableWidgetItem,
     QHeaderView, QAbstractItemView
 )
 from PyQt6.QtGui import QFont, QTextCursor, QIcon
@@ -15,9 +15,10 @@ from utils.GerenEstilos import (
     campo_qline_light, campo_qline_dark,
     estilo_check_box_light, estilo_check_box_dark,
     estilo_log_light, estilo_log_dark,
-    estilo_progress_bar_light, estilo_progress_bar_dark,
     estilo_hover
 )
+from services.OrganizacaoPastas import OrganizadorThread, AgrupadorThread
+
 
 class EditorClientes(QDialog):
     def __init__(self, clientes, parent=None):
@@ -117,7 +118,6 @@ class PainelOrganizacaoPastas(QWidget):
         line_style = campo_qline_dark() if dark_mode else campo_qline_light()
         check_style = estilo_check_box_dark() if dark_mode else estilo_check_box_light()
         log_style = estilo_log_dark() if dark_mode else estilo_log_light()
-        progress_style = estilo_progress_bar_dark() if dark_mode else estilo_progress_bar_light()
 
         # Aplicar estilos recursivamente
         def apply(widget):
@@ -127,7 +127,7 @@ class PainelOrganizacaoPastas(QWidget):
                 widget.setStyleSheet(line_style)
             elif isinstance(widget, QCheckBox):
                 widget.setStyleSheet(check_style)
-            elif isinstance(widget, (QTextEdit, QProgressBar)):
+            elif isinstance(widget, (QTextEdit)):
                 # Aplicar estilos específicos para esses componentes
                 pass
             
@@ -138,12 +138,11 @@ class PainelOrganizacaoPastas(QWidget):
         apply(self)
 
         for btn in [self.botao_selecionar, self.botao_editar, 
-                   self.botao_organizar, self.botao_reverter]:
+                   self.botao_organizar]:
             estilo_hover(btn, dark_mode)
         
         # Aplicar estilos específicos
         self.log_unificado.setStyleSheet(log_style)
-        self.barra_progresso.setStyleSheet(progress_style)
 
     def carregar_clientes(self):
         """Carrega a lista de clientes do arquivo de configuração"""
@@ -208,9 +207,14 @@ class PainelOrganizacaoPastas(QWidget):
 
         self.layout_principal.addWidget(self.painel_config)
 
+    def aplicar_icone_mensagem(self, message_box):
+        caminho_base = Path(__file__).resolve().parent.parent / "resources" / "icons"
+        caminho_icone = caminho_base / "logo.ico"
+        if os.path.exists(caminho_icone):
+            message_box.setIcon(QIcon(caminho_icone))
+
     def conectar_worker(self):
         """Conecta os sinais do worker à interface do usuário"""
-        self.worker.progresso.connect(self.barra_progresso.setValue)
         self.worker.mensagem.connect(self.log)
         self.worker.finalizado.connect(self._operacao_finalizada)
         self.worker.error.connect(self._mostrar_erro)
@@ -219,13 +223,11 @@ class PainelOrganizacaoPastas(QWidget):
     def _operacao_finalizada(self, sucesso):
         """Atualiza a interface após conclusão da operação"""
         self.botao_organizar.setEnabled(True)
-        self.botao_reverter.setEnabled(True)
         self.label_status.setText("Operação concluída com sucesso!" if sucesso else "Operação falhou!")
 
     def _mostrar_erro(self, mensagem):
         """Exibe mensagens de erro na interface"""
         self.log(f"ERRO: {mensagem}")
-        QMessageBox.critical(self, "Erro", mensagem)
 
     def atualizar_checks(self, checked):
         """Atualiza o estado dos checkboxes para serem mutuamente exclusivos."""
@@ -255,17 +257,12 @@ class PainelOrganizacaoPastas(QWidget):
         self.botao_organizar = QPushButton("Organizar")
         self.botao_organizar.setFixedWidth(160)
 
-        self.botao_reverter = QPushButton("Reverter") #desativado
-        self.barra_progresso = QProgressBar() #desativado
         self.label_status = QLabel("Pronto para organizar!")
 
         layout.addWidget(self.botao_organizar)
-        #layout.addWidget(self.botao_reverter)
-        #layout.addWidget(self.barra_progresso)
         layout.addWidget(self.label_status)
 
         self.botao_organizar.clicked.connect(self.iniciar_organizacao)
-        self.botao_reverter.clicked.connect(self.reverter_organizacao)
 
         self.layout_principal.addWidget(container)
 
@@ -276,7 +273,7 @@ class PainelOrganizacaoPastas(QWidget):
         elif self.check_juntar.isChecked():
             self.juntar_arquivos()
         else:
-            QMessageBox.warning(self, "Aviso", "Selecione uma opção de organização!")
+            self.log("Aviso", "Selecione uma opção de organização!")
 
     def selecionar_pasta(self):
         pasta = QFileDialog.getExistingDirectory(self, "Selecionar Pasta")
@@ -306,16 +303,11 @@ class PainelOrganizacaoPastas(QWidget):
 
     def editar_clientes(self):
         editor = EditorClientes(self.clientes, self)
-
-        caminho_base = os.path.join(os.path.dirname(__file__), "resources", "icons")
-        caminho_icone = os.path.join(caminho_base, "logo.ico")
-        if os.path.exists(caminho_icone):
-            self.setWindowIcon(QIcon(caminho_icone))
-            
         if editor.exec() == QDialog.DialogCode.Accepted:
             self.salvar_clientes()
             self.clientes_updated.emit()
-            QMessageBox.information(self, "Sucesso", "Lista de clientes atualizada!")
+            self.log("Lista de clientes atualizada!")
+
 
     def salvar_clientes(self):
         config = configparser.ConfigParser()
@@ -339,191 +331,15 @@ class PainelOrganizacaoPastas(QWidget):
     
         preview = self.gerar_previa()
         if not preview:
-            QMessageBox.warning(self, "Aviso", "Nenhum cliente encontrado para organização!")
+            self.log("Aviso", "Nenhum cliente encontrado para organização!")
             return
-
-        resposta = QMessageBox.question(
-            self, "Confirmar",
-            f"Deseja organizar {sum(len(f) for f in preview.values())} arquivos?",
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
-        )
-        
-        if resposta == QMessageBox.StandardButton.Yes:
-            self.worker = OrganizadorThread(self.diretorio, self.clientes)
-            self.conectar_worker()
-            self.worker.start()
+    
+        self.worker = OrganizadorThread(self.diretorio, self.clientes)
+        self.conectar_worker()
+        self.worker.start()
 
     def juntar_arquivos(self):
-        resposta = QMessageBox.question(
-            self, "Confirmar",
-            "Deseja juntar todos os arquivos das subpastas para a pasta principal?",
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
-        )
+        self.worker = AgrupadorThread(self.diretorio)
+        self.conectar_worker()
+        self.worker.start()
         
-        if resposta == QMessageBox.StandardButton.Yes:
-            self.worker = AgrupadorThread(self.diretorio)
-            self.conectar_worker()
-            self.worker.start()
-
-    def reverter_organizacao(self):
-        if not self.historico:
-            QMessageBox.warning(self, "Aviso", "Nenhuma operação para reverter!")
-            return
-
-        resposta = QMessageBox.question(
-            self, "Confirmar",
-            "Deseja reverter a última operação?",
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
-        )
-        
-        if resposta == QMessageBox.StandardButton.Yes:
-            self.worker = ReversorThread(self.diretorio, self.historico)
-            self.conectar_worker()
-            self.worker.start()
-
-class OrganizadorThread(QThread):
-    progresso = pyqtSignal(int)
-    mensagem = pyqtSignal(str)
-    finalizado = pyqtSignal(bool)
-    error = pyqtSignal(str)
-
-    def __init__(self, diretorio, clientes):
-        super().__init__()
-        self.diretorio = diretorio
-        self.clientes = clientes
-        self.historico = []
-
-    def run(self):
-        try:
-            arquivos = [f for f in os.listdir(self.diretorio) if os.path.isfile(os.path.join(self.diretorio, f))]
-            total = len(arquivos)
-            pastas_criadas = 0
-            arquivos_movidos = 0
-
-            for i, arquivo in enumerate(arquivos):
-                if self.isInterruptionRequested():
-                    break
-
-                caminho_origem = os.path.join(self.diretorio, arquivo)
-                if os.path.basename(caminho_origem).lower() == 'desktop.ini':
-                    continue
-
-                cliente = self.extrair_cliente(arquivo)
-                if not cliente:
-                    continue
-
-                pasta_destino = os.path.join(self.diretorio, cliente)
-                if not os.path.exists(pasta_destino):
-                    os.makedirs(pasta_destino)
-                    pastas_criadas += 1
-
-                caminho_destino = os.path.join(pasta_destino, arquivo)
-                if os.path.exists(caminho_destino):
-                    caminho_destino = self.gerar_nome_unico(caminho_destino)
-
-                shutil.move(caminho_origem, caminho_destino)
-                self.historico.append((caminho_destino, caminho_origem))
-                arquivos_movidos += 1
-
-                self.progresso.emit(int((i+1)/total*100))
-
-            self.mensagem.emit(f"Organização concluída! Pastas criadas: {pastas_criadas}, Arquivos movidos: {arquivos_movidos}")
-            self.finalizado.emit(True)
-
-        except Exception as e:
-            self.error.emit(f"Erro na organização: {str(e)}")
-            self.finalizado.emit(False)
-
-    def extrair_cliente(self, nome_arquivo):
-        """Retorna o nome da pasta baseado no padrão do arquivo (case-insensitive)"""
-        nome_arquivo_lower = nome_arquivo.lower()
-        for padrao, nome_pasta in self.clientes.items():
-            if padrao and nome_arquivo_lower.startswith(padrao.lower()):
-                return nome_pasta
-        return ""
-
-    def gerar_nome_unico(self, caminho):
-        base, ext = os.path.splitext(caminho)
-        contador = 1
-        while os.path.exists(caminho):
-            caminho = f"{base}_{contador}{ext}"
-            contador += 1
-        return caminho
-
-class AgrupadorThread(QThread):
-    progresso = pyqtSignal(int)
-    mensagem = pyqtSignal(str)
-    finalizado = pyqtSignal(bool)
-    error = pyqtSignal(str)
-
-    def __init__(self, diretorio):
-        super().__init__()
-        self.diretorio = diretorio
-        self.historico = []
-
-    def run(self):
-        try:
-            arquivos_processados = 0
-            total = sum(len(files) for _, _, files in os.walk(self.diretorio)) - len(os.listdir(self.diretorio))
-
-            for root, dirs, files in os.walk(self.diretorio, topdown=False):
-                for file in files:
-                    if self.isInterruptionRequested():
-                        break
-
-                    caminho_origem = os.path.join(root, file)
-                    if root == self.diretorio or os.path.basename(caminho_origem).lower() == 'desktop.ini':
-                        continue
-
-                    caminho_destino = os.path.join(self.diretorio, file)
-                    if os.path.exists(caminho_destino):
-                        caminho_destino = self.gerar_nome_unico(caminho_destino)
-
-                    shutil.move(caminho_origem, caminho_destino)
-                    self.historico.append((caminho_destino, caminho_origem))
-                    arquivos_processados += 1
-                    self.progresso.emit(int((arquivos_processados/total)*100))
-
-                # Remove pastas vazias
-                if root != self.diretorio and not os.listdir(root):
-                    os.rmdir(root)
-
-            self.mensagem.emit(f"Junção concluída! Arquivos movidos: {arquivos_processados}")
-            self.finalizado.emit(True)
-
-        except Exception as e:
-            self.error.emit(f"Erro no agrupamento: {str(e)}")
-            self.finalizado.emit(False)
-
-class ReversorThread(QThread):
-    progresso = pyqtSignal(int)
-    mensagem = pyqtSignal(str)
-    finalizado = pyqtSignal(bool)
-    error = pyqtSignal(str)
-
-    def __init__(self, diretorio, historico):
-        super().__init__()
-        self.diretorio = diretorio
-        self.historico = historico
-
-    def run(self):
-        try:
-            total = len(self.historico)
-            for i, (destino, origem) in enumerate(reversed(self.historico)):
-                if self.isInterruptionRequested():
-                    break
-
-                if os.path.exists(destino):
-                    shutil.move(destino, origem)
-                    pasta = os.path.dirname(destino)
-                    if not os.listdir(pasta):
-                        os.rmdir(pasta)
-
-                self.progresso.emit(int((i+1)/total*100))
-
-            self.mensagem.emit("Reversão concluída com sucesso!")
-            self.finalizado.emit(True)
-
-        except Exception as e:
-            self.error.emit(f"Erro na reversão: {str(e)}")
-            self.finalizado.emit(False)

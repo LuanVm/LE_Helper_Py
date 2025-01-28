@@ -1,5 +1,4 @@
 import colorsys
-import os
 from pathlib import Path
 import random
 from functools import partial

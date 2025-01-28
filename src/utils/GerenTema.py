@@ -8,8 +8,9 @@ from utils.GerenEstilos import (
     estilo_sheet_dark, estilo_combo_box_dark
 )
 
-from modules.planilhamento.OrganizacaoPastas import PainelOrganizacaoPastas
-from modules.planilhamento.SubstituicaoSimples import PainelSubstituicaoSimples
+from services.SubstituicaoSimples import PainelSubstituicaoSimples
+from UI.IOrganizacaoPastas import PainelOrganizacaoPastas
+from UI.IMesclaPlanilhas import PainelMesclaPlanilha
 
 class GerenTema:
     def __init__(self, main_window, central_widget, barra_titulo, funcionalidades_combo,
@@ -90,6 +91,8 @@ class GerenTema:
         if isinstance(widget, PainelOrganizacaoPastas):
             widget.apply_styles(self.modo_escuro)
         elif isinstance(widget, PainelSubstituicaoSimples):
+            widget.apply_styles(self.modo_escuro)
+        elif isinstance(widget, PainelMesclaPlanilha):
             widget.apply_styles(self.modo_escuro)
         elif hasattr(widget, 'apply_styles'):
             widget.apply_styles(self.modo_escuro)

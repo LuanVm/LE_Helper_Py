@@ -12,7 +12,7 @@ from utils.GerenEstilos import (
     estilo_log_dark, campo_qline_dark, estilo_combo_box_dark,
     estilo_label_dark
 )
-from modules.coleta.AutomacaoColeta import TarefaAutomacao, PararAutomacao, Blume
+from services.AutomacaoColeta import TarefaAutomacao, PararAutomacao, Blume
 
 class InterfaceAutoBlume(QWidget):
     """Classe que constrói e gerencia a interface gráfica"""
