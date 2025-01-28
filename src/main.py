@@ -22,6 +22,24 @@ from UI.IOrganizacaoPastas import PainelOrganizacaoPastas
 from utils.GerenJanela import ResizableWindow
 from utils.GerenTema import GerenTema
 
+###################TASKS####################
+#               
+#    # - Separar lógica e interface
+#    # 1. ProcessamentoAgitel 
+#    # 2. Substituição Simples
+#
+#    # - Organizar classe de estilos
+#    # - Adicionar botão resize de janelas
+#
+#    # - Revisar GerenJanela
+#    # - Revisar GerenTema
+#
+#    # - Adicionar função para renomear
+#    # notas fiscais conforme CNPJ
+#    # identificado
+#
+############################################
+
 class MainApp(ResizableWindow):
     def __init__(self):
         super().__init__()
