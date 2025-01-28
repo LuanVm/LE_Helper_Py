@@ -8,7 +8,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, QSize, QTimer
 from PyQt6.QtGui import QPixmap, QIcon
 
-from modules.coleta.AutomacaoColeta import InterfaceAutoBlume
+from UI.IAutomacaoColeta import InterfaceAutoBlume
 from modules.planilhamento.OrganizacaoPastas import PainelOrganizacaoPastas
 from modules.planilhamento.ProcessamentoAgitel import PainelProcessamentoAgitel
 from modules.planilhamento.MesclaPlanilhas import PainelMesclaPlanilha

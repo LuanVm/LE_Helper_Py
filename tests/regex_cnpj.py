@@ -5,9 +5,6 @@ def extract_cnpjs_from_pdf(file_path):
     """
     Função para extrair CNPJs de um arquivo PDF utilizando PyPDF2.
     
-    Args:
-        file_path (str): Caminho para o arquivo PDF.
-    
     Returns:
         list: Lista de CNPJs encontrados no PDF.
     """
