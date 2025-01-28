@@ -13,7 +13,7 @@ from modules.planilhamento.OrganizacaoPastas import PainelOrganizacaoPastas
 from modules.planilhamento.ProcessamentoAgitel import PainelProcessamentoAgitel
 from modules.planilhamento.MesclaPlanilhas import PainelMesclaPlanilha
 from modules.planilhamento.SubstituicaoSimples import PainelSubstituicaoSimples
-from home import HomeScreen
+from UI.HomeScreen import HomeScreen
 from utils.GerenJanela import ResizableWindow
 from utils.GerenTema import GerenTema
 
