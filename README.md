@@ -82,7 +82,7 @@ python src/main.py
 O LE Helper foi desenvolvido com base nas necessidades diárias da empresa Livre Escolha Assessoria. Com sua implementação, foi possível conquistar uma economia de aproximadamente 120 horas mensais nos setores da empresa, otimizando processos repetitivos e aumentando a produtividade.
 
 ### Novas Funcionalidades
-- **Painel de Coleta**: Realiza a coleta de operadores e provedores de forma automatizada utilizando Selenium. Atualmente, a coleta é feita apenas na plataforma do provedor BLUME, mas o sistema é escalável para outras plataformas.
+- **Painel de Coleta Automatizada**: Realiza a coleta de operadoras e provedores de forma automatizada utilizando Selenium. Atualmente, a coleta é feita apenas na plataforma do provedor BLUME, mas o sistema é escalável para outras plataformas.
 
 ### Contribuições
 **Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou pull requests para melhorar o projeto.**
