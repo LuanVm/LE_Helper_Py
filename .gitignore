@@ -1,3 +1,5 @@
 # Ignorar todas as pastas __pycache__
 __pycache__/
-__clientes.properties__/
+
+# Ignorar o arquivo clientes.properties
+clientes.properties
