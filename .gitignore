@@ -1,2 +1,3 @@
 # Ignorar todas as pastas __pycache__
 __pycache__/
+__clientes.properties__/
