@@ -49,10 +49,10 @@
 ## Estrutura do Projeto
 ### Diretórios Principais:
 
-**/services**: Contém a lógica de processamento (business).
-**/modules**: Contém os diferentes painéis do aplicativo.
-**/utils**: Inclui utilitários e funções auxiliares, como gerenciamento de temas e estilos.
-**/resources**: Armazena ícones e outros recursos visuais.
+- **/services**: Contém a lógica de processamento (business).
+- **/modules**: Contém os diferentes painéis do aplicativo.
+- **/utils**: Inclui utilitários e funções auxiliares, como gerenciamento de temas e estilos.
+- **/resources**: Armazena ícones e outros recursos visuais.
 
 ---
 
