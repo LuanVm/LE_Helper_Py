@@ -9,8 +9,8 @@ from utils.GerenEstilos import (
 )
 
 from services.SubstituicaoSimples import PainelSubstituicaoSimples
-from UI.IOrganizacaoPastas import PainelOrganizacaoPastas
-from UI.IMesclaPlanilhas import PainelMesclaPlanilha
+from qt_ui.IOrganizacaoPastas import PainelOrganizacaoPastas
+from qt_ui.IMesclaPlanilhas import PainelMesclaPlanilha
 
 class GerenTema:
     def __init__(self, main_window, central_widget, barra_titulo, funcionalidades_combo,

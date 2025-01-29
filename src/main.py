@@ -13,10 +13,10 @@ from services.ProcessamentoAgitel import PainelProcessamentoAgitel
 from services.SubstituicaoSimples import PainelSubstituicaoSimples
 
 #UI/Interface
-from UI.HomeScreen import HomeScreen
-from UI.IAutomacaoColeta import InterfaceAutoBlume
-from UI.IMesclaPlanilhas import PainelMesclaPlanilha
-from UI.IOrganizacaoPastas import PainelOrganizacaoPastas
+from qt_ui.HomeScreen import HomeScreen
+from qt_ui.IAutomacaoColeta import InterfaceAutoBlume
+from qt_ui.IMesclaPlanilhas import PainelMesclaPlanilha
+from qt_ui.IOrganizacaoPastas import PainelOrganizacaoPastas
 
 #Utils/Modules
 from utils.GerenJanela import ResizableWindow
