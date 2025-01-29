@@ -31,8 +31,9 @@ from utils.GerenTema import GerenTema
 #    # - Organizar classe de estilos
 #    # - Adicionar botão resize de janelas
 #
-#    # - Revisar GerenJanela
-#    # - Revisar GerenTema
+#    # - Revisar GerenJanela ✅
+#    # - Revisar HomeScreen
+#    # - Revisar GerenTema 
 #
 #    # - Adicionar função para renomear
 #    # notas fiscais conforme CNPJ
