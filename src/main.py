@@ -8,53 +8,36 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, QSize, QTimer
 from PyQt6.QtGui import QPixmap, QIcon
 
-#Business/Logic
-from services.ProcessamentoAgitel import PainelProcessamentoAgitel
+# Business/Logic
 from services.SubstituicaoSimples import PainelSubstituicaoSimples
+from services.ProcessamentoAgitel import ProcessamentoAgitel
 
-#UI/Interface
+# UI/Interface
 from qt_ui.HomeScreen import HomeScreen
-from qt_ui.IAutomacaoColeta import InterfaceAutoBlume
+from qt_ui.IAutomacaoColeta import PainelAutomacaoColeta
 from qt_ui.IMesclaPlanilhas import PainelMesclaPlanilha
 from qt_ui.IOrganizacaoPastas import PainelOrganizacaoPastas
+from qt_ui.IProcessamentoAgitel import PainelProcessamentoAgitel
 
-#Utils/Modules
+# Utils/Modules
 from utils.GerenJanela import ResizableWindow
 from utils.GerenTema import GerenTema
-
-###################TASKS####################
-#               
-#    # - Separar lógica e interface
-#    # 1. ProcessamentoAgitel 
-#    # 2. Substituição Simples
-#
-#    # - Organizar classe de estilos
-#    # - Adicionar botão resize de janelas
-#
-#    # - Revisar GerenJanela ✅
-#    # - Revisar HomeScreen
-#    # - Revisar GerenTema 
-#
-#    # - Adicionar função para renomear
-#    # notas fiscais conforme CNPJ
-#    # identificado
-#
-############################################
 
 class MainApp(ResizableWindow):
     def __init__(self):
         super().__init__()
+        self.settings_path = "config.ini"  # Adicione esta linha
+        self._initialize_ui()
+        self._setup_connections()
+        self._finalize_ui_setup()
 
+    def _initialize_ui(self):
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         
-        self.settings_path = "config.ini"
         self.setWindowTitle("LE Helper")
         self.setGeometry(100, 100, 1200, 750)
-        caminho_base = Path(__file__).resolve().parent.parent / "resources" / "icons"
-        caminho_icone = caminho_base / "logo.ico"
-        if os.path.exists(caminho_icone):
-            self.setWindowIcon(QIcon(caminho_icone))
+        self._set_window_icon()
         
         self.function_groupsping = {
             "Home": 0,
@@ -68,11 +51,20 @@ class MainApp(ResizableWindow):
         self._configure_ui_components()
         self._setup_content_panes()
         self._setup_theme_manager()
-        self._finalize_ui_setup()
 
         self.setAttribute(Qt.WidgetAttribute.WA_Hover)
         self.central_widget.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
         QApplication.processEvents()
+
+    def _set_window_icon(self):
+        caminho_base = Path(__file__).resolve().parent.parent / "resources" / "icons"
+        caminho_icone = caminho_base / "logo.ico"
+        if caminho_icone.exists():
+            self.setWindowIcon(QIcon(str(caminho_icone)))
+
+    def _setup_connections(self):
+        self.funcionalidades_combo.currentTextChanged.connect(self.on_combo_text_changed)
+        self.home_screen.square_clicked.connect(self.on_square_clicked)
 
     def showEvent(self, event):
         """Garante a renderização correta na primeira exibição"""
@@ -202,24 +194,31 @@ class MainApp(ResizableWindow):
         self.stacked_content = QStackedWidget(self.central_content)
         self.content_layout.addWidget(self.stacked_content)
         
+        # Inicializa os controladores primeiro
+        self.controller_agitel = ProcessamentoAgitel()
+        
+        # Cria os painéis de interface
         self.home_screen = HomeScreen()
-        self.automacao_coleta = InterfaceAutoBlume(self)
-        self.organizacao_pastas = PainelOrganizacaoPastas(self)
-        self.gui_processamento_agitel = PainelProcessamentoAgitel(self)
-        self.painel_mesclagem = PainelMesclaPlanilha(self)
-        self.substituicao_simples = PainelSubstituicaoSimples(self)
-        
-        self.stacked_content.addWidget(self.home_screen)              # Índice 0
-        self.stacked_content.addWidget(self.automacao_coleta)         # Índice 1
-        self.stacked_content.addWidget(self.organizacao_pastas)       # Índice 2
-        self.stacked_content.addWidget(self.gui_processamento_agitel) # Índice 3
-        self.stacked_content.addWidget(self.painel_mesclagem)         # Índice 4
-        self.stacked_content.addWidget(self.substituicao_simples)     # Índice 5
-        
-        
-        self.funcionalidades_combo.currentTextChanged.connect(self.on_combo_text_changed)
-        self.home_screen.square_clicked.connect(self.on_square_clicked)
-        
+        self.automacao_coleta = PainelAutomacaoColeta()
+        self.organizacao_pastas = PainelOrganizacaoPastas()
+        self.gui_processamento_agitel = PainelProcessamentoAgitel(self.controller_agitel)
+        self.painel_mesclagem = PainelMesclaPlanilha()
+        self.substituicao_simples = PainelSubstituicaoSimples()
+
+        # Adiciona ao stacked widget
+        self.stacked_content.addWidget(self.home_screen)
+        self.stacked_content.addWidget(self.automacao_coleta)
+        self.stacked_content.addWidget(self.organizacao_pastas)
+        self.stacked_content.addWidget(self.gui_processamento_agitel)
+        self.stacked_content.addWidget(self.painel_mesclagem)
+        self.stacked_content.addWidget(self.substituicao_simples)
+
+        # Conecta sinais do controller ao painel
+        self.controller_agitel.progress_updated.connect(self.gui_processamento_agitel._update_progress)
+        self.controller_agitel.process_finished.connect(self.gui_processamento_agitel._on_process_finished)
+        self.controller_agitel.error_occurred.connect(self.gui_processamento_agitel._show_error)
+        self.controller_agitel.log_updated.connect(self.gui_processamento_agitel._append_log)
+
         self.layout.addWidget(self.central_content, stretch=1)
     
     def on_combo_text_changed(self, text):

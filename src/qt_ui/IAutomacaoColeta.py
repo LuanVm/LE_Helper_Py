@@ -14,7 +14,7 @@ from utils.GerenEstilos import (
 )
 from services.AutomacaoColeta import TarefaAutomacao, PararAutomacao, Blume
 
-class InterfaceAutoBlume(QWidget):
+class PainelAutomacaoColeta(QWidget):
     """Classe que constrói e gerencia a interface gráfica"""
     
     def __init__(self, parent=None):
