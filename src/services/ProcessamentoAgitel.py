@@ -86,7 +86,6 @@ class ProcessadorAgitel(QThread):
             output_path = self._get_output_path()
             output_wb.save(output_path)
             self.processFinished.emit(f"Arquivo salvo em: {output_path}")
-            self.progressUpdated.emit(100)
 
         except Exception as e:
             self.errorOccurred.emit(f"Erro crítico: {str(e)}")

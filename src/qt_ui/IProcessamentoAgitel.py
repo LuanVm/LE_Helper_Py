@@ -2,7 +2,7 @@ import os
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QGridLayout, QPushButton, QLineEdit,
     QFileDialog, QProgressBar, QTextEdit, QCheckBox,
-    QMessageBox, QLabel, QHBoxLayout
+    QLabel, QHBoxLayout
 )
 from PyQt6.QtCore import pyqtSignal, pyqtSlot, QSettings, Qt
 from utils.GerenEstilos import (
@@ -41,7 +41,6 @@ class PainelProcessamentoAgitel(QWidget):
         grid.setHorizontalSpacing(15)
         grid.setColumnStretch(1, 1)
 
-        # Componentes da interface
         self.label_file = QLabel("Arquivo XLSX (Planilha da Agitel):")
         self.text_file = QLineEdit()
         self.text_file.setReadOnly(True)
@@ -52,7 +51,6 @@ class PainelProcessamentoAgitel(QWidget):
         self.btn_process.setFixedSize(160, 32)
         self.checkbox_equalize = QCheckBox("Equalizar 'Região'")
 
-        # Layout e conexões
         button_layout = QHBoxLayout()
         button_layout.addWidget(self.btn_select_file)
         button_layout.addWidget(self.btn_process)
@@ -113,28 +111,43 @@ class PainelProcessamentoAgitel(QWidget):
         if file_path:
             self.text_file.setText(file_path)
             settings.setValue("last_open_dir", os.path.dirname(file_path))
+            self.append_log(f"📂 Arquivo selecionado: {os.path.basename(file_path)}")
 
     def _emit_process_file(self):
+        if not self.text_file.text():
+            self.append_log("⚠️ Selecione um arquivo antes de processar!")
+            return
+        self.append_log("⏳ Iniciando processamento...")
         self.processStarted.emit()
 
     @pyqtSlot(int)
     def update_progress(self, value):
         self.progress_bar.setValue(value)
+        if value == 100:
+            self.append_log("✅ Processamento concluído, salvando arquivo!")
 
     @pyqtSlot(str)
     def on_process_finished(self, message):
         self.btn_process.setEnabled(True)
-        self.append_log(message)
+        self.append_log("──────────────────────────────────────────────────")
+        self.append_log(f"🎉 {message}")
 
     @pyqtSlot(str)
     def append_log(self, message):
         color = "#e0e0e0" if self.is_dark_mode else "#333333"
         self.text_results.append(f'<span style="color: {color}">{message}</span>')
+        self.scroll_to_bottom()
 
     @pyqtSlot(str)
     def show_error(self, message):
-        QMessageBox.critical(self, "Erro", message)
-        self.append_log("Processamento interrompido devido a erro crítico")
+        self.append_log(f"⛔ ERRO: {message}")
+        self.append_log("🛑 Processamento interrompido!")
+        self.scroll_to_bottom()
+
+    def scroll_to_bottom(self):
+        self.text_results.verticalScrollBar().setValue(
+            self.text_results.verticalScrollBar().maximum()
+        )
 
     def get_file_path(self):
         return self.text_file.text()
@@ -145,3 +158,5 @@ class PainelProcessamentoAgitel(QWidget):
     def set_processing_state(self, processing):
         self.btn_process.setEnabled(not processing)
         self.btn_select_file.setEnabled(not processing)
+        status = "Processando..." if processing else "Pronto"
+        self.append_log(f"📢 Status: {status}")
