@@ -9,7 +9,6 @@ from PyQt6.QtCore import Qt, QSize, QTimer
 from PyQt6.QtGui import QPixmap, QIcon
 
 # Business/Logic
-from services.SubstituicaoSimples import PainelSubstituicaoSimples
 from services.ProcessamentoAgitel import ProcessadorAgitel
 
 # UI/Interface
@@ -18,6 +17,7 @@ from qt_ui.IAutomacaoColeta import PainelAutomacaoColeta
 from qt_ui.IMesclaPlanilhas import PainelMesclaPlanilha
 from qt_ui.IOrganizacaoPastas import PainelOrganizacaoPastas
 from qt_ui.IProcessamentoAgitel import PainelProcessamentoAgitel
+from qt_ui.ISubstituicaoSimples import PainelSubstituicaoSimples
 
 # Utils/Modules
 from utils.GerenJanela import ResizableWindow

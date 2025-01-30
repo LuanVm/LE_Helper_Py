@@ -8,7 +8,7 @@ from utils.GerenEstilos import (
     estilo_sheet_dark, estilo_combo_box_dark
 )
 
-from services.SubstituicaoSimples import PainelSubstituicaoSimples
+from qt_ui.ISubstituicaoSimples import PainelSubstituicaoSimples
 from qt_ui.IOrganizacaoPastas import PainelOrganizacaoPastas
 from qt_ui.IMesclaPlanilhas import PainelMesclaPlanilha
 
