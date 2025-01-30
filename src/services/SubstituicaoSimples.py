@@ -1,5 +1,4 @@
 import os
-from pathlib import Path
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QGridLayout, QLabel, QLineEdit, QPushButton,
     QTextEdit, QFileDialog, QMessageBox, QScrollArea
