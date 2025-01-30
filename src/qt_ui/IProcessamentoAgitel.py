@@ -1,4 +1,3 @@
-# Interface de Usuário - IProcessamentoAgitel.py
 import os
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QGridLayout, QPushButton, QLineEdit,
@@ -16,6 +15,7 @@ from utils.GerenEstilos import (
     estilo_hover
 )
 
+
 class PainelProcessamentoAgitel(QWidget):
     def __init__(self, controller, parent=None):
         super().__init__(parent)
@@ -29,7 +29,6 @@ class PainelProcessamentoAgitel(QWidget):
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(15, 15, 15, 15)
         self.layout().setSpacing(10)
-
         self._create_file_controls()
         self._create_progress_bar()
         self._create_results_area()
@@ -39,27 +38,22 @@ class PainelProcessamentoAgitel(QWidget):
         grid.setVerticalSpacing(10)
         grid.setHorizontalSpacing(15)
         grid.setColumnStretch(1, 1)
-
         self.label_file = QLabel("Arquivo XLSX (Planilha da Agitel):")
         self.text_file = QLineEdit()
         self.text_file.setReadOnly(True)
-
         self.btn_select_file = QPushButton("Selecionar Arquivo")
         self.btn_select_file.setFixedSize(160, 32)
         self.btn_process = QPushButton("Processar")
         self.btn_process.setFixedSize(160, 32)
         self.checkbox_equalize = QCheckBox("Equalizar 'Região'")
-
         button_layout = QHBoxLayout()
         button_layout.addWidget(self.btn_select_file)
         button_layout.addWidget(self.btn_process)
         button_layout.setSpacing(10)
-
         grid.addWidget(self.label_file, 0, 0)
         grid.addWidget(self.text_file, 0, 1)
         grid.addLayout(button_layout, 0, 2)
         grid.addWidget(self.checkbox_equalize, 0, 3, Qt.AlignmentFlag.AlignLeft)
-
         self.layout().addLayout(grid)
 
     def _create_progress_bar(self):
@@ -91,13 +85,11 @@ class PainelProcessamentoAgitel(QWidget):
             'log': estilo_log_dark() if is_dark_mode else estilo_log_light(),
             'progress': estilo_progress_bar_dark() if is_dark_mode else estilo_progress_bar_light()
         }
-
         self.label_file.setStyleSheet(styles['label'])
         self.text_file.setStyleSheet(styles['line'])
         self.checkbox_equalize.setStyleSheet(styles['check'])
         self.text_results.setStyleSheet(styles['log'])
         self.progress_bar.setStyleSheet(styles['progress'])
-
         for btn in [self.btn_select_file, self.btn_process]:
             estilo_hover(btn, is_dark_mode)
 
@@ -117,7 +109,7 @@ class PainelProcessamentoAgitel(QWidget):
             self.progress_bar.reset()
             self.btn_process.setEnabled(False)
             self.controller.processar(
-                file_path, 
+                file_path,
                 self.checkbox_equalize.isChecked()
             )
 
@@ -138,9 +130,11 @@ class PainelProcessamentoAgitel(QWidget):
         self._append_log(message)
 
     def _append_log(self, message):
-        color = "#e0e0e0" if self.is_dark_mode else "#333333"
-        self.text_results.append(f'<span style="color: {color}">{message}</span>')
-        QApplication.processEvents()
+        current_text = self.text_results.toPlainText()
+        if message not in current_text:
+            color = "#e0e0e0" if self.is_dark_mode else "#333333"
+            self.text_results.append(f'{message}')
+            QApplication.processEvents()
 
     def _show_error(self, message):
         QMessageBox.critical(self, "Erro", message)
@@ -149,14 +143,12 @@ class PainelProcessamentoAgitel(QWidget):
     def _load_settings(self):
         """Carrega configurações persistentes"""
         settings = QSettings("LivreEscolha", "LE_Helper")
-        # Verifica se existe um valor antes de restaurar
         geometry = settings.value("windowGeometry")
         if geometry:
             self.restoreGeometry(geometry)
 
     def closeEvent(self, event: QCloseEvent):
         settings = QSettings("LivreEscolha", "LE_Helper")
-        # Verifica se a geometria é válida antes de salvar
         if not self.saveGeometry().isEmpty():
             settings.setValue("windowGeometry", self.saveGeometry())
         super().closeEvent(event)

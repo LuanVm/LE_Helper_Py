@@ -1,5 +1,3 @@
-# Lógica de Negócios - ProcessamentoAgitel.py
-import re
 import os
 import gc
 import logging
@@ -8,7 +6,9 @@ from openpyxl import load_workbook, Workbook
 from openpyxl.utils import datetime as xl_datetime
 from openpyxl.styles import Font, Alignment, NamedStyle
 from PyQt6.QtCore import QThread, pyqtSignal
+from PyQt6.QtWidgets import QApplication
 import unicodedata
+
 
 class ProcessamentoAgitel(QThread):
     progress_updated = pyqtSignal(int)
@@ -17,7 +17,7 @@ class ProcessamentoAgitel(QThread):
     log_updated = pyqtSignal(str)
 
     COLUNAS_SAIDA = [
-        'Data', 'Origem', 'Serviço', 'Região', 
+        'Data', 'Origem', 'Serviço', 'Região',
         'Destino', 'Duração', 'Duração (minutos)', 'Valor'
     ]
 
@@ -26,6 +26,7 @@ class ProcessamentoAgitel(QThread):
         self._setup_styles()
         self._file_path = None
         self._equalize = False
+        self._log_emitted = set()
 
     def processar(self, file_path, equalize):
         self._file_path = file_path
@@ -37,28 +38,65 @@ class ProcessamentoAgitel(QThread):
             wb = load_workbook(self._file_path, read_only=True)
             output_wb = Workbook()
             output_sheet = output_wb.active
-            self._processar_planilhas(wb, output_sheet)
+            self._processar_planilhas(wb, output_wb, output_sheet)
             self._finalizar_processamento(output_wb, output_sheet)
         except Exception as e:
             self._handle_error(e)
         finally:
             self._cleanup_resources(wb, output_wb)
 
-    def _processar_planilhas(self, wb, output_sheet):
+    def _processar_planilhas(self, wb, output_wb, output_sheet):
+        MAX_LINHAS = 1048575
         valid_sheets = self._identificar_abas_validas(wb)
-        total_sheets = len(valid_sheets)
-        progress_per_sheet = 100 / total_sheets if total_sheets > 0 else 0
+        sheet_num = 1
+        total_linhas = 0
 
-        self._create_header(output_sheet)
+        # Resetar barra de progresso
+        self.progress_updated.emit(0)
 
-        for index, sheet in enumerate(valid_sheets, 1):
-            self._processar_aba(sheet, output_sheet, index, progress_per_sheet)
+        for index, sheet in enumerate(valid_sheets):
+            # Criar nova planilha se necessário (com margem de segurança)
+            if total_linhas > (MAX_LINHAS - 50000):  # 50k linhas de margem
+                sheet_num += 1
+                output_sheet = output_wb.create_sheet(title=f"Parte_{sheet_num}")
+                self._create_header(output_sheet)
+                total_linhas = 0
+                self.log_updated.emit(f"Nova planilha criada: Parte_{sheet_num}")
+
+            # Processamento com monitoramento preciso
+            linhas_processadas = self._processar_aba(sheet, output_sheet)
+            total_linhas += linhas_processadas
+
+            # Atualização de progresso baseada em abas processadas
+            progress_per_sheet = 100 / len(valid_sheets)
+            self._atualizar_progresso(index + 1, progress_per_sheet)
+
+        # Após processar todas as abas, ordenar ambas as sheets criadas
+        self._ordenar_e_mesclar_sheets(output_wb)
+
+    def _ordenar_e_mesclar_sheets(self, output_wb):
+        """Ordena e mescla todas as sheets criadas."""
+        all_data = []
+        for sheet in output_wb.worksheets:
+            if sheet.max_row > 1:  # Ignorar sheets sem dados
+                header = [cell.value for cell in sheet[1]]
+                if not all_data:  # Adicionar cabeçalho apenas uma vez
+                    all_data.append(header)
+                for row in sheet.iter_rows(min_row=2, values_only=True):
+                    all_data.append(row)
+
+        # Criar nova sheet para dados mesclados
+        merged_sheet = output_wb.create_sheet(title="Dados_Mesclados")
+        for row in all_data:
+            merged_sheet.append(row)
+
+        # Ordenar pela coluna "Departamento" (índice 3)
+        self._clean_and_sort_output(merged_sheet)
 
     def _identificar_abas_validas(self, wb):
         valid_sheets = []
         primeira_aba = wb.worksheets[0].title.lower() if wb.worksheets else ""
         ignorar_primeira = "resumo" in primeira_aba
-
         for sheet in wb.worksheets:
             if ignorar_primeira and sheet == wb.worksheets[0]:
                 continue
@@ -68,48 +106,34 @@ class ProcessamentoAgitel(QThread):
                 self.log_updated.emit(f"Aviso: {sheet.title} ignorada (cabeçalho não encontrado)")
         return valid_sheets
 
-    def _processar_aba(self, sheet, output_sheet, index, progress_per_sheet):
-        if self.isInterruptionRequested():
-            return
-
-        # Verifica se já foi processada
-        if not hasattr(sheet, '_processada'):
-            self.log_updated.emit(f"Processando: {sheet.title}")
-            sheet._processada = True  # Marca como processada
-
-        header_row = self._find_header_row(sheet)
-        if not header_row:
-            return
-
-        indices = self._get_column_indices(header_row)
+    def _processar_aba(self, sheet, output_sheet):
+        try:
+            if sheet.title not in self._log_emitted:
+                self.log_updated.emit(f"Processando: {sheet.title}")
+                self._log_emitted.add(sheet.title)
+            linhas_processadas = 0
+            header_row = self._find_header_row(sheet)
+            if not header_row:
+                return 0
+            indices = self._get_column_indices(header_row)
+            start_row = header_row[0].row + 1
+            for row in sheet.iter_rows(min_row=start_row, values_only=True):
+                if self.isInterruptionRequested():
+                    return linhas_processadas
+                processed_row = self._process_row(row, indices)
+                if processed_row:
+                    output_sheet.append(processed_row)
+                    linhas_processadas += 1
+            return linhas_processadas
+        except Exception as e:
+            self.log_updated.emit(f"Erro na aba {sheet.title}: {str(e)[:50]}")
+            return linhas_processadas
         
-        for chunk in self._process_linhas(sheet, header_row, indices):
-            if self.isInterruptionRequested():
-                return
-            for row in chunk:
-                output_sheet.append(row)
-
-        self._atualizar_progresso(index, progress_per_sheet)
-
-    def _process_linhas(self, sheet, header_row, indices):
-        start_row = header_row[0].row + 1
-        rows = list(sheet.iter_rows(min_row=start_row, values_only=True))
-        chunk = []
-
-        for row in rows:
-            if self.isInterruptionRequested():
-                return
-            processed_row = self._process_row(row, indices)
-            if processed_row:
-                chunk.append(processed_row)
-        yield chunk
-
     def _process_row(self, row, indices):
         try:
             data = self._convert_date(row[indices['data']]) or ""
             origem = str(row[indices['origem']] or "").strip()
             destino = str(row[indices['destino']] or "").strip()
-            
             return [
                 data,
                 origem,
@@ -125,55 +149,83 @@ class ProcessamentoAgitel(QThread):
             return None
 
     def _finalizar_processamento(self, output_wb, output_sheet):
-        self._clean_and_sort_output(output_sheet)
         self._apply_final_formatting(output_sheet)
-        
         if self._equalize:
             self._equalize_regiao(output_sheet)
-        
         output_path = self._get_output_path()
         output_wb.save(output_path)
         self.process_finished.emit(f"Arquivo salvo em: {output_path}")
 
-    def _clean_and_sort_output(self, sheet):
-        """Remove linhas vazias e classifica por Região com verificação de limite"""
+    def _apply_final_formatting(self, sheet):
+        """
+        Aplica formatações finais à planilha de saída.
+        """
         try:
-            max_rows = 1048576  # Limite máximo do Excel
-            
-            # Coletar linhas válidas
+            # Aplicar estilos às colunas específicas
+            for row in sheet.iter_rows(min_row=2):
+                # Formatar coluna "Duração" (índice 6)
+                duration_cell = row[5]
+                duration_cell.number_format = self.styles['duration'].number_format
+
+                # Formatar coluna "Duração (minutos)" (índice 7)
+                minutes_cell = row[6]
+                minutes_cell.number_format = self.styles['minutes'].number_format
+
+                # Formatar coluna "Valor" (índice 8)
+                currency_cell = row[7]
+                currency_cell.number_format = self.styles['currency'].number_format
+
+            # Garantir que o cabeçalho tenha estilo consistente
+            for col, title in enumerate(self.COLUNAS_SAIDA, 1):
+                header_cell = sheet.cell(row=1, column=col)
+                header_cell.font = Font(bold=True)
+                header_cell.alignment = Alignment(horizontal='center')
+
+            # Ajustar largura das colunas automaticamente
+            for col in range(1, len(self.COLUNAS_SAIDA) + 1):
+                max_length = 0
+                column = sheet.column_dimensions[chr(64 + col)]  # Colunas A, B, C...
+                for cell in sheet[chr(64 + col)]:
+                    try:
+                        if len(str(cell.value)) > max_length:
+                            max_length = len(str(cell.value))
+                    except:
+                        pass
+                column.width = max_length + 2  # Adicionar margem
+
+        except Exception as e:
+            self.log_updated.emit(f"FALHA NA FORMATAÇÃO FINAL: {str(e)}")
+            raise
+
+    def _clean_and_sort_output(self, sheet):
+        """Método totalmente reformulado para evitar limites do Excel"""
+        try:
+            MAX_ROWS = 1048576  # Limite absoluto do Excel
+            SAFE_LIMIT = MAX_ROWS - 1000  # Margem de segurança
+            current_rows = sheet.max_row
+            if current_rows <= 1:
+                return  # Nada a processar
+
             all_rows = []
             for row_idx, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
-                if row_idx > max_rows:
-                    self.log_updated.emit("Aviso: Limite de linhas do Excel atingido. Dados truncados.")
+                if row_idx >= SAFE_LIMIT:
+                    self.log_updated.emit(f"Aviso: Dados truncados em {SAFE_LIMIT} linhas por segurança")
                     break
-                    
                 if any(cell not in (None, "", 0) for cell in row):
                     all_rows.append(row)
 
-            # Verificar se ultrapassou o limite após coleta
-            if len(all_rows) + 1 > max_rows:  # +1 para o cabeçalho
-                self.log_updated.emit("Erro: Os dados excedem o limite máximo de linhas do Excel.")
-                raise ValueError("Limite de linhas do Excel excedido")
+            # Ordenação otimizada por Departamento (índice 3)
+            all_rows.sort(key=lambda x: (str(x[3]).lower(), x[0]))
 
-            # Ordenar e reinserir
-            all_rows.sort(key=lambda x: str(x[3]).lower() if x[3] else "")
-            
-            # Limpar dados existentes (de forma segura)
-            if sheet.max_row > 1:
-                sheet.delete_rows(2, sheet.max_row)
-                
-            # Adicionar linhas respeitando o limite
-            for row in all_rows[:max_rows-1]:  # -1 para o cabeçalho
+            # Limpeza radical e reinserção segura
+            sheet.delete_rows(2, sheet.max_row)
+            for row in all_rows:
                 sheet.append(row)
 
+            self.log_updated.emit(f"Processo quase finalizado,{len(all_rows)} linhas foram validadas, processando planilha a ser salva")
         except Exception as e:
-            self.log_updated.emit(f"Erro na organização: {str(e)[:50]}")
+            self.log_updated.emit(f"FALHA NA ORGANIZAÇÃO: {str(e)}")
             raise
-
-    def _apply_final_formatting(self, sheet):
-        for row in sheet.iter_rows(min_row=2):
-            cell = row[5]
-            cell.number_format = 'hh:mm:ss'
 
     def _setup_styles(self):
         self.styles = {
@@ -189,7 +241,6 @@ class ProcessamentoAgitel(QThread):
             cell = sheet.cell(row=1, column=col)
             cell.font = Font(bold=True)
             cell.alignment = Alignment(horizontal='center')
-        sheet.column_dimensions['F'].number_format = 'hh:mm:ss'
 
     def _get_output_path(self):
         base, _ = os.path.splitext(self._file_path)
@@ -202,11 +253,11 @@ class ProcessamentoAgitel(QThread):
 
     def _convert_duration(self, value):
         if isinstance(value, dt_time):
-            return value.hour/24 + value.minute/1440 + value.second/86400
+            return value.hour / 24 + value.minute / 1440 + value.second / 86400
         elif isinstance(value, str):
             try:
                 h, m, s = map(int, value.split(':'))
-                return h/24 + m/1440 + s/86400
+                return h / 24 + m / 1440 + s / 86400
             except:
                 return 0.0
         return value
@@ -269,8 +320,8 @@ class ProcessamentoAgitel(QThread):
         return indices
 
     def _normalize(self, text):
-        return ''.join(c for c in unicodedata.normalize('NFD', str(text).lower()) 
-                      if not unicodedata.combining(c))
+        return ''.join(c for c in unicodedata.normalize('NFD', str(text).lower())
+                       if not unicodedata.combining(c))
 
     def _handle_error(self, error):
         error_msg = f"Erro crítico: {str(error)}"
@@ -278,8 +329,10 @@ class ProcessamentoAgitel(QThread):
         logging.exception(error_msg)
 
     def _cleanup_resources(self, wb, output_wb):
-        if wb: wb.close()
-        if output_wb: output_wb.close()
+        if wb:
+            wb.close()
+        if output_wb:
+            output_wb.close()
         gc.collect()
 
     def _atualizar_progresso(self, index, progress_per_sheet):
