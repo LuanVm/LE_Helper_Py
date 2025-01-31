@@ -15,7 +15,7 @@ from qt_ui.IMesclaPlanilhas import PainelMesclaPlanilha
 class GerenTema:
     def __init__(self, main_window, central_widget, barra_titulo, funcionalidades_combo,
                  automacao_coleta, gui_processamento_agitel, organizacao_pastas,
-                 substituicao_simples, botao_modo, botao_minimizar, botao_fechar, botao_home):
+                 substituicao_simples, botao_theme, botao_minimize, botao_maximize, botao_fechar, botao_home):
         self.main_window = main_window
         self.central_widget = central_widget
         self.barra_titulo = barra_titulo
@@ -24,8 +24,9 @@ class GerenTema:
         self.gui_processamento_agitel = gui_processamento_agitel
         self.organizacao_pastas = organizacao_pastas
         self.substituicao_simples = substituicao_simples
-        self.botao_modo = botao_modo
-        self.botao_minimizar = botao_minimizar
+        self.botao_theme = botao_theme
+        self.botao_minimize = botao_minimize
+        self.botao_maximize = botao_maximize
         self.botao_fechar = botao_fechar
         self.botao_home = botao_home
         self.settings_path = main_window.settings_path
@@ -46,7 +47,7 @@ class GerenTema:
             central_widget, barra_titulo, funcionalidades_combo,
             automacao_coleta, gui_processamento_agitel, organizacao_pastas,
             substituicao_simples,
-            botao_modo, botao_minimizar, botao_fechar, botao_home
+            botao_theme, botao_minimize, botao_maximize, botao_fechar, botao_home
         ]
         for component in components:
             self.register_widget(component)
@@ -101,10 +102,12 @@ class GerenTema:
         base_path = str(Path(__file__).resolve().parent.parent / "resources" / "icons")
         theme_suffix = "dark" if self.modo_escuro else "light"
         
-        # Atualizar ícones principais
+        # Determinar ícone correto para maximizar/restaurar
+        maximize_icon = "ui_maximize" if self.main_window.isMaximized() else "ui_maximize"
+        self.botao_maximize.setIcon(QIcon(os.path.join(base_path, f"{maximize_icon}_{theme_suffix}.png")))
         self.botao_home.setIcon(QIcon(os.path.join(base_path, f"home_{theme_suffix}.png")))
-        self.botao_modo.setIcon(QIcon(os.path.join(base_path, f"ui_{theme_suffix}.png")))
-        self.botao_minimizar.setIcon(QIcon(os.path.join(base_path, f"ui_minimize_{theme_suffix}.png")))
+        self.botao_theme.setIcon(QIcon(os.path.join(base_path, f"ui_{theme_suffix}.png")))
+        self.botao_minimize.setIcon(QIcon(os.path.join(base_path, f"ui_minimize_{theme_suffix}.png")))
         self.botao_fechar.setIcon(QIcon(os.path.join(base_path, f"ui_exit_{theme_suffix}.png")))
 
         # Atualizar ícones específicos dos painéis
@@ -141,11 +144,15 @@ class GerenTema:
         self.funcionalidades_combo.setStyleSheet(estilo_combo_box_dark() if dark_mode else estilo_combo_box_light())
 
         # Aplicar estilos genéricos nos botões
-        self.botao_modo.setStyleSheet(f"""
+        self.botao_theme.setStyleSheet(f"""
             QPushButton {{ background-color: transparent; border: none; }}
             QPushButton:hover {{ background-color: #{estilo_botao[0]}; border-radius: 5px; }}
         """)
-        self.botao_minimizar.setStyleSheet(f"""
+        self.botao_minimize.setStyleSheet(f"""
+            QPushButton {{ background-color: transparent; border: none; }}
+            QPushButton:hover {{ background-color: #{estilo_botao[0]}; border-radius: 5px; }}
+        """)
+        self.botao_maximize.setStyleSheet(f"""
             QPushButton {{ background-color: transparent; border: none; }}
             QPushButton:hover {{ background-color: #{estilo_botao[0]}; border-radius: 5px; }}
         """)

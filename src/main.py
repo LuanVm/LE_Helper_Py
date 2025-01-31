@@ -5,7 +5,7 @@ from PyQt6.QtWidgets import (
     QApplication, QLabel, QComboBox, QMessageBox,
     QWidget, QVBoxLayout, QPushButton, QHBoxLayout, QStackedWidget
 )
-from PyQt6.QtCore import Qt, QSize, QTimer
+from PyQt6.QtCore import Qt, QSize, QTimer, QEvent
 from PyQt6.QtGui import QPixmap, QIcon
 
 # Business/Logic
@@ -30,13 +30,11 @@ class MainApp(ResizableWindow):
         self._initialize_ui()
         self._setup_connections()
         self._finalize_ui_setup()
+        self._title_bar = self.barra_titulo
 
     def _initialize_ui(self):
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
-        
-        self.setWindowTitle("LE Helper")
-        self.setGeometry(100, 100, 1200, 750)
         self._set_window_icon()
         
         self.function_groupsping = {
@@ -69,22 +67,20 @@ class MainApp(ResizableWindow):
     def showEvent(self, event):
         super().showEvent(event)
         self._refresh_layout()
-        
-        if hasattr(self, 'theme_manager') and self.theme_manager is not None:
-            self.theme_manager._force_layout_update()
-            self.resize(self.size() + QSize(1, 1))
-            self.resize(self.size() - QSize(1, 1))
-        else:
-            QTimer.singleShot(100, lambda: self.resize(self.size() + QSize(1, 1)))
-            QTimer.singleShot(150, lambda: self.resize(self.size() - QSize(1, 1)))
+        self.theme_manager._force_layout_update()
 
     def _refresh_layout(self):
-        self.central_widget.updateGeometry()
-        self.stacked_content.updateGeometry()
-        for i in range(self.stacked_content.count()):
-            if widget := self.stacked_content.widget(i):
-                widget.updateGeometry()
-        QApplication.processEvents()
+        """Atualização segura do layout"""
+        try:
+            if not self.isMaximized():
+                self.central_widget.updateGeometry()
+                self.stacked_content.updateGeometry()
+                for i in range(self.stacked_content.count()):
+                    if widget := self.stacked_content.widget(i):
+                        widget.updateGeometry()
+                QApplication.processEvents()
+        except Exception as e:
+            print(f"Erro ao atualizar layout: {e}")
 
     def _configure_ui_components(self):
         self.central_widget = QWidget(self)
@@ -117,11 +113,11 @@ class MainApp(ResizableWindow):
         self.funcionalidades_combo.addItems(["Home"])
         left_section.addWidget(self.funcionalidades_combo)
         
-        self.botao_home = QPushButton(self.barra_titulo)
-        self.botao_home.setIcon(QIcon(os.path.join("resources","icons", "home_light.png")))
-        self.botao_home.setFixedSize(QSize(20, 20))
-        self.botao_home.clicked.connect(self.mostrar_home)
-        left_section.addWidget(self.botao_home)
+        self.button_home = QPushButton(self.barra_titulo)
+        self.button_home.setIcon(QIcon(os.path.join("resources","icons", "home_light.png")))
+        self.button_home.setFixedSize(QSize(20, 20))
+        self.button_home.clicked.connect(self.mostrar_home)
+        left_section.addWidget(self.button_home)
         
         layout_titulo.addLayout(left_section)
         layout_titulo.addStretch()
@@ -145,23 +141,29 @@ class MainApp(ResizableWindow):
     def _add_control_buttons(self, layout):
         caminho_base = Path(__file__).resolve().parent.parent / "resources" / "icons"
         
-        self.botao_modo = QPushButton(self.barra_titulo)
-        self.botao_modo.setIcon(QIcon(os.path.join(caminho_base, "ui_light.png")))
-        self.botao_modo.setFixedSize(QSize(20, 20))
+        self.button_theme = QPushButton(self.barra_titulo)
+        self.button_theme.setIcon(QIcon(os.path.join(caminho_base, "ui_light.png")))
+        self.button_theme.setFixedSize(QSize(20, 20))
         
-        self.botao_minimizar = QPushButton(self.barra_titulo)
-        self.botao_minimizar.setIcon(QIcon(os.path.join(caminho_base, "ui_minimize_light.png")))
-        self.botao_minimizar.setFixedSize(QSize(20, 20))
-        self.botao_minimizar.clicked.connect(self.showMinimized)
+        self.button_minimize = QPushButton(self.barra_titulo)
+        self.button_minimize.setIcon(QIcon(os.path.join(caminho_base, "ui_minimize_light.png")))
+        self.button_minimize.setFixedSize(QSize(20, 20))
+        self.button_minimize.clicked.connect(self.showMinimized)
+
+        self.button_maximize = QPushButton(self.barra_titulo)
+        self.button_maximize.setIcon(QIcon(os.path.join(caminho_base, "ui_maximize_light.png")))
+        self.button_maximize.setFixedSize(QSize(20, 20))
+        self.button_maximize.clicked.connect(self.toggle_maximize)
         
-        self.botao_fechar = QPushButton(self.barra_titulo)
-        self.botao_fechar.setIcon(QIcon(os.path.join(caminho_base, "ui_exit_light.png")))
-        self.botao_fechar.setFixedSize(QSize(20, 20))
-        self.botao_fechar.clicked.connect(self.close)
+        self.button_exit = QPushButton(self.barra_titulo)
+        self.button_exit.setIcon(QIcon(os.path.join(caminho_base, "ui_exit_light.png")))
+        self.button_exit.setFixedSize(QSize(20, 20))
+        self.button_exit.clicked.connect(self.close)
         
-        layout.addWidget(self.botao_modo)
-        layout.addWidget(self.botao_minimizar)
-        layout.addWidget(self.botao_fechar)
+        layout.addWidget(self.button_theme)
+        layout.addWidget(self.button_minimize)
+        layout.addWidget(self.button_maximize)
+        layout.addWidget(self.button_exit)
 
     def _setup_theme_manager(self):
         self.theme_manager = GerenTema(
@@ -173,10 +175,11 @@ class MainApp(ResizableWindow):
             self.organizacao_pastas,
             self.processamento_agitel,
             self.substituicao_simples,
-            self.botao_modo,
-            self.botao_minimizar,
-            self.botao_fechar,
-            self.botao_home
+            self.button_theme,
+            self.button_minimize,
+            self.button_maximize,
+            self.button_exit,
+            self.button_home
         )
 
     def _setup_content_panes(self):
@@ -216,19 +219,16 @@ class MainApp(ResizableWindow):
             QMessageBox.warning(self, "Aviso", "Selecione um arquivo Excel.")
             return
         
-        # Cria o controlador com os parâmetros corretos
         self.controller_agitel = ProcessadorAgitel(
             file_path=file_path,
             equalize=equalize
         )
         
-        # Conecta os sinais
         self.controller_agitel.progressUpdated.connect(self.processamento_agitel.update_progress)
         self.controller_agitel.processFinished.connect(self.processamento_agitel.on_process_finished)
         self.controller_agitel.errorOccurred.connect(self.processamento_agitel.show_error)
         self.controller_agitel.logUpdated.connect(self.processamento_agitel.append_log)
         
-        # Inicia o processamento
         self.controller_agitel.start()
         self.processamento_agitel.set_processing_state(True)
 
@@ -236,6 +236,22 @@ class MainApp(ResizableWindow):
         index = self.function_groupsping.get(text, 0)
         self.stacked_content.setCurrentIndex(index)
         self._refresh_layout()
+
+    def changeEvent(self, event):
+        """Atualização de elementos na mudança de estado"""
+        if event.type() == QEvent.Type.WindowStateChange:
+            if self.isMaximized():
+                # Atualiza os tamanhos dos componentes
+                self.central_widget.resize(self.size())
+                self.stacked_content.resize(self.size())
+                for i in range(self.stacked_content.count()):
+                    self.stacked_content.widget(i).resize(self.size())
+            
+            # Atualiza ícones e tema
+            self.theme_manager.update_icons()
+            self.theme_manager.aplicar_tema()
+        
+        super().changeEvent(event)
 
     def on_square_clicked(self, index):
         function_groups = {
@@ -265,7 +281,7 @@ class MainApp(ResizableWindow):
         self.theme_manager.register_widget(self.painel_mesclagem)
         self.theme_manager.update_icons()
         self.theme_manager.aplicar_tema()
-        self.botao_modo.clicked.connect(self.theme_manager.alternar_modo)
+        self.button_theme.clicked.connect(self.theme_manager.alternar_modo)
 
     def closeEvent(self, event):
         if hasattr(self.automacao_coleta, 'automator'):
@@ -274,7 +290,7 @@ class MainApp(ResizableWindow):
                     try:
                         driver.quit()
                     except Exception as e:
-                        print(f"Erro ao fechar navegador: {e}")
+                        print(f"Erro ao exit navegador: {e}")
         event.accept()
 
 if __name__ == "__main__":

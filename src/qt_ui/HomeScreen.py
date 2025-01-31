@@ -20,6 +20,13 @@ class HomeScreen(QWidget):
         self.setup_layout()
         self.setup_animations()
 
+    def update_geometry(self):
+        """Força a atualização completa da geometria"""
+        self.squares_container.updateGeometry()
+        for square in self.squares:
+            square.updateGeometry()
+        self.update()
+
     def setup_logo(self):
         self.logo_label = QLabel(self)
         caminho_logo = str(Path(__file__).resolve().parent.parent / "resources" / "icons" / "logo_completa.png")
