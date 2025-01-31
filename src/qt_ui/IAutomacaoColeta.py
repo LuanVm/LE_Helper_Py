@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import (
-    QLabel, QComboBox, QWidget, QGridLayout, QMessageBox,
+    QLabel, QComboBox, QWidget, QGridLayout,
     QTextEdit, QFileDialog, QLineEdit, QVBoxLayout, QPushButton 
 )
 from PyQt6.QtCore import QThreadPool, QSettings
@@ -37,7 +37,6 @@ class PainelAutomacaoColeta(QWidget):
         for btn in [self.botao_pasta, self.botao_planilha, self.botao_iniciar]:
             estilo_hover(btn, dark_mode)
 
-        # Aplica estilos nos componentes
         self.combo_operadora.setStyleSheet(estilo_combo)
         self.campo_pasta.setStyleSheet(estilo_campo)
         self.campo_planilha.setStyleSheet(estilo_campo)
@@ -50,8 +49,6 @@ class PainelAutomacaoColeta(QWidget):
     def inicializar_interface(self):
         """Configura todos os elementos da interface gráfica"""
         self.setWindowTitle("Automação Blume")
-
-        # Layout principal
         layout_principal = QVBoxLayout(self)
         layout_principal.setContentsMargins(10, 10, 10, 10)
         layout_principal.setSpacing(10)
@@ -59,39 +56,27 @@ class PainelAutomacaoColeta(QWidget):
         # Seção de configurações
         layout_superior = QGridLayout()
         
-        # Campo de pasta de salvamento
+        # Componentes da interface
         self.rotulo_pasta = QLabel("Pasta de Salvamento:")
-        self.rotulo_pasta.setStyleSheet(estilo_label_light())
         self.campo_pasta = QLineEdit()
         self.campo_pasta.setReadOnly(True)
-        self.campo_pasta.setStyleSheet(campo_qline_light())
         self.botao_pasta = QPushButton("Selecionar Pasta")
-        estilo_hover(self.botao_pasta)
         self.botao_pasta.clicked.connect(self.selecionar_pasta)
 
-        # Campo de planilha de dados
         self.rotulo_planilha = QLabel("Planilha de Dados:")
-        self.rotulo_planilha.setStyleSheet(estilo_label_light())
         self.campo_planilha = QLineEdit()
         self.campo_planilha.setReadOnly(True)
-        self.campo_planilha.setStyleSheet(campo_qline_light())
         self.botao_planilha = QPushButton("Selecionar Arquivo")
-        estilo_hover(self.botao_planilha)
         self.botao_planilha.clicked.connect(self.selecionar_planilha)
 
-        # Seleção de operadora
         self.rotulo_operadora = QLabel("Operadora:")
-        self.rotulo_operadora.setStyleSheet(estilo_label_light())
         self.combo_operadora = QComboBox()
         self.combo_operadora.addItem("Selecione uma planilha primeiro")
-        self.combo_operadora.setStyleSheet(estilo_combo_box_light())
 
-        # Botão de controle
         self.botao_iniciar = QPushButton("Iniciar Automação")
-        estilo_hover(self.botao_iniciar)
         self.botao_iniciar.clicked.connect(self.alternar_automacao)
 
-        # Adicionando elementos ao layout
+        # Layout
         layout_superior.addWidget(self.rotulo_pasta, 0, 0)
         layout_superior.addWidget(self.campo_pasta, 0, 1)
         layout_superior.addWidget(self.botao_pasta, 0, 2)
@@ -108,14 +93,11 @@ class PainelAutomacaoColeta(QWidget):
         self.log_tecnico = QTextEdit()
         self.log_tecnico.setPlaceholderText("Logs técnicos...")
         self.log_tecnico.setReadOnly(True)
-        self.log_tecnico.setStyleSheet(estilo_log_light())
         
         self.log_faturas = QTextEdit()
         self.log_faturas.setPlaceholderText("Faturas coletadas...")
         self.log_faturas.setReadOnly(True)
-        self.log_faturas.setStyleSheet(estilo_log_light())
 
-        # Montagem final
         layout_principal.addLayout(layout_superior)
         layout_principal.addWidget(self.log_tecnico)
         layout_principal.addWidget(self.log_faturas)
@@ -140,6 +122,7 @@ class PainelAutomacaoColeta(QWidget):
             self.pasta_salvamento = pasta
             self.campo_pasta.setText(pasta)
             self.salvar_configuracoes()
+            self.log_mensagem(f"📁 Pasta selecionada: {pasta}", "tecnico", "#4CAF50")
 
     def selecionar_planilha(self):
         """Seleciona o arquivo Excel com os dados"""
@@ -151,6 +134,7 @@ class PainelAutomacaoColeta(QWidget):
         )
         if arquivo:
             self.carregar_planilha(arquivo)
+            self.log_mensagem(f"📄 Planilha carregada: {arquivo}", "tecnico", "#2196F3")
 
     def carregar_planilha(self, caminho):
         """Carrega e processa o arquivo Excel selecionado"""
@@ -167,16 +151,16 @@ class PainelAutomacaoColeta(QWidget):
             
             self.combo_operadora.clear()
             self.combo_operadora.addItems(operadoras)
+            self.log_mensagem(f"✅ Operadoras carregadas: {len(operadoras)} encontradas", "tecnico", "#4CAF50")
             
         except Exception as erro:
-            self.log_mensagem(f"Erro ao carregar planilha: {erro}", area="tecnico")
-            QMessageBox.critical(self, "Erro", f"Falha ao carregar arquivo: {erro}")
+            self.log_mensagem(f"❌ Erro crítico ao carregar planilha: {str(erro)}", "tecnico", "#f44336")
 
     def alternar_automacao(self):
         """Controla o início/parada da automação"""
         if self.botao_iniciar.text() == "Iniciar Automação":
-            self.iniciar_automacao()
-            self.botao_iniciar.setText("Parar Automação")
+            if self.iniciar_automacao():
+                self.botao_iniciar.setText("Parar Automação")
         else:
             self.parar_automacao()
             self.botao_iniciar.setText("Iniciar Automação")
@@ -184,7 +168,7 @@ class PainelAutomacaoColeta(QWidget):
     def iniciar_automacao(self):
         """Inicia o processo de automação"""
         if not self.validar_campos():
-            return
+            return False
 
         operadora = self.combo_operadora.currentText()
         dados = self.obter_dados_usuario(operadora)
@@ -193,14 +177,17 @@ class PainelAutomacaoColeta(QWidget):
             self.automator = Blume(self, self.caminho_dados)
             tarefa = TarefaAutomacao(self.automator, dados, self.log_mensagem)
             self.threads.start(tarefa)
+            self.log_mensagem(f"🚀 Iniciando automação para {operadora}...", "tecnico", "#FF9800")
+            return True
         except Exception as erro:
-            self.log_mensagem(f"Falha ao iniciar: {erro}", area="tecnico")
+            self.log_mensagem(f"⛔ Falha ao iniciar automação: {str(erro)}", "tecnico", "#f44336")
+            return False
 
     def parar_automacao(self):
         """Interrompe a automação em execução"""
         if hasattr(self, 'automator'):
             PararAutomacao(self.automator).parar()
-        self.botao_iniciar.setText("Iniciar Automação")
+            self.log_mensagem("⏹️ Automação interrompida pelo usuário", "tecnico", "#9E9E9E")
 
     def validar_campos(self):
         """Valida os campos antes de iniciar"""
@@ -213,7 +200,9 @@ class PainelAutomacaoColeta(QWidget):
             erros.append("Selecione uma operadora válida")
         
         if erros:
-            QMessageBox.warning(self, "Atenção", "\n".join(erros))
+            self.log_mensagem("⚠️ Erros de validação:", "tecnico", "#FFC107")
+            for erro in erros:
+                self.log_mensagem(f"• {erro}", "tecnico", "#FFC107")
             return False
         return True
 
@@ -237,15 +226,16 @@ class PainelAutomacaoColeta(QWidget):
                     "STATUS": linha[11],
                     "NOMENCLATURA": linha[12]
                 })
+        self.log_mensagem(f"📊 Dados carregados: {len(dados)} registros para processamento", "tecnico", "#2196F3")
         return dados
 
     def log_mensagem(self, mensagem, area="tecnico", cor=None):
         """Exibe mensagens nas áreas de log correspondentes"""
         area_log = self.log_tecnico if area == "tecnico" else self.log_faturas
-
-        if cor:
-            mensagem = f'<span style="color: {cor};">{mensagem}</span>'
-        area_log.append(mensagem)
+        estilo = f'<span style="color: {cor};">{mensagem}</span>' if cor else mensagem
+        
+        area_log.append(estilo)
         cursor = area_log.textCursor()
         cursor.movePosition(QTextCursor.MoveOperation.End)
         area_log.setTextCursor(cursor)
+        area_log.ensureCursorVisible()
