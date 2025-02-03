@@ -61,7 +61,7 @@ class EditorClientes(QDialog):
 
     def carregar_dados(self):
         self.tabela.setRowCount(len(self.clientes))
-        for i, (padrao, nome_pasta) in enumerate(self.clientes.items()):  # Inverte a ordem
+        for i, (padrao, nome_pasta) in enumerate(self.clientes.items()):
             self.tabela.setItem(i, 0, QTableWidgetItem(padrao))
             self.tabela.setItem(i, 1, QTableWidgetItem(nome_pasta))
 
@@ -79,10 +79,10 @@ class EditorClientes(QDialog):
     def salvar(self):
         self.clientes.clear()
         for row in range(self.tabela.rowCount()):
-            padrao = self.tabela.item(row, 0).text().strip()  # Padrão é a chave
-            nome_pasta = self.tabela.item(row, 1).text().strip()  # Nome da pasta é o valor
+            padrao = self.tabela.item(row, 0).text().strip()
+            nome_pasta = self.tabela.item(row, 1).text().strip()
             if padrao:
-                self.clientes[padrao] = nome_pasta  # Corrigir a ordem do dicionário
+                self.clientes[padrao] = nome_pasta
         self.accept()
 
 
@@ -110,16 +110,13 @@ class PainelOrganizacaoPastas(QWidget):
         self.apply_styles(self._dark_mode)
 
     def apply_styles(self, dark_mode):
-        """Aplica os estilos aos componentes com base no modo selecionado"""
         self._dark_mode = dark_mode
         
-        # Chamar as funções de estilo para obter os valores
         label_style = estilo_label_dark() if dark_mode else estilo_label_light()
         line_style = campo_qline_dark() if dark_mode else campo_qline_light()
         check_style = estilo_check_box_dark() if dark_mode else estilo_check_box_light()
         log_style = estilo_log_dark() if dark_mode else estilo_log_light()
 
-        # Aplicar estilos recursivamente
         def apply(widget):
             if isinstance(widget, QLabel):
                 widget.setStyleSheet(label_style)
@@ -127,9 +124,6 @@ class PainelOrganizacaoPastas(QWidget):
                 widget.setStyleSheet(line_style)
             elif isinstance(widget, QCheckBox):
                 widget.setStyleSheet(check_style)
-            elif isinstance(widget, (QTextEdit)):
-                # Aplicar estilos específicos para esses componentes
-                pass
             
             if hasattr(widget, 'children'):
                 for child in widget.children():
@@ -137,31 +131,24 @@ class PainelOrganizacaoPastas(QWidget):
 
         apply(self)
 
-        for btn in [self.botao_selecionar, self.botao_editar, 
-                   self.botao_organizar]:
+        for btn in [self.botao_selecionar, self.botao_editar, self.botao_organizar]:
             estilo_hover(btn, dark_mode)
         
-        # Aplicar estilos específicos
         self.log_unificado.setStyleSheet(log_style)
 
     def carregar_clientes(self):
-        """Carrega a lista de clientes do arquivo de configuração"""
         config = configparser.ConfigParser()
         if os.path.exists('clientes.properties'):
             config.read('clientes.properties')
             if 'CLIENTES' in config:
-                # Manter a estrutura {padrão: nome_da_pasta}
                 self.clientes = dict(config['CLIENTES'].items())
         else:
-            # Cria um arquivo padrão se não existir
-            self.clientes = {
-                'ClienteExemplo': 'CE_'
-            }
+            self.clientes = {'ClienteExemplo': 'CE_'}
             self.salvar_clientes()
+            self.log("📝 Arquivo de clientes criado com configurações padrão")
 
     def log(self, mensagem):
-        """Adiciona mensagem ao log"""
-        self.log_unificado.append(f"> {mensagem}")
+        self.log_unificado.append(f"<span style='color: {'#e0e0e0' if self._dark_mode else '#333333'}'>{mensagem}</span>")
         self.log_unificado.moveCursor(QTextCursor.MoveOperation.End)
 
     def criar_painel_configuracao(self):
@@ -170,35 +157,29 @@ class PainelOrganizacaoPastas(QWidget):
         layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(15)
 
-        # Componentes de seleção
         self.label_pasta = QLabel("Diretório a ser organizado:")
         self.campo_pasta = QLineEdit()
         self.campo_pasta.setReadOnly(True)
-
         
         self.botao_selecionar = QPushButton("Selecionar Pasta")
         self.botao_selecionar.setFixedWidth(160)
         self.botao_selecionar.clicked.connect(self.selecionar_pasta)
 
-        # Layout de seleção
         hbox = QHBoxLayout()
         hbox.addWidget(self.label_pasta)
         hbox.addWidget(self.campo_pasta)
         hbox.addWidget(self.botao_selecionar)
         layout.addLayout(hbox, 0, 0, 1, 2)
 
-        # Botão de edição
         self.botao_editar = QPushButton("Lista de Clientes")
         self.botao_editar.setFixedWidth(160)
         self.botao_editar.clicked.connect(self.editar_clientes)
         layout.addWidget(self.botao_editar, 0, 2)
 
-        # Checkboxes
         self.check_subpastas = QCheckBox("Criar e organizar em subpastas")
         self.check_juntar = QCheckBox("Buscar e juntar arquivos em subpastas")
         self.check_subpastas.setChecked(True)
         
-        # Conexões
         self.check_subpastas.toggled.connect(self.atualizar_checks)
         self.check_juntar.toggled.connect(self.atualizar_checks)
 
@@ -207,30 +188,23 @@ class PainelOrganizacaoPastas(QWidget):
 
         self.layout_principal.addWidget(self.painel_config)
 
-    def aplicar_icone_mensagem(self, message_box):
-        caminho_base = Path(__file__).resolve().parent.parent / "resources" / "icons"
-        caminho_icone = caminho_base / "logo.ico"
-        if os.path.exists(caminho_icone):
-            message_box.setIcon(QIcon(caminho_icone))
-
     def conectar_worker(self):
-        """Conecta os sinais do worker à interface do usuário"""
         self.worker.mensagem.connect(self.log)
         self.worker.finalizado.connect(self._operacao_finalizada)
         self.worker.error.connect(self._mostrar_erro)
         self.worker.finished.connect(self.worker.deleteLater)
 
     def _operacao_finalizada(self, sucesso):
-        """Atualiza a interface após conclusão da operação"""
         self.botao_organizar.setEnabled(True)
-        self.label_status.setText("Operação concluída com sucesso!" if sucesso else "Operação falhou!")
+        if sucesso:
+            self.log("✅ Operação concluída com sucesso!")
+        else:
+            self.log("⛔ Operação falhou!")
 
     def _mostrar_erro(self, mensagem):
-        """Exibe mensagens de erro na interface"""
-        self.log(f"ERRO: {mensagem}")
+        self.log(f"⛔ ERRO: {mensagem}")
 
     def atualizar_checks(self, checked):
-        """Atualiza o estado dos checkboxes para serem mutuamente exclusivos."""
         sender = self.sender()
         if sender == self.check_subpastas and checked:
             self.check_juntar.setChecked(False)
@@ -256,30 +230,28 @@ class PainelOrganizacaoPastas(QWidget):
         
         self.botao_organizar = QPushButton("Organizar")
         self.botao_organizar.setFixedWidth(160)
+        self.botao_organizar.clicked.connect(self.iniciar_organizacao)
 
         self.label_status = QLabel("Pronto para organizar!")
 
         layout.addWidget(self.botao_organizar)
         layout.addWidget(self.label_status)
-
-        self.botao_organizar.clicked.connect(self.iniciar_organizacao)
-
         self.layout_principal.addWidget(container)
 
     def iniciar_organizacao(self):
-        """Inicia a operação de organização com base na seleção do usuário."""
         if self.check_subpastas.isChecked():
             self.organizar_arquivos()
         elif self.check_juntar.isChecked():
             self.juntar_arquivos()
         else:
-            self.log("Aviso", "Selecione uma opção de organização!")
+            self.log("⚠️ Selecione uma opção de organização!")
 
     def selecionar_pasta(self):
         pasta = QFileDialog.getExistingDirectory(self, "Selecionar Pasta")
         if pasta:
             self.diretorio = pasta
             self.campo_pasta.setText(pasta)
+            self.log(f"📂 Pasta selecionada: {os.path.basename(pasta)}")
             self.atualizar_visualizacao()
 
     def atualizar_visualizacao(self):
@@ -289,7 +261,7 @@ class PainelOrganizacaoPastas(QWidget):
                 for item in os.listdir(self.diretorio):
                     self.log_unificado.append(item)
             except Exception as e:
-                self.log(f"Erro ao listar diretório: {str(e)}")
+                self.log(f"⛔ Erro ao listar diretório: {str(e)}")
 
     def gerar_previa(self):
         preview = defaultdict(list)
@@ -306,17 +278,16 @@ class PainelOrganizacaoPastas(QWidget):
         if editor.exec() == QDialog.DialogCode.Accepted:
             self.salvar_clientes()
             self.clientes_updated.emit()
-            self.log("Lista de clientes atualizada!")
-
+            self.log("✅ Lista de clientes atualizada!")
 
     def salvar_clientes(self):
         config = configparser.ConfigParser()
         config['CLIENTES'] = self.clientes
         with open('clientes.properties', 'w') as f:
             config.write(f)
+        self.log("💾 Configurações salvas com sucesso")
 
     def extrair_cliente(self, nome_arquivo):
-        """Retorna o nome da pasta baseado no padrão do arquivo (case-insensitive)"""
         nome_arquivo_lower = nome_arquivo.lower()
         for padrao, nome_pasta in self.clientes.items():
             if padrao and nome_arquivo_lower.startswith(padrao.lower()):
@@ -331,15 +302,16 @@ class PainelOrganizacaoPastas(QWidget):
     
         preview = self.gerar_previa()
         if not preview:
-            self.log("Aviso", "Nenhum cliente encontrado para organização!")
+            self.log("⚠️ Nenhum cliente encontrado para organização!")
             return
     
         self.worker = OrganizadorThread(self.diretorio, self.clientes)
         self.conectar_worker()
         self.worker.start()
+        self.log("⏳ Iniciando organização de arquivos...")
 
     def juntar_arquivos(self):
         self.worker = AgrupadorThread(self.diretorio)
         self.conectar_worker()
         self.worker.start()
-        
+        self.log("⏳ Iniciando agrupamento de arquivos...")

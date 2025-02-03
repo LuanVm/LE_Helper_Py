@@ -3,7 +3,7 @@ from openpyxl import load_workbook
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QGridLayout, QPushButton, QLineEdit,
     QFileDialog, QProgressBar, QTableWidget, QTableWidgetItem,
-    QMessageBox, QLabel, QHBoxLayout, QHeaderView,
+    QLabel, QHBoxLayout, QHeaderView, QTextEdit,
     QAbstractItemView, QDialog, QCheckBox, QScrollArea
 )
 from PyQt6.QtCore import QThread, pyqtSlot, QSettings
@@ -14,6 +14,7 @@ from utils.sheetStyles import (
     campo_qline_light, campo_qline_dark,
     estilo_tabela_dark, estilo_tabela_light,
     estilo_progress_bar_light, estilo_progress_bar_dark,
+    estilo_log_light, estilo_log_dark,
     estilo_hover
 )
 from services.MesclaPlanilhas import PlanilhaMesclagemWorker
@@ -36,6 +37,7 @@ class PainelMesclaPlanilha(QWidget):
         self._create_file_controls()
         self._create_table()
         self._create_progress_bar()
+        self._create_log_area()
         self._create_action_buttons()
 
     def _create_file_controls(self):
@@ -87,6 +89,12 @@ class PainelMesclaPlanilha(QWidget):
         self.progress_bar.setValue(0)
         self.layout().addWidget(self.progress_bar)
 
+    def _create_log_area(self):
+        self.text_log = QTextEdit()
+        self.text_log.setReadOnly(True)
+        self.text_log.setPlaceholderText("Log de processamento...")
+        self.layout().addWidget(self.text_log)
+
     def _create_action_buttons(self):
         container = QHBoxLayout()
         container.addStretch()
@@ -113,6 +121,7 @@ class PainelMesclaPlanilha(QWidget):
         line_style = campo_qline_dark() if is_dark_mode else campo_qline_light()
         progress_style = estilo_progress_bar_dark() if is_dark_mode else estilo_progress_bar_light()
         table_style = estilo_tabela_dark() if is_dark_mode else estilo_tabela_light()
+        log_style = estilo_log_dark() if is_dark_mode else estilo_log_light()
 
         for label in [self.label_pasta, self.label_base, self.label_saida]:
             label.setStyleSheet(label_style)
@@ -122,10 +131,21 @@ class PainelMesclaPlanilha(QWidget):
             
         self.progress_bar.setStyleSheet(progress_style)
         self.tabela_arquivos.setStyleSheet(table_style)
+        self.text_log.setStyleSheet(log_style)
 
         for button in [self.btn_selecionar_pasta, self.btn_selecionar_base, 
                     self.btn_mesclar, self.btn_cancelar]:
             estilo_hover(button, is_dark_mode)
+
+    def append_log(self, mensagem):
+        color = "#e0e0e0" if self.is_dark_mode else "#333333"
+        self.text_log.append(f'<span style="color: {color}">{mensagem}</span>')
+        self._scroll_to_bottom()
+
+    def _scroll_to_bottom(self):
+        self.text_log.verticalScrollBar().setValue(
+            self.text_log.verticalScrollBar().maximum()
+        )
 
     def selecionar_pasta(self):
         settings = QSettings("LivreEscolha", "LE_Helper")
@@ -133,6 +153,7 @@ class PainelMesclaPlanilha(QWidget):
         if pasta:
             self.text_pasta.setText(pasta)
             settings.setValue("last_merge_dir", pasta)
+            self.append_log(f"📂 Pasta selecionada: {os.path.basename(pasta)}")
             self.carregar_arquivos_pasta(pasta)
 
     def selecionar_arquivo_base(self):
@@ -145,6 +166,7 @@ class PainelMesclaPlanilha(QWidget):
         if arquivo:
             self.text_arquivo_base.setText(arquivo)
             settings.setValue("last_base_dir", os.path.dirname(arquivo))
+            self.append_log(f"📄 Arquivo base selecionado: {os.path.basename(arquivo)}")
             self.ler_colunas_base(arquivo)
 
     def carregar_arquivos_pasta(self, pasta):
@@ -155,6 +177,7 @@ class PainelMesclaPlanilha(QWidget):
             self.tabela_arquivos.insertRow(row)
             self.tabela_arquivos.setItem(row, 0, QTableWidgetItem(arquivo))
             self.tabela_arquivos.setItem(row, 1, QTableWidgetItem("Pendente"))
+        self.append_log(f"📑 {len(arquivos)} arquivos encontrados na pasta")
 
     def ler_colunas_base(self, caminho):
         try:
@@ -165,9 +188,10 @@ class PainelMesclaPlanilha(QWidget):
             dialogo = DialogoSelecaoColunas(cabecalhos, self)
             if dialogo.exec() == QDialog.DialogCode.Accepted:
                 self.colunas_base = set(dialogo.colunas_selecionadas())
+                self.append_log(f"🔖 Colunas base selecionadas: {len(self.colunas_base)} colunas")
                 
         except Exception as e:
-            QMessageBox.critical(self, "Erro", f"Erro ao ler arquivo base:\n{str(e)}")
+            self.append_log(f"⛔ Erro ao ler arquivo base: {str(e)}")
         finally:
             wb.close()
 
@@ -200,19 +224,21 @@ class PainelMesclaPlanilha(QWidget):
         self.btn_mesclar.setEnabled(False)
         self.btn_cancelar.setEnabled(True)
         self.worker_thread.start()
+        self.append_log("⏳ Iniciando processo de mesclagem...")
 
     def validar_campos(self):
         if not self.text_pasta.text():
-            QMessageBox.warning(self, "Aviso", "Selecione uma pasta contendo os arquivos!")
+            self.append_log("⚠️ Selecione uma pasta contendo os arquivos!")
             return False
         if not self.colunas_base:
-            QMessageBox.warning(self, "Aviso", "Selecione as colunas base!")
+            self.append_log("⚠️ Selecione as colunas base!")
             return False
         return True
 
     @pyqtSlot(int, str)
     def atualizar_status_arquivo(self, linha, status):
         self.tabela_arquivos.item(linha, 1).setText(status)
+        self.append_log(f"📝 Processando {self.tabela_arquivos.item(linha, 0).text()}: {status}")
 
     @pyqtSlot(str)
     def processamento_concluido(self, mensagem):
@@ -220,12 +246,12 @@ class PainelMesclaPlanilha(QWidget):
         self.worker_thread.wait()
         self.btn_mesclar.setEnabled(True)
         self.btn_cancelar.setEnabled(False)
-        QMessageBox.information(self, "Status", mensagem)
+        self.append_log(f"✅ {mensagem}")
 
     @pyqtSlot(str)
     def mostrar_erro(self, mensagem):
-        QMessageBox.critical(self, "Erro", mensagem)
-        self.processamento_concluido("")
+        self.append_log(f"⛔ {mensagem}")
+        self.processamento_concluido("Processamento interrompido!")
 
     @pyqtSlot()
     def cancelar_mesclagem(self):
@@ -234,6 +260,7 @@ class PainelMesclaPlanilha(QWidget):
             self.btn_cancelar.setEnabled(False)
             self.worker_thread.quit()
             self.worker_thread.wait()
+            self.append_log("🛑 Mesclagem cancelada pelo usuário")
 
 
 class DialogoSelecaoColunas(QDialog):

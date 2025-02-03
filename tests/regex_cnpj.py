@@ -25,7 +25,7 @@ def extract_cnpjs_from_pdf(file_path):
     return cnpjs
 
 if __name__ == "__main__":
-    file_path = r"C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\testes\Notas Fiscais Metropolitano\AAKSKKDSKKAMETROPOLITANO01.pdf"
+    file_path = r"C:\Users\LUANVITOR\OneDrive - Welington Henrique Baggio\Área de Trabalho\Geral\testes\Notas Fiscais Metropolitano\ASDASPDJASOIDJMIMETROPOLITANO01.pdf"
     
     cnpjs_encontrados = extract_cnpjs_from_pdf(file_path)
     
