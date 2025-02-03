@@ -18,6 +18,7 @@ from qt_ui.iMesclaPlanilhas import PainelMesclaPlanilha
 from qt_ui.iOrganizacaoPastas import PainelOrganizacaoPastas
 from qt_ui.iProcessamentoAgitel import PainelProcessamentoAgitel
 from qt_ui.iSubstituicaoSimples import PainelSubstituicaoSimples
+from qt_ui.iOrganizacaoSicoob import PainelOrganizacaoSicoob
 
 # Utils/Modules
 from utils.windowManager import ResizableWindow
@@ -66,7 +67,8 @@ class MainApp(ResizableWindow):
             "Organização de Pastas": 2,
             "Processamento Agitel": 3,
             "Mesclagem de Planilhas": 4,
-            "Substituição Simples": 5
+            "Substituição Simples": 5,
+            "Organizador (NF) Sicoob": 6
         }
 
         self._configure_ui_components()
@@ -168,6 +170,7 @@ class MainApp(ResizableWindow):
             self.organizacao_pastas,
             self.processamento_agitel,
             self.substituicao_simples,
+            self.organizador_sicoob,
             self.button_theme,
             self.button_minimize,
             self.button_exit,
@@ -187,6 +190,7 @@ class MainApp(ResizableWindow):
         self.processamento_agitel = PainelProcessamentoAgitel()
         self.painel_mesclagem = PainelMesclaPlanilha()
         self.substituicao_simples = PainelSubstituicaoSimples()
+        self.organizador_sicoob = PainelOrganizacaoSicoob()
 
         self.processamento_agitel.processStarted.connect(self._iniciar_processamento_agitel)
 
@@ -196,6 +200,7 @@ class MainApp(ResizableWindow):
         self.stacked_content.addWidget(self.processamento_agitel)
         self.stacked_content.addWidget(self.painel_mesclagem)
         self.stacked_content.addWidget(self.substituicao_simples)
+        self.stacked_content.addWidget(self.organizador_sicoob)
 
         self.layout.addWidget(self.central_content, stretch=1)
 
@@ -234,7 +239,7 @@ class MainApp(ResizableWindow):
             0: ["Automação da Coleta"],
             1: ["Organização de Pastas", "Processamento Agitel",
                 "Mesclagem de Planilhas", "Substituição Simples"],
-            2: ["Organização de notas Sicoob"]
+            2: ["Organizador (NF) Sicoob"]
         }
         self.funcionalidades_combo.clear()
         if index in function_groups:
@@ -267,6 +272,7 @@ class MainApp(ResizableWindow):
         self.theme_manager.register_widget(self.processamento_agitel)
         self.theme_manager.register_widget(self.organizacao_pastas)
         self.theme_manager.register_widget(self.painel_mesclagem)
+        self.theme_manager.register_widget(self.organizador_sicoob)
         self.theme_manager.register_widget(self.home_screen)
         self.theme_manager.update_icons()
         self.theme_manager.aplicar_tema()

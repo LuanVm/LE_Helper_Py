@@ -16,7 +16,7 @@ from qt_ui.iMesclaPlanilhas import PainelMesclaPlanilha
 class GerenTema:
     def __init__(self, main_window, central_widget, barra_titulo, funcionalidades_combo,
                  automacao_coleta, gui_processamento_agitel, organizacao_pastas,
-                 substituicao_simples, botao_theme, botao_minimize, botao_fechar, botao_home):
+                 substituicao_simples, organizador_sicoob, botao_theme, botao_minimize, botao_fechar, botao_home):
         self.main_window = main_window
         self.central_widget = central_widget
         self.barra_titulo = barra_titulo
@@ -25,6 +25,7 @@ class GerenTema:
         self.gui_processamento_agitel = gui_processamento_agitel
         self.organizacao_pastas = organizacao_pastas
         self.substituicao_simples = substituicao_simples
+        self.organizador_sicoob = organizador_sicoob
         self.botao_theme = botao_theme
         self.botao_minimize = botao_minimize
         self.botao_fechar = botao_fechar
@@ -50,7 +51,7 @@ class GerenTema:
         components = [
             central_widget, barra_titulo, funcionalidades_combo,
             automacao_coleta, gui_processamento_agitel, organizacao_pastas,
-            substituicao_simples, botao_theme, botao_minimize, botao_fechar, botao_home
+            substituicao_simples, organizador_sicoob, botao_theme, botao_minimize, botao_fechar, botao_home
         ]
         for component in components:
             self.register_widget(component)

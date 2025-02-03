@@ -3,3 +3,4 @@ __pycache__/
 
 # Ignorar o arquivo clientes.properties
 clientes.properties
+sicoob.properties
