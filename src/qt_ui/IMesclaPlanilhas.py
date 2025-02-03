@@ -9,7 +9,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import QThread, pyqtSlot, QSettings
 from openpyxl.utils import get_column_letter
 
-from utils.GerenEstilos import (
+from utils.sheetStyles import (
     estilo_label_light, estilo_label_dark,
     campo_qline_light, campo_qline_dark,
     estilo_tabela_dark, estilo_tabela_light,

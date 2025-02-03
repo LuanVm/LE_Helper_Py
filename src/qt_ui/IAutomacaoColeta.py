@@ -6,7 +6,7 @@ from PyQt6.QtCore import QThreadPool, QSettings
 from PyQt6.QtGui import QTextCursor
 from openpyxl import load_workbook
 
-from utils.GerenEstilos import (
+from utils.sheetStyles import (
     estilo_combo_box_light, estilo_hover,
     estilo_log_light, estilo_label_light, campo_qline_light, 
     estilo_log_dark, campo_qline_dark, estilo_combo_box_dark,
