@@ -99,7 +99,7 @@ class GerenTema:
             widget.apply_styles(self.modo_escuro)
 
     def update_icons(self):
-        base_path = str(Path(__file__).resolve().parent.parent / "resources" / "icons")
+        base_path = str(Path(__file__).resolve().parent.parent / "resources" / "ui")
         theme_suffix = "dark" if self.modo_escuro else "light"
 
         self.botao_home.setIcon(QIcon(os.path.join(base_path, f"home_{theme_suffix}.png")))

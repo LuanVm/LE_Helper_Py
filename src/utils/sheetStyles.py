@@ -1,7 +1,7 @@
 def campo_qline_dark():
     return """
         QLineEdit {
-            font-family: 'Open Sans', sans-serif;
+            font-family: 'Segoe UI';
             font-size: 12px;
             color: #e6e3e3;
             background-color: #3d3d3d;
@@ -36,7 +36,7 @@ def campo_qline_dark():
 def campo_qline_light():
     return """
         QLineEdit {
-            font-family: 'Open Sans', sans-serif;
+            font-family: 'Segoe UI';
             font-size: 12px;
             color: #1c1c1c;
             background-color: #ffffff;
@@ -71,7 +71,7 @@ def campo_qline_light():
 def estilo_check_box_dark():
     return """
         QCheckBox {
-            font-family: 'Open Sans', sans-serif;
+            font-family: 'Segoe UI';
             font-size: 13px;
             color: #e6e3e3;
             spacing: 5px;
@@ -85,17 +85,17 @@ def estilo_check_box_dark():
             background-color: #ff8c00;
         }
         QCheckBox::indicator:checked {
-            image: url("src/resources/icons/checkbox_checked.png");
+            image: url("src/resources/ui/checkbox_checked.png");
         }
         QCheckBox::indicator:unchecked {
-            image: url("src/resources/icons/checkbox_unchecked.png");
+            image: url("src/resources/ui/checkbox_unchecked.png");
         }
     """
 
 def estilo_check_box_light():
     return """
         QCheckBox {
-            font-family: 'Open Sans', sans-serif;
+            font-family: 'Segoe UI';
             font-size: 13px;
             color: #1c1c1c;
             spacing: 5px;
@@ -109,10 +109,10 @@ def estilo_check_box_light():
             background-color: #ff8c00;
         }
         QCheckBox::indicator:checked {
-            image: url("src/resources/icons/checkbox_checked.png");
+            image: url("src/resources/ui/checkbox_checked.png");
         }
         QCheckBox::indicator:unchecked {
-            image: url("src/resources/icons/checkbox_unchecked.png");
+            image: url("src/resources/ui/checkbox_unchecked.png");
         }
     """
 
@@ -124,7 +124,7 @@ def estilo_combo_box_dark():
             border: 1px solid #555555;
             padding: 6px 10px;
             border-radius: 6px;
-            font-family: 'Open Sans', sans-serif;
+            font-family: 'Segoe UI';
             font-size: 13px;
             text-align: center;
             selection-background-color: #ff8c00;
@@ -148,7 +148,7 @@ def estilo_combo_box_dark():
         }
 
         QComboBox::down-arrow {
-            image: url("src/resources/icons/ui_drop_down_dark.png");
+            image: url("src/resources/ui/ui_drop_down_dark.png");
             width: 16px;
             height: 16px;
         }
@@ -195,7 +195,7 @@ def estilo_combo_box_light():
             border: 1px solid #CCCCCC;
             padding: 6px 10px;
             border-radius: 6px;
-            font-family: 'Open Sans', sans-serif;
+            font-family: 'Segoe UI';
             font-size: 13px;
             text-align: center;
             selection-background-color: #FFD699;
@@ -219,7 +219,7 @@ def estilo_combo_box_light():
         }
 
         QComboBox::down-arrow {
-            image: url("src/resources/icons/ui_drop_down_light.png");
+            image: url("src/resources/ui/ui_drop_down_light.png");
             width: 16px;
             height: 16px;
         }
@@ -259,42 +259,68 @@ def estilo_combo_box_light():
     """
 
 def estilo_hover(button, dark_mode=False):
-    """Aplica estilo de hover com suporte a dark/light mode"""
-    cor_base = "#2D2D2D" if dark_mode else "#EF4765"
-    cor_secundaria = "#404040" if dark_mode else "#f58634"
-    cor_hover = "#606060" if dark_mode else "#FFC2A3"
-    cor_borda = "rgba(255, 255, 255, 0.2)" if dark_mode else "rgba(255, 255, 255, 0.6)"
-    cor_texto = "#FFFFFF" if dark_mode else "#FFFFFF"
+    from PyQt6.QtWidgets import QGraphicsDropShadowEffect
+    from PyQt6.QtCore import QPropertyAnimation
+    from PyQt6.QtGui import QColor
 
+    # Definição das cores de acordo com o modo (dark/light)
+    cor_base       = "#2D2D2D" if dark_mode else "#EF4765"
+    cor_secundaria = "#404040" if dark_mode else "#f58634"
+    cor_hover      = "#606060" if dark_mode else "#FFC2A3"
+    cor_texto      = "#FFFFFF"
+
+    # Aplica o estilo básico via stylesheet, incluindo estados hover e pressed
     button.setStyleSheet(f"""
         QPushButton {{
             background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, 
                 stop:0 {cor_base}, 
                 stop:1 {cor_secundaria});
-            border: 0;
+            border: none;
             border-radius: 12px;
             color: {cor_texto};
             font-family: 'Segoe UI Black', Roboto, Helvetica, Arial, sans-serif;
             font-size: 12px;
-            font-weight: 500;
+            font-weight: bold;
             padding: 8px 24px;
-            text-align: center;
         }}
         QPushButton:hover {{
             background: qlineargradient(spread:pad, x1:0.5, y1:0.5, x2:1, y2:1, 
                 stop:0 {cor_hover}, 
                 stop:1 {cor_secundaria});
-            border: 1px solid {cor_borda};
+        }}
+        QPushButton:pressed {{
+            background: qlineargradient(spread:pad, x1:0.5, y1:0.5, x2:1, y2:1, 
+                stop:0 {cor_secundaria}, 
+                stop:1 {cor_hover});
+            /* Ajuste de padding para simular o efeito de clique */
+            padding: 9px 25px;
         }}
         QPushButton:focus {{
             outline: none;
         }}
     """)
 
+    # Cria um efeito de sombra que será usado para simular o brilho animado na borda
+    efeito = QGraphicsDropShadowEffect(button)
+    efeito.setBlurRadius(20)
+    efeito.setOffset(0)  # Para centralizar o brilho ao redor do botão
+    efeito.setColor(QColor(255, 255, 255, 0))  # Inicia sem brilho (transparente)
+    button.setGraphicsEffect(efeito)
+
+    # Animação na propriedade 'color' do efeito para criar o brilho pulsante
+    anim = QPropertyAnimation(efeito, b"color")
+    anim.setDuration(2000)  # Duração do ciclo de animação (em milissegundos)
+    anim.setStartValue(QColor(255, 255, 255, 0))
+    # No meio do ciclo aumenta a opacidade para gerar o brilho
+    anim.setKeyValueAt(0.5, QColor(255, 255, 255, 200))
+    anim.setEndValue(QColor(255, 255, 255, 0))
+    anim.setLoopCount(-1)  # Loop infinito
+    anim.start()
+
 def estilo_label_dark():
     return """
         QLabel {
-            font-family: 'Open Sans';
+            font-family: 'Segoe UI';
             padding-left: 0.5em;
             font-size: 13px;
             color: #e6e3e3;
@@ -304,7 +330,7 @@ def estilo_label_dark():
 def estilo_label_light():
     return """
         QLabel {
-            font-family: 'Open Sans';
+            font-family: 'Segoe UI';
             padding-left: 0.5em;
             font-size: 13px;
             color: #1c1c1c;
@@ -344,7 +370,7 @@ def estilo_progress_bar_dark():
             border: 1px solid #555555;
             border-radius: 6px;
             text-align: center;
-            font-family: 'Open Sans', sans-serif;
+            font-family: 'Segoe UI';
             font-size: 12px;
             color: #e6e3e3;
         }
@@ -363,7 +389,7 @@ def estilo_progress_bar_light():
             border: 1px solid #cccccc;
             border-radius: 6px;
             text-align: center;
-            font-family: 'Open Sans', sans-serif;
+            font-family: 'Segoe UI';
             font-size: 12px;
             color: #333333;
         }
@@ -398,7 +424,7 @@ def estilo_sheet_dark():
 
         QLabel#titulo {
             font-size: 16px;
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI';
             color: #e6e3e3;
             font-weight: bold;
             padding-left: 4px;
@@ -445,7 +471,7 @@ def estilo_sheet_light():
 
         QLabel#titulo {
             font-size: 16px;
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI';
             color: #474746;
             font-weight: bold;
             padding-left: 4px;
@@ -501,7 +527,7 @@ def estilo_tabela_dark():
             border: 1px solid #444444;
             border-radius: 5px;
             gridline-color: #444444;
-            font-family: 'Open Sans';
+            font-family: 'Segoe UI';
             font-size: 12px;
         }
 
@@ -545,7 +571,7 @@ def estilo_tabela_light():
             border: 1px solid #cccccc;
             border-radius: 5px;
             gridline-color: #e6e3e3;
-            font-family: 'Open Sans';
+            font-family: 'Segoe UI';
             font-size: 12px;
         }
 
