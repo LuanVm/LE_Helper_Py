@@ -219,7 +219,7 @@ class HomeScreen(QWidget):
 
     def setup_animations(self) -> None:
         """Configura animações de entrada para opacidade e posição (simulada via spacer)."""
-        duration = 3000  # 3 segundos
+        duration = 2000  # 3 segundos
 
         # --- Animação de opacidade para o logo ---
         self.logo_anim = QPropertyAnimation(self.logo_opacity_effect, b"opacity")

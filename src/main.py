@@ -23,6 +23,7 @@ from qt_ui.iOrganizacaoSicoob import PainelOrganizacaoSicoob
 from utils.windowManager import ResizableWindow
 from utils.themeManager import GerenTema
 
+### Corrigir bug dos retangulos perderem elementos no X ao redimensionar antes de trocar tema
 
 class AnimatedButton(QPushButton):
     def __init__(self, parent=None):

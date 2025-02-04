@@ -1,7 +1,7 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 a = Analysis(
-    ['src\\app.py'],  # Script principal
+    ['src\\main.py'],  # Script principal
     pathex=['C:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de Trabalho\\Geral\\00. Works\\LE_Helper'],  # Caminho do projeto
     binaries=[],
     datas=[
@@ -43,5 +43,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon='C:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de Trabalho\\Geral\\00. Works\\LE_Helper\\src\\resources\\logo.ico',  # Caminho completo do ícone
+    icon='C:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de Trabalho\\Geral\\00. Works\\LE_Helper\\src\\resources\\icons\\logo.ico',  # Caminho completo do ícone
 )
