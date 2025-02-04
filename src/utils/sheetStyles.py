@@ -73,22 +73,46 @@ def estilo_check_box_dark():
         QCheckBox {
             font-family: 'Segoe UI';
             font-size: 13px;
-            color: #e6e3e3;
-            spacing: 5px;
+            color: #f0f0f0;
+            spacing: 8px;
+        }
+        QCheckBox:disabled {
+            color: #808080;
         }
         QCheckBox::indicator {
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #606060;
             border-radius: 4px;
+            background: #404040;
         }
         QCheckBox::indicator:hover {
-            background-color: #ff8c00;
+            border-color: #ff9e3d;
+            background: #484848;
+        }
+        QCheckBox::indicator:pressed {
+            border-color: #ff6d00;
+            background: #505050;
         }
         QCheckBox::indicator:checked {
-            image: url("src/resources/ui/checkbox_checked.png");
+            background-color: #ff8c00;
+            border-color: #ff8c00;
         }
-        QCheckBox::indicator:unchecked {
-            image: url("src/resources/ui/checkbox_unchecked.png");
+        QCheckBox::indicator:checked:hover {
+            background-color: #ff9e3d;
+            border-color: #ff9e3d;
+        }
+        QCheckBox::indicator:checked:pressed {
+            background-color: #ff6d00;
+            border-color: #ff6d00;
+        }
+        QCheckBox::indicator:checked:disabled {
+            background-color: #806040;
+            border-color: #604830;
+        }
+        QCheckBox::indicator:disabled {
+            border-color: #505050;
+            background: #303030;
         }
     """
 
@@ -97,22 +121,46 @@ def estilo_check_box_light():
         QCheckBox {
             font-family: 'Segoe UI';
             font-size: 13px;
-            color: #1c1c1c;
-            spacing: 5px;
+            color: #1a1a1a;
+            spacing: 8px;
+        }
+        QCheckBox:disabled {
+            color: #a0a0a0;
         }
         QCheckBox::indicator {
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #909090;
             border-radius: 4px;
+            background: #ffffff;
         }
         QCheckBox::indicator:hover {
-            background-color: #ff8c00;
+            border-color: #ff9e3d;
+            background: #f8f8f8;
+        }
+        QCheckBox::indicator:pressed {
+            border-color: #ff6d00;
+            background: #f0f0f0;
         }
         QCheckBox::indicator:checked {
-            image: url("src/resources/ui/checkbox_checked.png");
+            background-color: #ff8c00;
+            border-color: #ff8c00;
         }
-        QCheckBox::indicator:unchecked {
-            image: url("src/resources/ui/checkbox_unchecked.png");
+        QCheckBox::indicator:checked:hover {
+            background-color: #ff9e3d;
+            border-color: #ff9e3d;
+        }
+        QCheckBox::indicator:checked:pressed {
+            background-color: #ff6d00;
+            border-color: #ff6d00;
+        }
+        QCheckBox::indicator:checked:disabled {
+            background-color: #ffd8a8;
+            border-color: #e0e0e0;
+        }
+        QCheckBox::indicator:disabled {
+            border-color: #d0d0d0;
+            background: #f8f8f8;
         }
     """
 

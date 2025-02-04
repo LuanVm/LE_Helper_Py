@@ -1,7 +1,6 @@
 import configparser
 import os
 from collections import defaultdict
-from pathlib import Path
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
     QWidget, QLabel, QTextEdit, QLineEdit, QPushButton, QCheckBox,
