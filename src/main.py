@@ -12,12 +12,12 @@ from services.ProcessamentoAgitel import ProcessadorAgitel
 
 # UI/Interface
 from qt_ui.homeScreen import HomeScreen
-from qt_ui.iAutomacaoColeta import PainelAutomacaoColeta
-from qt_ui.iMesclaPlanilhas import PainelMesclaPlanilha
-from qt_ui.iOrganizacaoPastas import PainelOrganizacaoPastas
-from qt_ui.iProcessamentoAgitel import PainelProcessamentoAgitel
-from qt_ui.iSubstituicaoSimples import PainelSubstituicaoSimples
-from qt_ui.iOrganizacaoSicoob import PainelOrganizacaoSicoob
+from qt_ui.IAutomacaoColeta import PainelAutomacaoColeta
+from qt_ui.IMesclaPlanilhas import PainelMesclaPlanilha
+from qt_ui.IOrganizacaoPastas import PainelOrganizacaoPastas
+from qt_ui.IProcessamentoAgitel import PainelProcessamentoAgitel
+from qt_ui.ISubstituicaoSimples import PainelSubstituicaoSimples
+from qt_ui.IOrganizacaoSicoob import PainelOrganizacaoSicoob
 
 # Utils/Modules
 from utils.windowManager import ResizableWindow
