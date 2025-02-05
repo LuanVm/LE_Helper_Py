@@ -9,6 +9,7 @@ from PyQt6.QtGui import QPixmap, QIcon, QEnterEvent
 
 # Business/Logic
 from services.ProcessamentoAgitel import ProcessadorAgitel
+from services.AutomacaoColeta import Blume
 
 # UI/Interface
 from qt_ui.homeScreen import HomeScreen
@@ -25,6 +26,8 @@ from utils.windowManager import ResizableWindow
 from utils.themeManager import GerenTema
 
 ### Corrigir bug dos retangulos perderem elementos no X ao redimensionar antes de trocar tema
+### Adicionar tratamento de faturas vencidas na classe de automação em selenium
+### Corrigir bug onde é identificado mais que 1 /span contendo "Pagar boleto", em que ele tenta acessar antes de retornar para billings
 
 class AnimatedButton(QPushButton):
     def __init__(self, parent=None):
@@ -36,6 +39,7 @@ class AnimatedButton(QPushButton):
         self.anim.setDuration(200)
         self.anim.setEasingCurve(QEasingCurve.Type.OutQuad)
         self.setMouseTracking(True)
+        #self.blume = Blume(parent=self, caminho_dados)
 
     def enterEvent(self, event: QEnterEvent):
         self.anim.setEndValue(self._hover_icon_size)
@@ -156,6 +160,7 @@ class MainApp(ResizableWindow):
 
         self.button_exit = AnimatedButton(self.barra_titulo)
         self.button_exit.setFixedSize(QSize(20, 20))
+        #self.button_exit.clicked.connect(self.blume.fechar_navegadores)
         self.button_exit.clicked.connect(self.close)
 
         layout.addWidget(self.button_theme)

@@ -79,7 +79,7 @@ class Blume:
             opcoes = webdriver.ChromeOptions()
             opcoes.add_argument("--disable-extensions")
             opcoes.add_argument("--disable-popup-blocking")
-            #opcoes.add_argument("--headless")
+            opcoes.add_argument("--headless")
             self.parent.log_mensagem("Abrindo navegador...", area="tecnico")
             driver = webdriver.Chrome(
                 service=Service(ChromeDriverManager().install()),
@@ -112,11 +112,11 @@ class Blume:
             driver = None
             try:
                 driver = self.inicializar_navegador()
-                wait = WebDriverWait(driver, 15)
+                wait = WebDriverWait(driver, 2)
                 driver.get("https://portal.blumetelecom.com.br")
                 self.fazer_login(driver, wait, usuario)
                 self.processar_boletos(driver, wait, usuario)
-                # Após processar boletos, marca as linhas pendentes como INDISPONÍVEL
+                # Após processar boletos, marca os boletos pendentes do login como INDISPONIVEL
                 self.marcar_pendentes_indisponiveis(usuario['LOGIN'])
             except Exception as erro:
                 self.parent.log_mensagem(f"Erro no processamento: {str(erro)}", area="tecnico")
@@ -150,19 +150,24 @@ class Blume:
             raise
 
     def processar_boletos(self, driver, wait, dados_usuario):
-        """Processa os boletos disponíveis no portal"""
+        """
+        Processa os boletos disponíveis no portal.
+        Ao entrar na página de billings, identifica quantos textos "Pagar boleto" existem,
+        numera-os (ex.: Pagar boleto - 01, Pagar boleto - 02, etc.) e processa cada um sequencialmente.
+        """
         try:
             ids_processados = set()
             while True:
                 driver.get("https://portal.blumetelecom.com.br/billings")
+                # Verifica se há mensagem informando que não há faturas em aberto.
                 try:
-                    mensagem_sem_faturas = wait.until(
+                    wait.until(
                         EC.presence_of_element_located(
                             (By.XPATH, "//h5[contains(text(), 'Você não possui faturas em aberto')]")
                         )
                     )
                     self.parent.log_mensagem("Nenhuma fatura disponível", area="tecnico")
-                    # Marca o usuário como INDISPONÍVEL para evitar reprocessamento
+                    # Atualiza o status do login para INDISPONIVEL para evitar reprocessamento.
                     self.atualizar_status_planilha(dados_usuario['LOGIN'], 'INDISPONIVEL')
                     return
                 except:
@@ -176,10 +181,17 @@ class Blume:
                     self.parent.log_mensagem(f"Erro ao buscar boletos: {erro}", area="tecnico")
                     break
 
+                # Registra quantos "Pagar boleto" foram encontrados
+                total_botoes = len(botoes_boleto)
+                self.parent.log_mensagem(f"Foram encontrados {total_botoes} boleto(s) para processar", area="tecnico")
+                
                 for indice, botao in enumerate(botoes_boleto):
                     id_boleto = f"botao-{indice}"
                     if id_boleto in ids_processados:
                         continue
+
+                    # Loga qual botão está sendo processado (ex.: Pagar boleto - 01)
+                    self.parent.log_mensagem(f"Processando Pagar boleto - {indice + 1}", area="tecnico")
                     try:
                         # Clique via JavaScript para agilizar a interação
                         driver.execute_script("arguments[0].click();", botao)
@@ -192,9 +204,11 @@ class Blume:
                                 for f in os.listdir(os.path.join(os.path.expanduser('~'), 'Downloads'))
                             )
                         )
+                        # Após processar o boleto, retorna para a página de billings
+                        driver.get("https://portal.blumetelecom.com.br/billings")
                     except Exception as erro:
                         self.parent.log_mensagem(f"Erro ao processar boleto {indice + 1}: {erro}", area="tecnico")
-                if len(ids_processados) >= len(botoes_boleto):
+                if len(ids_processados) >= total_botoes:
                     break
         except Exception as erro:
             self.parent.log_mensagem(f"Erro geral no processamento: {erro}", area="tecnico")
@@ -215,6 +229,9 @@ class Blume:
                 contrato = self.extrair_contrato_pdf(arquivo)
                 if contrato:
                     self.processar_arquivo_baixado(contrato, arquivo, dados_usuario)
+                else:
+                    # Se o contrato (boleto) não for encontrado, move o arquivo para a pasta de boletos não encontrados.
+                    self.mover_arquivo_nao_encontrado(arquivo)
         except Exception as erro:
             self.parent.log_mensagem(f"Erro no download: {erro}", area="tecnico")
 
@@ -248,19 +265,25 @@ class Blume:
     def extrair_contrato_pdf(self, caminho_pdf):
         """Extrai o número do contrato de um arquivo PDF"""
         try:
-            leitor = PdfReader(caminho_pdf)
-            texto = "".join([pagina.extract_text() for pagina in leitor.pages])
-            # Primeira tentativa: busca padrão com zeros à esquerda.
-            contrato = re.search(r'\b0{3,}(\d{3,})\b', texto)
-            if contrato:
-                return contrato.group(1)
-            # Se não encontrar, busca a palavra "contrato" e extrai o número
-            if "contrato" in texto.lower():
-                indice = texto.lower().find(",\d{2}")
-                subtexto = texto[indice:]
-                contrato = re.search(r'(\d{3,})\b', subtexto)
-                if contrato:
-                    return contrato.group(1)
+            # Abre o arquivo em modo binário
+            with open(caminho_pdf, "rb") as f:
+                leitor = PdfReader(f)
+                texto = "".join(pagina.extract_text() or "" for pagina in leitor.pages)
+            
+            # Padrão que procura:
+            # - A palavra "Contrato"
+            # - O valor da fatura no formato "R$ xx,xx"
+            # - Seguido pelo número do contrato com 2 a 7 dígitos, removendo zeros à esquerda
+            padrao = re.compile(
+                r'Contrato\s*R\$\s*\d{1,4}(?:[.,]\d{3})*[.,]\d{2}\s*0*(\d{1,7})',
+                re.IGNORECASE
+            )
+            match = padrao.search(texto)
+            if match:
+                # Converte para int para remover os zeros à esquerda e volta para str
+                contrato = str(int(match.group(1)))
+                return contrato
+            
             return None
         except Exception as erro:
             self.parent.log_mensagem(f"Erro na leitura do PDF: {erro}", area="tecnico")
@@ -269,24 +292,31 @@ class Blume:
     def processar_arquivo_baixado(self, contrato, arquivo, dados_usuario):
         """Processa o arquivo baixado e atualiza a planilha"""
         contrato = contrato.lstrip('0')
+        # Verifica se o contrato já foi coletado (linha já marcada como 'COLETADO IA')
+        for linha in self.planilha.iter_rows(min_row=2, values_only=True):
+            if str(linha[4]).lstrip('0') == contrato and linha[11] == 'COLETADO IA':
+                self.parent.log_mensagem(f"O contrato {contrato} já havia sido baixado.", area="tecnico")
+                os.remove(arquivo)  # Remove o arquivo duplicado
+                return
+        # Caso contrário, procede com o processamento normal
         if self.verificar_contrato_planilha(contrato):
             nomenclatura = self.obter_nomenclatura(contrato)
-            # Remove caracteres inválidos do nome
             nomenclatura = re.sub(r'[<>:"/\\|?*]', '', str(nomenclatura))
             destino = os.path.join(self.parent.pasta_salvamento, f"{nomenclatura}.pdf")
             self.parent.log_mensagem(f"Movendo arquivo para: {destino}", area="tecnico")
             shutil.move(arquivo, destino)
             self.parent.log_mensagem(nomenclatura, area="faturas")
-            # Atualiza todas as linhas que correspondem ao contrato
             self.atualizar_status_planilha(contrato, 'COLETADO IA')
         else:
             self.mover_arquivo_nao_encontrado(arquivo)
 
     def mover_arquivo_nao_encontrado(self, arquivo):
-        """Move arquivos não identificados para pasta específica"""
-        pasta_erro = os.path.join(self.parent.pasta_salvamento, "Boleto não encontrado")
+        """Move arquivos não identificados para a pasta 'Boletos não encontrados'"""
+        pasta_erro = os.path.join(self.parent.pasta_salvamento, "Boletos não encontrados")
         os.makedirs(pasta_erro, exist_ok=True)
-        shutil.move(arquivo, os.path.join(pasta_erro, os.path.basename(arquivo)))
+        destino = os.path.join(pasta_erro, os.path.basename(arquivo))
+        shutil.move(arquivo, destino)
+        self.parent.log_mensagem(f"Arquivo movido para: {destino}", area="tecnico")
 
     def verificar_contrato_planilha(self, contrato):
         """Verifica se o contrato existe na planilha"""
@@ -303,7 +333,10 @@ class Blume:
         return None
 
     def atualizar_status_planilha(self, identificador, status):
-        """Atualiza o status na planilha Excel para todas as linhas que batem com o identificador"""
+        """
+        Atualiza o status na planilha Excel para todas as linhas que batem com o identificador.
+        O identificador pode ser o LOGIN ou o número do contrato (sem zeros à esquerda).
+        """
         self.mutex.lock()
         try:
             for linha in self.planilha.iter_rows(min_row=2):
@@ -315,13 +348,14 @@ class Blume:
 
     def marcar_pendentes_indisponiveis(self, login):
         """
-        Após o processamento dos boletos para o usuário, percorre todas as linhas da planilha e 
-        marca como "INDISPONÍVEL" aquelas que ainda não foram atualizadas para "COLETADO IA".
+        Após o processamento dos boletos para o usuário, percorre as linhas da planilha
+        que pertencem ao login informado e marca como "INDISPONIVEL" aquelas que ainda não foram
+        atualizadas para "COLETADO IA".
         """
         self.mutex.lock()
         try:
             for linha in self.planilha.iter_rows(min_row=2, values_only=False):
-                if linha[11].value not in ['COLETADO IA', 'INDISPONIVEL']:
+                if str(linha[8].value) == login and linha[11].value not in ['COLETADO IA', 'INDISPONIVEL']:
                     linha[11].value = 'INDISPONIVEL'
             self.planilha.parent.save(self.caminho_dados)
         finally:
