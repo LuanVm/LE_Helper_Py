@@ -74,7 +74,7 @@ class HomeScreen(QWidget):
 
         setores = [
             "Coleta de faturas", "Planilhamento", "Financeiro",
-            "Indisponível", "Indisponível", "Indisponível"
+            "Diretoria", "Indisponível", "Indisponível"
         ]
 
         gif_mapping = {

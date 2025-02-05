@@ -80,8 +80,8 @@ def estilo_check_box_dark():
             color: #808080;
         }
         QCheckBox::indicator {
-            width: 18px;
-            height: 18px;
+            width: 14px;
+            height: 14px;
             border: 2px solid #606060;
             border-radius: 4px;
             background: #404040;
@@ -128,8 +128,8 @@ def estilo_check_box_light():
             color: #a0a0a0;
         }
         QCheckBox::indicator {
-            width: 18px;
-            height: 18px;
+            width: 14px;
+            height: 14px;
             border: 2px solid #909090;
             border-radius: 4px;
             background: #ffffff;

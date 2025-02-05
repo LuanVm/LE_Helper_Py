@@ -14,6 +14,9 @@ a = Analysis(
         'PyQt6',     # Módulo para interface gráfica
         'selenium',  # Módulo para automação de navegadores
         'webdriver_manager',  # Módulo para gerenciamento de drivers do Selenium
+        'python-docx' # Módulo de leitura e edição de docx
+        'docx2pdf' # Módulo de conversão docx para pdf
+        'validate-docbr'
     ],
     hookspath=[],
     hooksconfig={},

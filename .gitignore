@@ -1,6 +1,10 @@
 # Ignorar todas as pastas __pycache__
 __pycache__/
 
-# Ignorar o arquivo clientes.properties
+# Ignorar os arquivos .properties
 clientes.properties
 sicoob.properties
+
+# Ignorar o arquivo "modelo_contrato.docx", pois possui dados sensíveis
+/src/templates/modelo_contrato.docx
+

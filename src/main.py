@@ -18,6 +18,7 @@ from qt_ui.IOrganizacaoPastas import PainelOrganizacaoPastas
 from qt_ui.IProcessamentoAgitel import PainelProcessamentoAgitel
 from qt_ui.ISubstituicaoSimples import PainelSubstituicaoSimples
 from qt_ui.IOrganizacaoSicoob import PainelOrganizacaoSicoob
+from qt_ui.IPreenchimentoContrato import PainelPreenchimentoContrato
 
 # Utils/Modules
 from utils.windowManager import ResizableWindow
@@ -28,8 +29,8 @@ from utils.themeManager import GerenTema
 class AnimatedButton(QPushButton):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self._normal_icon_size = QSize(16, 16)
-        self._hover_icon_size = QSize(18, 18)
+        self._normal_icon_size = QSize(15, 15)
+        self._hover_icon_size = QSize(16, 16)
         self.setIconSize(self._normal_icon_size)
         self.anim = QPropertyAnimation(self, b"iconSize")
         self.anim.setDuration(200)
@@ -68,7 +69,8 @@ class MainApp(ResizableWindow):
             "Processamento Agitel": 3,
             "Mesclagem de Planilhas": 4,
             "Substituição Simples": 5,
-            "Organizador (NF) Sicoob": 6
+            "Organizador (NF) Sicoob": 6,
+            "Preenchimento de contrato": 7
         }
 
         self._configure_ui_components()
@@ -171,6 +173,7 @@ class MainApp(ResizableWindow):
             self.processamento_agitel,
             self.substituicao_simples,
             self.organizador_sicoob,
+            self.preenchimento_contrato,
             self.button_theme,
             self.button_minimize,
             self.button_exit,
@@ -191,6 +194,7 @@ class MainApp(ResizableWindow):
         self.painel_mesclagem = PainelMesclaPlanilha()
         self.substituicao_simples = PainelSubstituicaoSimples()
         self.organizador_sicoob = PainelOrganizacaoSicoob()
+        self.preenchimento_contrato = PainelPreenchimentoContrato()
 
         self.processamento_agitel.processStarted.connect(self._iniciar_processamento_agitel)
 
@@ -201,6 +205,7 @@ class MainApp(ResizableWindow):
         self.stacked_content.addWidget(self.painel_mesclagem)
         self.stacked_content.addWidget(self.substituicao_simples)
         self.stacked_content.addWidget(self.organizador_sicoob)
+        self.stacked_content.addWidget(self.preenchimento_contrato)
 
         self.layout.addWidget(self.central_content, stretch=1)
 
@@ -239,7 +244,8 @@ class MainApp(ResizableWindow):
             0: ["Automação da Coleta"],
             1: ["Organização de Pastas", "Processamento Agitel",
                 "Mesclagem de Planilhas", "Substituição Simples"],
-            2: ["Organizador (NF) Sicoob"]
+            2: ["Organizador (NF) Sicoob"],
+            3: ["Preenchimento de contrato"]
         }
         self.funcionalidades_combo.clear()
         if index in function_groups:
@@ -273,6 +279,7 @@ class MainApp(ResizableWindow):
         self.theme_manager.register_widget(self.organizacao_pastas)
         self.theme_manager.register_widget(self.painel_mesclagem)
         self.theme_manager.register_widget(self.organizador_sicoob)
+        self.theme_manager.register_widget(self.preenchimento_contrato)
         self.theme_manager.register_widget(self.home_screen)
         self.theme_manager.update_icons()
         self.theme_manager.aplicar_tema()

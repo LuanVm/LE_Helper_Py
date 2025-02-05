@@ -67,7 +67,7 @@ class Blume:
     def __init__(self, parent, caminho_dados):
         self.parent = parent
         self.caminho_dados = caminho_dados
-        self.planilha = load_workbook(caminho_dados).active
+        self.planilha = load_workbook(caminho_dados, data_only=True).active
         self.mutex = QMutex()
         self.flag_parar = False
         self.drivers = []
@@ -78,7 +78,7 @@ class Blume:
             opcoes = webdriver.ChromeOptions()
             opcoes.add_argument("--disable-extensions")
             opcoes.add_argument("--disable-popup-blocking")
-            opcoes.add_argument("--headless")
+            #opcoes.add_argument("--headless")
 
             self.parent.log_mensagem("Abrindo navegador...", area="tecnico")
             driver = webdriver.Chrome(
@@ -106,7 +106,8 @@ class Blume:
                 self.fechar_navegadores()
                 return
 
-            if usuario['STATUS'] == 'COLETADO IA':
+            # Se o STATUS já estiver como "COLETADO IA" ou "INDISPONIVEL", pula a execução.
+            if usuario['STATUS'] in ['COLETADO IA', 'INDISPONIVEL']:
                 continue
 
             driver = None
@@ -131,7 +132,6 @@ class Blume:
             wait.until(lambda driver: driver.execute_script("return document.readyState") == "complete")
 
             campo_email = wait.until(EC.presence_of_element_located((By.ID, "loginUsername")))
-
             driver.execute_script("arguments[0].scrollIntoView(true);", campo_email)
             campo_email.send_keys(dados_usuario['LOGIN'])
 
@@ -168,6 +168,7 @@ class Blume:
                             (By.XPATH, "//h5[contains(text(), 'Você não possui faturas em aberto')]"))
                     )
                     self.parent.log_mensagem("Nenhuma fatura disponível", area="tecnico")
+                    # Marca o usuário como "INDISPONIVEL" para que não seja reprocessado nesta execução
                     self.atualizar_status_planilha(dados_usuario['LOGIN'], 'INDISPONIVEL')
                     return
                 except:
@@ -187,9 +188,8 @@ class Blume:
                         continue
 
                     try:
-                        wait.until(EC.element_to_be_clickable(botao))
-                        driver.execute_script("arguments[0].scrollIntoView(true);", botao)
-                        botao.click()
+                        # Usamos clique via JavaScript para agilizar a interação
+                        driver.execute_script("arguments[0].click();", botao)
                         self.baixar_boleto(wait, dados_usuario, indice + 1)
                         ids_processados.add(id_boleto)
                     except Exception as erro:
@@ -209,6 +209,9 @@ class Blume:
                 EC.presence_of_element_located((By.XPATH, "//p[text()='Baixar boleto']"))
             )
             botao_download.click()
+            
+            # Aguarda alguns segundos para que o download tenha tempo de iniciar
+            time.sleep(3)
 
             caminho_download = os.path.join(os.path.expanduser('~'), 'Downloads')
             arquivo = self.aguardar_download(caminho_download)
@@ -221,13 +224,31 @@ class Blume:
             self.parent.log_mensagem(f"Erro no download: {erro}", area="tecnico")
 
     def aguardar_download(self, pasta):
-        """Aguarda a conclusão do download do arquivo"""
+        """Aguarda a conclusão do download do arquivo e retorna o caminho do arquivo mais recente."""
+        def nome_valido(nome):
+            # Aqui você pode definir regras para considerar um nome válido.
+            # Por exemplo, permitir apenas letras, dígitos e o ponto final:
+            return re.fullmatch(r"[A-Za-z0-9]+\.(pdf|PDF)", nome) is not None
+
         tempo_limite = 60
         while tempo_limite > 0:
-            arquivos = [f for f in os.listdir(pasta) if f.endswith(".pdf")]
-            if arquivos:
-                arquivo_recente = os.path.join(pasta, max(arquivos, key=lambda f: os.path.getmtime(os.path.join(pasta, f))))
-                if not arquivo_recente.endswith(".crdownload"):
+            arquivos = [f for f in os.listdir(pasta) if f.lower().endswith(".pdf")]
+            # Se houver arquivos, filtra para os que possuem nome válido (caso necessário)
+            arquivos_validos = [f for f in arquivos if nome_valido(f)]
+            if arquivos_validos:
+                arquivo_recente = os.path.join(
+                    pasta,
+                    max(arquivos_validos, key=lambda f: os.path.getmtime(os.path.join(pasta, f)))
+                )
+                if not arquivo_recente.lower().endswith(".crdownload"):
+                    return arquivo_recente
+            # Se nenhum arquivo com nome válido foi encontrado, tenta com todos os PDFs
+            if arquivos and not arquivos_validos:
+                arquivo_recente = os.path.join(
+                    pasta,
+                    max(arquivos, key=lambda f: os.path.getmtime(os.path.join(pasta, f)))
+                )
+                if not arquivo_recente.lower().endswith(".crdownload"):
                     return arquivo_recente
             time.sleep(1)
             tempo_limite -= 1
@@ -238,8 +259,18 @@ class Blume:
         try:
             leitor = PdfReader(caminho_pdf)
             texto = "".join([pagina.extract_text() for pagina in leitor.pages])
+            # Primeira tentativa: busca padrão com zeros à esquerda.
             contrato = re.search(r'\b0{3,}(\d{3,})\b', texto)
-            return contrato.group(1) if contrato else None
+            if contrato:
+                return contrato.group(1)
+            # Se não encontrar, verifica se o texto contém a palavra "contrato" (case-insensitive)
+            if "contrato" in texto.lower():
+                indice = texto.lower().find("contrato")
+                subtexto = texto[indice:]
+                contrato = re.search(r'(\d{3,})\b', subtexto)
+                if contrato:
+                    return contrato.group(1)
+            return None
         except Exception as erro:
             self.parent.log_mensagem(f"Erro na leitura do PDF: {erro}", area="tecnico")
             return None
@@ -249,7 +280,10 @@ class Blume:
         contrato = contrato.lstrip('0')
         if self.verificar_contrato_planilha(contrato):
             nomenclatura = self.obter_nomenclatura(contrato)
+            # Remove caracteres inválidos do nome
+            nomenclatura = re.sub(r'[<>:"/\\|?*]', '', str(nomenclatura))
             destino = os.path.join(self.parent.pasta_salvamento, f"{nomenclatura}.pdf")
+            self.parent.log_mensagem(f"Movendo arquivo para: {destino}", area="tecnico")
             shutil.move(arquivo, destino)
             self.parent.log_mensagem(nomenclatura, area="faturas")
             self.atualizar_status_planilha(contrato, 'COLETADO IA')
@@ -289,9 +323,12 @@ class Blume:
             self.mutex.unlock()
 
     def verificar_coleta_completa(self):
-        """Verifica se todas as faturas foram coletadas"""
+        """
+        Verifica se todas as faturas foram coletadas.
+        Agora, considera processadas as linhas que estão com status 'COLETADO IA' ou 'INDISPONIVEL'.
+        """
         for linha in self.planilha.iter_rows(min_row=2, values_only=True):
-            if linha[11] != 'COLETADO IA':
+            if linha[11] not in ['COLETADO IA', 'INDISPONIVEL']:
                 return False
         return True
 
