@@ -67,6 +67,7 @@ class Blume:
     def __init__(self, parent, caminho_dados):
         self.parent = parent
         self.caminho_dados = caminho_dados
+        # Ao carregar a planilha com data_only=True, obtemos os valores já calculados
         self.planilha = load_workbook(caminho_dados, data_only=True).active
         self.mutex = QMutex()
         self.flag_parar = False
@@ -79,7 +80,6 @@ class Blume:
             opcoes.add_argument("--disable-extensions")
             opcoes.add_argument("--disable-popup-blocking")
             #opcoes.add_argument("--headless")
-
             self.parent.log_mensagem("Abrindo navegador...", area="tecnico")
             driver = webdriver.Chrome(
                 service=Service(ChromeDriverManager().install()),
@@ -87,7 +87,6 @@ class Blume:
             )
             self.drivers.append(driver)
             return driver
-            
         except Exception as erro:
             self.parent.log_mensagem(f"Falha ao iniciar navegador: {erro}", area="tecnico")
             raise
@@ -117,39 +116,35 @@ class Blume:
                 driver.get("https://portal.blumetelecom.com.br")
                 self.fazer_login(driver, wait, usuario)
                 self.processar_boletos(driver, wait, usuario)
-                
+                # Após processar boletos, marca as linhas pendentes como INDISPONÍVEL
+                self.marcar_pendentes_indisponiveis(usuario['LOGIN'])
             except Exception as erro:
                 self.parent.log_mensagem(f"Erro no processamento: {str(erro)}", area="tecnico")
             finally:
                 if driver:
                     driver.quit()
-                    self.drivers.remove(driver)
+                    if driver in self.drivers:
+                        self.drivers.remove(driver)
 
     def fazer_login(self, driver, wait, dados_usuario):
         """Realiza o login no portal da Blume"""
         try:
             self.parent.log_mensagem(f"Realizando login no acesso: {dados_usuario['LOGIN']}", area="tecnico")
             wait.until(lambda driver: driver.execute_script("return document.readyState") == "complete")
-
             campo_email = wait.until(EC.presence_of_element_located((By.ID, "loginUsername")))
             driver.execute_script("arguments[0].scrollIntoView(true);", campo_email)
             campo_email.send_keys(dados_usuario['LOGIN'])
-
             campo_senha = wait.until(EC.element_to_be_clickable((By.NAME, "password")))
             driver.execute_script("arguments[0].scrollIntoView(true);", campo_senha)
             campo_senha.clear()
             campo_senha.send_keys(dados_usuario['SENHA'])
-
             time.sleep(1)
             botao_login = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "MuiButton-label")))
             driver.execute_script("arguments[0].scrollIntoView(true);", botao_login)
             botao_login.click()
-
             time.sleep(2)
             driver.get("https://portal.blumetelecom.com.br/billings")
-
             self.parent.log_mensagem("Login realizado com sucesso!", area="tecnico")
-
         except Exception as erro:
             self.parent.log_mensagem(f"Falha no login: {erro}", area="tecnico")
             raise
@@ -158,17 +153,16 @@ class Blume:
         """Processa os boletos disponíveis no portal"""
         try:
             ids_processados = set()
-
             while True:
                 driver.get("https://portal.blumetelecom.com.br/billings")
-
                 try:
                     mensagem_sem_faturas = wait.until(
                         EC.presence_of_element_located(
-                            (By.XPATH, "//h5[contains(text(), 'Você não possui faturas em aberto')]"))
+                            (By.XPATH, "//h5[contains(text(), 'Você não possui faturas em aberto')]")
+                        )
                     )
                     self.parent.log_mensagem("Nenhuma fatura disponível", area="tecnico")
-                    # Marca o usuário como "INDISPONIVEL" para que não seja reprocessado nesta execução
+                    # Marca o usuário como INDISPONÍVEL para evitar reprocessamento
                     self.atualizar_status_planilha(dados_usuario['LOGIN'], 'INDISPONIVEL')
                     return
                 except:
@@ -186,18 +180,22 @@ class Blume:
                     id_boleto = f"botao-{indice}"
                     if id_boleto in ids_processados:
                         continue
-
                     try:
-                        # Usamos clique via JavaScript para agilizar a interação
+                        # Clique via JavaScript para agilizar a interação
                         driver.execute_script("arguments[0].click();", botao)
                         self.baixar_boleto(wait, dados_usuario, indice + 1)
                         ids_processados.add(id_boleto)
+                        # Aguarda de forma dinâmica a finalização do download
+                        WebDriverWait(driver, 10).until(
+                            lambda d: not any(
+                                f.lower().endswith(".crdownload")
+                                for f in os.listdir(os.path.join(os.path.expanduser('~'), 'Downloads'))
+                            )
+                        )
                     except Exception as erro:
                         self.parent.log_mensagem(f"Erro ao processar boleto {indice + 1}: {erro}", area="tecnico")
-
                 if len(ids_processados) >= len(botoes_boleto):
                     break
-
         except Exception as erro:
             self.parent.log_mensagem(f"Erro geral no processamento: {erro}", area="tecnico")
             raise
@@ -209,13 +207,10 @@ class Blume:
                 EC.presence_of_element_located((By.XPATH, "//p[text()='Baixar boleto']"))
             )
             botao_download.click()
-            
             # Aguarda alguns segundos para que o download tenha tempo de iniciar
             time.sleep(3)
-
             caminho_download = os.path.join(os.path.expanduser('~'), 'Downloads')
             arquivo = self.aguardar_download(caminho_download)
-
             if arquivo:
                 contrato = self.extrair_contrato_pdf(arquivo)
                 if contrato:
@@ -226,14 +221,11 @@ class Blume:
     def aguardar_download(self, pasta):
         """Aguarda a conclusão do download do arquivo e retorna o caminho do arquivo mais recente."""
         def nome_valido(nome):
-            # Aqui você pode definir regras para considerar um nome válido.
-            # Por exemplo, permitir apenas letras, dígitos e o ponto final:
             return re.fullmatch(r"[A-Za-z0-9]+\.(pdf|PDF)", nome) is not None
 
         tempo_limite = 60
         while tempo_limite > 0:
             arquivos = [f for f in os.listdir(pasta) if f.lower().endswith(".pdf")]
-            # Se houver arquivos, filtra para os que possuem nome válido (caso necessário)
             arquivos_validos = [f for f in arquivos if nome_valido(f)]
             if arquivos_validos:
                 arquivo_recente = os.path.join(
@@ -242,7 +234,6 @@ class Blume:
                 )
                 if not arquivo_recente.lower().endswith(".crdownload"):
                     return arquivo_recente
-            # Se nenhum arquivo com nome válido foi encontrado, tenta com todos os PDFs
             if arquivos and not arquivos_validos:
                 arquivo_recente = os.path.join(
                     pasta,
@@ -263,9 +254,9 @@ class Blume:
             contrato = re.search(r'\b0{3,}(\d{3,})\b', texto)
             if contrato:
                 return contrato.group(1)
-            # Se não encontrar, verifica se o texto contém a palavra "contrato" (case-insensitive)
+            # Se não encontrar, busca a palavra "contrato" e extrai o número
             if "contrato" in texto.lower():
-                indice = texto.lower().find("contrato")
+                indice = texto.lower().find(",\d{2}")
                 subtexto = texto[indice:]
                 contrato = re.search(r'(\d{3,})\b', subtexto)
                 if contrato:
@@ -286,6 +277,7 @@ class Blume:
             self.parent.log_mensagem(f"Movendo arquivo para: {destino}", area="tecnico")
             shutil.move(arquivo, destino)
             self.parent.log_mensagem(nomenclatura, area="faturas")
+            # Atualiza todas as linhas que correspondem ao contrato
             self.atualizar_status_planilha(contrato, 'COLETADO IA')
         else:
             self.mover_arquivo_nao_encontrado(arquivo)
@@ -311,21 +303,34 @@ class Blume:
         return None
 
     def atualizar_status_planilha(self, identificador, status):
-        """Atualiza o status na planilha Excel"""
+        """Atualiza o status na planilha Excel para todas as linhas que batem com o identificador"""
         self.mutex.lock()
         try:
             for linha in self.planilha.iter_rows(min_row=2):
-                if str(linha[8].value) == identificador or str(linha[4].value).lstrip('0') == identificador:
+                if (str(linha[8].value) == identificador or str(linha[4].value).lstrip('0') == identificador):
                     linha[11].value = status
-                    self.planilha.parent.save(self.caminho_dados)
-                    break
+            self.planilha.parent.save(self.caminho_dados)
+        finally:
+            self.mutex.unlock()
+
+    def marcar_pendentes_indisponiveis(self, login):
+        """
+        Após o processamento dos boletos para o usuário, percorre todas as linhas da planilha e 
+        marca como "INDISPONÍVEL" aquelas que ainda não foram atualizadas para "COLETADO IA".
+        """
+        self.mutex.lock()
+        try:
+            for linha in self.planilha.iter_rows(min_row=2, values_only=False):
+                if linha[11].value not in ['COLETADO IA', 'INDISPONIVEL']:
+                    linha[11].value = 'INDISPONIVEL'
+            self.planilha.parent.save(self.caminho_dados)
         finally:
             self.mutex.unlock()
 
     def verificar_coleta_completa(self):
         """
         Verifica se todas as faturas foram coletadas.
-        Agora, considera processadas as linhas que estão com status 'COLETADO IA' ou 'INDISPONIVEL'.
+        Considera processadas as linhas que estão com status 'COLETADO IA' ou 'INDISPONIVEL'.
         """
         for linha in self.planilha.iter_rows(min_row=2, values_only=True):
             if linha[11] not in ['COLETADO IA', 'INDISPONIVEL']:
