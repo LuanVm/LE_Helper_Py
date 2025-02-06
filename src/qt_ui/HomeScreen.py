@@ -5,23 +5,24 @@ from functools import partial
 
 from PyQt6.QtCore import (Qt, QPropertyAnimation, pyqtSignal,
                           QParallelAnimationGroup, QEasingCurve, QSize,
-                          QEvent)
-from PyQt6.QtGui import QPixmap, QMovie, QColor
+                          QEvent, QVariantAnimation, QRect)
+from PyQt6.QtGui import QPixmap, QMovie, QFont
 from PyQt6.QtWidgets import (QWidget, QLabel, QVBoxLayout, QGridLayout,
                              QPushButton, QGraphicsOpacityEffect, QHBoxLayout)
 
 class HomeScreen(QWidget):
-    """Tela inicial com logo e botões animados."""
     boxes_clicked = pyqtSignal(int)
 
     def __init__(self, parent: QWidget = None) -> None:
         super().__init__(parent)
-        self.base_logo_size = (480, 240)
+        self.base_logo_size = (400, 200)
         self.base_boxes_width = 190
         self.base_boxes_height = 75
         self.boxes = []
+        self.boxes_containers = []
         self.button_effects = []
         self.setup_ui()
+        self.setup_inspirational_message()
 
     def setup_ui(self) -> None:
         """Configura a interface do usuário."""
@@ -29,12 +30,13 @@ class HomeScreen(QWidget):
         self.setup_boxes()
         self.setup_layout()
         self.setup_animations()
+        self.messages = []
 
     def update_geometry(self) -> None:
         """Atualiza a geometria dos componentes."""
         self.boxes_container.updateGeometry()
-        for box in self.boxes:
-            box.updateGeometry()
+        for container in self.boxes_containers:
+            container.updateGeometry()
         self.update()
 
     def setup_logo(self) -> None:
@@ -58,9 +60,9 @@ class HomeScreen(QWidget):
         """Cria os botões com GIFs e efeitos."""
         def get_base_orange():
             return (
-                random.randint(220, 255),  # componente vermelho forte
-                random.randint(120, 180),  # componente verde moderado
-                random.randint(0, 50)      # componente azul baixo
+                random.randint(220, 255),
+                random.randint(120, 180),
+                random.randint(0, 50)
             )
 
         def adjust_hsl(rgb, h_delta=0, s_delta=0, l_delta=0):
@@ -88,16 +90,27 @@ class HomeScreen(QWidget):
 
         self.boxes = []
         self.button_effects = []
+        self.boxes_containers = []
 
         for i, setor in enumerate(setores):
-            btn = QPushButton("", self)
-            btn.setFixedSize(self.base_boxes_width, self.base_boxes_height)
+            # Container para o botão com tamanho fixo que comporta o botão no tamanho máximo (1.1x)
+            container = QWidget()
+            container.setFixedSize(int(self.base_boxes_width * 1.1), int(self.base_boxes_height * 1.1))
+            container_layout = QVBoxLayout(container)
+            container_layout.setContentsMargins(0, 0, 0, 0)
+            container_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+            # Botão principal
+            btn = QPushButton("", container)
+            # Define tamanho mínimo e máximo para permitir animação
+            btn.setMinimumSize(self.base_boxes_width, self.base_boxes_height)
+            btn.setMaximumSize(self.base_boxes_width * 2, self.base_boxes_height * 2)
             btn.setObjectName("sector_button")
             
-            # Layout compacto
+            # Layout do botão
             layout = QHBoxLayout(btn)
-            layout.setContentsMargins(15, 0, 25, 0)
-            layout.setSpacing(0)
+            layout.setContentsMargins(10, 0, 15, 0)
+            layout.setSpacing(5)
 
             # Configuração do GIF
             img_label = QLabel(btn)
@@ -119,7 +132,7 @@ class HomeScreen(QWidget):
             movie.finished.connect(lambda m=movie: m.jumpToFrame(0))
             btn.installEventFilter(self)
 
-            # Texto centralizado
+            # Texto do botão
             text_label = QLabel(setor, btn)
             text_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
             text_label.setStyleSheet("""
@@ -138,13 +151,13 @@ class HomeScreen(QWidget):
             layout.addWidget(text_label, 1)
             layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-            # Efeito de opacidade para o botão
+            # Efeito de opacidade
             btn_opacity = QGraphicsOpacityEffect(btn)
             btn.setGraphicsEffect(btn_opacity)
             btn_opacity.setOpacity(0)
             self.button_effects.append(btn_opacity)
 
-            # Gradiente dinâmico em tons alaranjados com saturação um pouco mais forte
+            # Gradiente dinâmico
             base_orange = get_base_orange()
             start_color = f"#{adjust_hsl(base_orange, s_delta=-0.1, l_delta=0.1)[0]:02x}" \
                           f"{adjust_hsl(base_orange, s_delta=-0.1, l_delta=0.1)[1]:02x}" \
@@ -169,36 +182,94 @@ class HomeScreen(QWidget):
             
             btn.clicked.connect(partial(self.boxes_clicked.emit, i))
             self.boxes.append(btn)
+            container_layout.addWidget(btn)
+            self.boxes_containers.append(container)
 
+        # Configurar grid layout com os containers
         self.grid_layout = QGridLayout()
         self.grid_layout.setSpacing(20)
         self.grid_layout.setContentsMargins(20, 20, 20, 20)
-        for idx, btn in enumerate(self.boxes):
+        for idx, container in enumerate(self.boxes_containers):
             row, col = divmod(idx, 3)
-            self.grid_layout.addWidget(btn, row, col)
+            self.grid_layout.addWidget(container, row, col)
 
         self.boxes_container = QWidget()
         self.boxes_container.setLayout(self.grid_layout)
 
     def eventFilter(self, obj, event):
-        """Controla os eventos de hover para animação dos GIFs."""
+        """Controla os eventos de hover para animação dos GIFs e redimensionamento do botão."""
         if event.type() == QEvent.Type.Enter:
             if obj in self.boxes:
+                # Parar animações anteriores
+                if hasattr(obj, 'enter_anim'):
+                    obj.enter_anim.stop()
+                if hasattr(obj, 'leave_anim'):
+                    obj.leave_anim.stop()
+
+                # Iniciar animação do GIF
                 obj.movie.loopCount = -1
                 obj.movie.stopAfterCurrentLoop = False
                 obj.movie.start()
+
+                # Salva a geometria original se ainda não estiver salva
+                if not hasattr(obj, '_orig_geom'):
+                    obj._orig_geom = obj.geometry()
+
+                orig_geom = obj._orig_geom
+
+                # Calcula o tamanho ampliado (1.1x) usando os valores da base
+                enlarged_width = int(self.base_boxes_width * 1.1)
+                enlarged_height = int(self.base_boxes_height * 1.1)
+                delta_w = enlarged_width - orig_geom.width()
+                delta_h = enlarged_height - orig_geom.height()
+                new_geom = QRect(orig_geom.x() - delta_w // 2,
+                                orig_geom.y() - delta_h // 2,
+                                enlarged_width,
+                                enlarged_height)
+
+                obj.enter_anim = QPropertyAnimation(obj, b"geometry")
+                obj.enter_anim.setDuration(200)
+                obj.enter_anim.setStartValue(obj.geometry())
+                obj.enter_anim.setEndValue(new_geom)
+                obj.enter_anim.setEasingCurve(QEasingCurve.Type.OutQuad)
+                obj.enter_anim.start()
             return True
 
         elif event.type() == QEvent.Type.Leave:
             if obj in self.boxes:
+                # Parar animações anteriores
+                if hasattr(obj, 'leave_anim'):
+                    obj.leave_anim.stop()
+                if hasattr(obj, 'enter_anim'):
+                    obj.enter_anim.stop()
+
+                # Parar animação do GIF
                 obj.movie.stopAfterCurrentLoop = True
                 obj.movie.frameChanged.connect(self.handleFrameChanged)
+
+                # Em vez de recalcular a geometria com base em self.base_boxes_width,
+                # usa a geometria original salva
+                if hasattr(obj, '_orig_geom'):
+                    original_geom = obj._orig_geom
+                else:
+                    original_geom = QRect(obj.geometry().x() + (obj.geometry().width() - self.base_boxes_width) // 2,
+                                        obj.geometry().y() + (obj.geometry().height() - self.base_boxes_height) // 2,
+                                        self.base_boxes_width,
+                                        self.base_boxes_height)
+
+                current_geom = obj.geometry()
+                obj.leave_anim = QPropertyAnimation(obj, b"geometry")
+                obj.leave_anim.setDuration(200)
+                obj.leave_anim.setStartValue(current_geom)
+                obj.leave_anim.setEndValue(original_geom)
+                obj.leave_anim.setEasingCurve(QEasingCurve.Type.OutQuad)
+                obj.leave_anim.start()
             return True
 
         return super().eventFilter(obj, event)
 
     def handleFrameChanged(self, frameNumber):
-        """Verifica se o último frame foi atingido e, se a flag estiver ativa, pausa o QMovie."""
+        """Pausa o QMovie após o último frame, se solicitado."""
         movie = self.sender()
         if getattr(movie, 'stopAfterCurrentLoop', False) and frameNumber == movie.frameCount() - 1:
             movie.stop()
@@ -208,7 +279,7 @@ class HomeScreen(QWidget):
     def setup_layout(self) -> None:
         """Configura o layout principal."""
         main_layout = QVBoxLayout(self)
-        # Cria um spacer no topo para animar a subida dos elementos
+        # Spacer no topo para animação de subida
         self.top_spacer = QWidget(self)
         self.top_spacer.setFixedHeight(60)
         main_layout.addWidget(self.top_spacer)
@@ -218,28 +289,28 @@ class HomeScreen(QWidget):
         main_layout.addStretch()
 
     def setup_animations(self) -> None:
-        """Configura animações de entrada para opacidade e posição (simulada via spacer)."""
-        duration = 2000  # 3 segundos
+        """Configura animações de entrada para opacidade e posição."""
+        duration = 2000  # duração em ms
 
-        # --- Animação de opacidade para o logo ---
+        # Animação de opacidade para o logo
         self.logo_anim = QPropertyAnimation(self.logo_opacity_effect, b"opacity")
         self.logo_anim.setDuration(duration)
         self.logo_anim.setStartValue(0)
         self.logo_anim.setEndValue(1)
         self.logo_anim.setEasingCurve(QEasingCurve.Type.InOutQuad)
 
-        # --- Animação de opacidade para os botões ---
+        # Animação de opacidade para os botões
         self.button_anims = [self.create_button_animation(effect, duration)
                              for effect in self.button_effects]
 
-        # --- Animação do spacer: diminui a altura de 60 para 0 ---
+        # Animação do spacer: altura de 60 para 0
         self.spacer_anim = QPropertyAnimation(self.top_spacer, b"maximumHeight")
         self.spacer_anim.setDuration(duration)
         self.spacer_anim.setStartValue(60)
         self.spacer_anim.setEndValue(0)
         self.spacer_anim.setEasingCurve(QEasingCurve.Type.InOutQuad)
 
-        # --- Grupo de animações paralelas ---
+        # Grupo de animações paralelas
         self.parallel_anim = QParallelAnimationGroup()
         self.parallel_anim.addAnimation(self.logo_anim)
         self.parallel_anim.addAnimation(self.spacer_anim)
@@ -297,3 +368,50 @@ class HomeScreen(QWidget):
                     outline: none;
                 }}
             """)
+
+    def setup_inspirational_message(self):
+        """
+        Configura o QLabel que exibirá a mensagem inspiradora
+        no canto inferior direito com efeito de digitação.
+        """
+        messages_file = Path(__file__).resolve().parent.parent / "resources" / "misc" / "messages.txt"
+        if messages_file.exists():
+            # Remove aspas e vírgulas se necessário:
+            with open(messages_file, encoding="utf-8") as f:
+                self.messages = [line.strip().strip('",') for line in f if line.strip()]
+
+        self.message_label = QLabel(self)
+        self.message_label.setFixedWidth(400)
+        self.message_label.setWordWrap(True)
+
+        writing_font = QFont("Script MT", 13)
+        self.message_label.setFont(writing_font)
+        self.message_label.setStyleSheet("color: #8C8C8C;")
+        self.message_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom)
+        self.message_label.setText("")
+        self.message_label.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+
+        self.current_message = random.choice(self.messages)
+        duration_per_char = 30  # duração em ms para cada caractere
+        total_duration = len(self.current_message) * duration_per_char
+
+        self.typing_anim = QVariantAnimation(self)
+        self.typing_anim.setStartValue(0)
+        self.typing_anim.setEndValue(len(self.current_message))
+        self.typing_anim.setDuration(total_duration)
+        self.typing_anim.setEasingCurve(QEasingCurve.Type.Linear)
+        self.typing_anim.valueChanged.connect(self.update_typing_effect)
+        self.typing_anim.start()
+
+    def update_typing_effect(self, value):
+        """Atualiza o texto do label com efeito de digitação."""
+        chars_to_show = int(value)
+        self.message_label.setText(self.current_message[:chars_to_show])
+
+    def resizeEvent(self, event):
+        """Reposiciona o label da mensagem no canto inferior direito ao redimensionar."""
+        super().resizeEvent(event)
+        margin = 5  # margem em pixels
+        x = self.width() - self.message_label.width() - margin
+        y = self.height() - self.message_label.height() - margin
+        self.message_label.move(x, y)
