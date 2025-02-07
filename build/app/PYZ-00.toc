@@ -1,6 +1,381 @@
 ('C:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
  'Trabalho\\Geral\\00. Works\\LE_Helper\\build\\app\\PYZ-00.pyz',
- [('PyPDF2',
+ [('PIL',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\__init__.py',
+   'PYMODULE'),
+  ('PIL.BlpImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\BlpImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.BmpImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\BmpImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.BufrStubImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\BufrStubImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.CurImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\CurImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.DcxImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\DcxImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.DdsImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\DdsImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.EpsImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\EpsImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.ExifTags',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\ExifTags.py',
+   'PYMODULE'),
+  ('PIL.FitsImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\FitsImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.FliImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\FliImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.FpxImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\FpxImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.FtexImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\FtexImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.GbrImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\GbrImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.GifImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\GifImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.GimpGradientFile',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\GimpGradientFile.py',
+   'PYMODULE'),
+  ('PIL.GimpPaletteFile',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\GimpPaletteFile.py',
+   'PYMODULE'),
+  ('PIL.GribStubImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\GribStubImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.Hdf5StubImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\Hdf5StubImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.IcnsImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\IcnsImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.IcoImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\IcoImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.ImImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\ImImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.Image',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\Image.py',
+   'PYMODULE'),
+  ('PIL.ImageChops',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\ImageChops.py',
+   'PYMODULE'),
+  ('PIL.ImageCms',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\ImageCms.py',
+   'PYMODULE'),
+  ('PIL.ImageColor',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\ImageColor.py',
+   'PYMODULE'),
+  ('PIL.ImageFile',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\ImageFile.py',
+   'PYMODULE'),
+  ('PIL.ImageFilter',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\ImageFilter.py',
+   'PYMODULE'),
+  ('PIL.ImageMath',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\ImageMath.py',
+   'PYMODULE'),
+  ('PIL.ImageMode',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\ImageMode.py',
+   'PYMODULE'),
+  ('PIL.ImageOps',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\ImageOps.py',
+   'PYMODULE'),
+  ('PIL.ImagePalette',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\ImagePalette.py',
+   'PYMODULE'),
+  ('PIL.ImageQt',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\ImageQt.py',
+   'PYMODULE'),
+  ('PIL.ImageSequence',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\ImageSequence.py',
+   'PYMODULE'),
+  ('PIL.ImageShow',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\ImageShow.py',
+   'PYMODULE'),
+  ('PIL.ImageTk',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\ImageTk.py',
+   'PYMODULE'),
+  ('PIL.ImageWin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\ImageWin.py',
+   'PYMODULE'),
+  ('PIL.ImtImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\ImtImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.IptcImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\IptcImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.Jpeg2KImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\Jpeg2KImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.JpegImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\JpegImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.JpegPresets',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\JpegPresets.py',
+   'PYMODULE'),
+  ('PIL.McIdasImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\McIdasImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.MicImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\MicImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.MpegImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\MpegImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.MpoImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\MpoImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.MspImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\MspImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.PaletteFile',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\PaletteFile.py',
+   'PYMODULE'),
+  ('PIL.PalmImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\PalmImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.PcdImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\PcdImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.PcxImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\PcxImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.PdfImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\PdfImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.PdfParser',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\PdfParser.py',
+   'PYMODULE'),
+  ('PIL.PixarImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\PixarImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.PngImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\PngImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.PpmImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\PpmImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.PsdImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\PsdImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.QoiImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\QoiImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.SgiImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\SgiImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.SpiderImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\SpiderImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.SunImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\SunImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.TgaImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\TgaImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.TiffImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\TiffImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.TiffTags',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\TiffTags.py',
+   'PYMODULE'),
+  ('PIL.WebPImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\WebPImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.WmfImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\WmfImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.XVThumbImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\XVThumbImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.XbmImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\XbmImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.XpmImagePlugin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\XpmImagePlugin.py',
+   'PYMODULE'),
+  ('PIL._binary',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\_binary.py',
+   'PYMODULE'),
+  ('PIL._deprecate',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\_deprecate.py',
+   'PYMODULE'),
+  ('PIL._typing',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\_typing.py',
+   'PYMODULE'),
+  ('PIL._util',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\_util.py',
+   'PYMODULE'),
+  ('PIL._version',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\_version.py',
+   'PYMODULE'),
+  ('PIL.features',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PIL\\features.py',
+   'PYMODULE'),
+  ('PyPDF2',
    'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
    'Trabalho\\Geral\\00. '
    'Works\\LE_Helper\\.venv\\Lib\\site-packages\\PyPDF2\\__init__.py',
@@ -400,6 +775,9 @@
   ('base64',
    'C:\\Users\\LUANVITOR\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\base64.py',
    'PYMODULE'),
+  ('bdb',
+   'C:\\Users\\LUANVITOR\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\bdb.py',
+   'PYMODULE'),
   ('bisect',
    'C:\\Users\\LUANVITOR\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\bisect.py',
    'PYMODULE'),
@@ -459,14 +837,52 @@
    'Trabalho\\Geral\\00. '
    'Works\\LE_Helper\\.venv\\Lib\\site-packages\\charset_normalizer\\version.py',
    'PYMODULE'),
+  ('cmd',
+   'C:\\Users\\LUANVITOR\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\cmd.py',
+   'PYMODULE'),
   ('code',
    'C:\\Users\\LUANVITOR\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\code.py',
    'PYMODULE'),
   ('codeop',
    'C:\\Users\\LUANVITOR\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\codeop.py',
    'PYMODULE'),
+  ('colorama',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\colorama\\__init__.py',
+   'PYMODULE'),
+  ('colorama.ansi',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\colorama\\ansi.py',
+   'PYMODULE'),
+  ('colorama.ansitowin32',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\colorama\\ansitowin32.py',
+   'PYMODULE'),
+  ('colorama.initialise',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\colorama\\initialise.py',
+   'PYMODULE'),
+  ('colorama.win32',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\colorama\\win32.py',
+   'PYMODULE'),
+  ('colorama.winterm',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\colorama\\winterm.py',
+   'PYMODULE'),
   ('colorsys',
    'C:\\Users\\LUANVITOR\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\colorsys.py',
+   'PYMODULE'),
+  ('commctrl',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\win32\\lib\\commctrl.py',
    'PYMODULE'),
   ('concurrent',
    'C:\\Users\\LUANVITOR\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\concurrent\\__init__.py',
@@ -545,6 +961,474 @@
    'PYMODULE'),
   ('dis',
    'C:\\Users\\LUANVITOR\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\dis.py',
+   'PYMODULE'),
+  ('doctest',
+   'C:\\Users\\LUANVITOR\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\doctest.py',
+   'PYMODULE'),
+  ('docx',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\__init__.py',
+   'PYMODULE'),
+  ('docx.api',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\api.py',
+   'PYMODULE'),
+  ('docx.blkcntnr',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\blkcntnr.py',
+   'PYMODULE'),
+  ('docx.dml',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\dml\\__init__.py',
+   'PYMODULE'),
+  ('docx.dml.color',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\dml\\color.py',
+   'PYMODULE'),
+  ('docx.document',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\document.py',
+   'PYMODULE'),
+  ('docx.drawing',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\drawing\\__init__.py',
+   'PYMODULE'),
+  ('docx.enum',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\enum\\__init__.py',
+   'PYMODULE'),
+  ('docx.enum.base',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\enum\\base.py',
+   'PYMODULE'),
+  ('docx.enum.dml',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\enum\\dml.py',
+   'PYMODULE'),
+  ('docx.enum.section',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\enum\\section.py',
+   'PYMODULE'),
+  ('docx.enum.shape',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\enum\\shape.py',
+   'PYMODULE'),
+  ('docx.enum.style',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\enum\\style.py',
+   'PYMODULE'),
+  ('docx.enum.table',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\enum\\table.py',
+   'PYMODULE'),
+  ('docx.enum.text',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\enum\\text.py',
+   'PYMODULE'),
+  ('docx.exceptions',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\exceptions.py',
+   'PYMODULE'),
+  ('docx.image',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\image\\__init__.py',
+   'PYMODULE'),
+  ('docx.image.bmp',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\image\\bmp.py',
+   'PYMODULE'),
+  ('docx.image.constants',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\image\\constants.py',
+   'PYMODULE'),
+  ('docx.image.exceptions',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\image\\exceptions.py',
+   'PYMODULE'),
+  ('docx.image.gif',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\image\\gif.py',
+   'PYMODULE'),
+  ('docx.image.helpers',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\image\\helpers.py',
+   'PYMODULE'),
+  ('docx.image.image',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\image\\image.py',
+   'PYMODULE'),
+  ('docx.image.jpeg',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\image\\jpeg.py',
+   'PYMODULE'),
+  ('docx.image.png',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\image\\png.py',
+   'PYMODULE'),
+  ('docx.image.tiff',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\image\\tiff.py',
+   'PYMODULE'),
+  ('docx.opc',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\opc\\__init__.py',
+   'PYMODULE'),
+  ('docx.opc.constants',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\opc\\constants.py',
+   'PYMODULE'),
+  ('docx.opc.coreprops',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\opc\\coreprops.py',
+   'PYMODULE'),
+  ('docx.opc.exceptions',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\opc\\exceptions.py',
+   'PYMODULE'),
+  ('docx.opc.oxml',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\opc\\oxml.py',
+   'PYMODULE'),
+  ('docx.opc.package',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\opc\\package.py',
+   'PYMODULE'),
+  ('docx.opc.packuri',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\opc\\packuri.py',
+   'PYMODULE'),
+  ('docx.opc.part',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\opc\\part.py',
+   'PYMODULE'),
+  ('docx.opc.parts',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\opc\\parts\\__init__.py',
+   'PYMODULE'),
+  ('docx.opc.parts.coreprops',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\opc\\parts\\coreprops.py',
+   'PYMODULE'),
+  ('docx.opc.phys_pkg',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\opc\\phys_pkg.py',
+   'PYMODULE'),
+  ('docx.opc.pkgreader',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\opc\\pkgreader.py',
+   'PYMODULE'),
+  ('docx.opc.pkgwriter',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\opc\\pkgwriter.py',
+   'PYMODULE'),
+  ('docx.opc.rel',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\opc\\rel.py',
+   'PYMODULE'),
+  ('docx.opc.shared',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\opc\\shared.py',
+   'PYMODULE'),
+  ('docx.opc.spec',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\opc\\spec.py',
+   'PYMODULE'),
+  ('docx.oxml',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\oxml\\__init__.py',
+   'PYMODULE'),
+  ('docx.oxml.coreprops',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\oxml\\coreprops.py',
+   'PYMODULE'),
+  ('docx.oxml.document',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\oxml\\document.py',
+   'PYMODULE'),
+  ('docx.oxml.drawing',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\oxml\\drawing.py',
+   'PYMODULE'),
+  ('docx.oxml.exceptions',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\oxml\\exceptions.py',
+   'PYMODULE'),
+  ('docx.oxml.ns',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\oxml\\ns.py',
+   'PYMODULE'),
+  ('docx.oxml.numbering',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\oxml\\numbering.py',
+   'PYMODULE'),
+  ('docx.oxml.parser',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\oxml\\parser.py',
+   'PYMODULE'),
+  ('docx.oxml.section',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\oxml\\section.py',
+   'PYMODULE'),
+  ('docx.oxml.settings',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\oxml\\settings.py',
+   'PYMODULE'),
+  ('docx.oxml.shape',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\oxml\\shape.py',
+   'PYMODULE'),
+  ('docx.oxml.shared',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\oxml\\shared.py',
+   'PYMODULE'),
+  ('docx.oxml.simpletypes',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\oxml\\simpletypes.py',
+   'PYMODULE'),
+  ('docx.oxml.styles',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\oxml\\styles.py',
+   'PYMODULE'),
+  ('docx.oxml.table',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\oxml\\table.py',
+   'PYMODULE'),
+  ('docx.oxml.text',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\oxml\\text\\__init__.py',
+   'PYMODULE'),
+  ('docx.oxml.text.font',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\oxml\\text\\font.py',
+   'PYMODULE'),
+  ('docx.oxml.text.hyperlink',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\oxml\\text\\hyperlink.py',
+   'PYMODULE'),
+  ('docx.oxml.text.pagebreak',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\oxml\\text\\pagebreak.py',
+   'PYMODULE'),
+  ('docx.oxml.text.paragraph',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\oxml\\text\\paragraph.py',
+   'PYMODULE'),
+  ('docx.oxml.text.parfmt',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\oxml\\text\\parfmt.py',
+   'PYMODULE'),
+  ('docx.oxml.text.run',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\oxml\\text\\run.py',
+   'PYMODULE'),
+  ('docx.oxml.xmlchemy',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\oxml\\xmlchemy.py',
+   'PYMODULE'),
+  ('docx.package',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\package.py',
+   'PYMODULE'),
+  ('docx.parts',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\parts\\__init__.py',
+   'PYMODULE'),
+  ('docx.parts.document',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\parts\\document.py',
+   'PYMODULE'),
+  ('docx.parts.hdrftr',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\parts\\hdrftr.py',
+   'PYMODULE'),
+  ('docx.parts.image',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\parts\\image.py',
+   'PYMODULE'),
+  ('docx.parts.numbering',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\parts\\numbering.py',
+   'PYMODULE'),
+  ('docx.parts.settings',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\parts\\settings.py',
+   'PYMODULE'),
+  ('docx.parts.story',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\parts\\story.py',
+   'PYMODULE'),
+  ('docx.parts.styles',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\parts\\styles.py',
+   'PYMODULE'),
+  ('docx.section',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\section.py',
+   'PYMODULE'),
+  ('docx.settings',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\settings.py',
+   'PYMODULE'),
+  ('docx.shape',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\shape.py',
+   'PYMODULE'),
+  ('docx.shared',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\shared.py',
+   'PYMODULE'),
+  ('docx.styles',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\styles\\__init__.py',
+   'PYMODULE'),
+  ('docx.styles.latent',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\styles\\latent.py',
+   'PYMODULE'),
+  ('docx.styles.style',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\styles\\style.py',
+   'PYMODULE'),
+  ('docx.styles.styles',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\styles\\styles.py',
+   'PYMODULE'),
+  ('docx.table',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\table.py',
+   'PYMODULE'),
+  ('docx.text',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\text\\__init__.py',
+   'PYMODULE'),
+  ('docx.text.font',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\text\\font.py',
+   'PYMODULE'),
+  ('docx.text.hyperlink',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\text\\hyperlink.py',
+   'PYMODULE'),
+  ('docx.text.pagebreak',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\text\\pagebreak.py',
+   'PYMODULE'),
+  ('docx.text.paragraph',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\text\\paragraph.py',
+   'PYMODULE'),
+  ('docx.text.parfmt',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\text\\parfmt.py',
+   'PYMODULE'),
+  ('docx.text.run',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\text\\run.py',
+   'PYMODULE'),
+  ('docx.text.tabstops',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\text\\tabstops.py',
+   'PYMODULE'),
+  ('docx.types',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx\\types.py',
+   'PYMODULE'),
+  ('docx2pdf',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\docx2pdf\\__init__.py',
    'PYMODULE'),
   ('dotenv',
    'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
@@ -814,6 +1698,126 @@
    'PYMODULE'),
   ('logging',
    'C:\\Users\\LUANVITOR\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\logging\\__init__.py',
+   'PYMODULE'),
+  ('lxml',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\lxml\\__init__.py',
+   'PYMODULE'),
+  ('lxml.ElementInclude',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\lxml\\ElementInclude.py',
+   'PYMODULE'),
+  ('lxml.cssselect',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\lxml\\cssselect.py',
+   'PYMODULE'),
+  ('lxml.doctestcompare',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\lxml\\doctestcompare.py',
+   'PYMODULE'),
+  ('lxml.html',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\lxml\\html\\__init__.py',
+   'PYMODULE'),
+  ('lxml.html.ElementSoup',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\lxml\\html\\ElementSoup.py',
+   'PYMODULE'),
+  ('lxml.html._diffcommand',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\lxml\\html\\_diffcommand.py',
+   'PYMODULE'),
+  ('lxml.html._html5builder',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\lxml\\html\\_html5builder.py',
+   'PYMODULE'),
+  ('lxml.html._setmixin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\lxml\\html\\_setmixin.py',
+   'PYMODULE'),
+  ('lxml.html.builder',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\lxml\\html\\builder.py',
+   'PYMODULE'),
+  ('lxml.html.clean',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\lxml\\html\\clean.py',
+   'PYMODULE'),
+  ('lxml.html.defs',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\lxml\\html\\defs.py',
+   'PYMODULE'),
+  ('lxml.html.formfill',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\lxml\\html\\formfill.py',
+   'PYMODULE'),
+  ('lxml.html.html5parser',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\lxml\\html\\html5parser.py',
+   'PYMODULE'),
+  ('lxml.html.soupparser',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\lxml\\html\\soupparser.py',
+   'PYMODULE'),
+  ('lxml.html.usedoctest',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\lxml\\html\\usedoctest.py',
+   'PYMODULE'),
+  ('lxml.includes',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\lxml\\includes\\__init__.py',
+   'PYMODULE'),
+  ('lxml.includes.extlibs',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\lxml\\includes\\extlibs\\__init__.py',
+   'PYMODULE'),
+  ('lxml.includes.libexslt',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\lxml\\includes\\libexslt\\__init__.py',
+   'PYMODULE'),
+  ('lxml.includes.libxml',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\lxml\\includes\\libxml\\__init__.py',
+   'PYMODULE'),
+  ('lxml.includes.libxslt',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\lxml\\includes\\libxslt\\__init__.py',
+   'PYMODULE'),
+  ('lxml.isoschematron',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\lxml\\isoschematron\\__init__.py',
+   'PYMODULE'),
+  ('lxml.pyclasslookup',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\lxml\\pyclasslookup.py',
+   'PYMODULE'),
+  ('lxml.usedoctest',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\lxml\\usedoctest.py',
    'PYMODULE'),
   ('lzma',
    'C:\\Users\\LUANVITOR\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\lzma.py',
@@ -1782,6 +2786,9 @@
    'Trabalho\\Geral\\00. '
    'Works\\LE_Helper\\.venv\\Lib\\site-packages\\openpyxl\\xml\\functions.py',
    'PYMODULE'),
+  ('optparse',
+   'C:\\Users\\LUANVITOR\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\optparse.py',
+   'PYMODULE'),
   ('packaging',
    'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
    'Trabalho\\Geral\\00. '
@@ -1871,6 +2878,9 @@
   ('pathlib._local',
    'C:\\Users\\LUANVITOR\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\pathlib\\_local.py',
    'PYMODULE'),
+  ('pdb',
+   'C:\\Users\\LUANVITOR\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\pdb.py',
+   'PYMODULE'),
   ('pickle',
    'C:\\Users\\LUANVITOR\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\pickle.py',
    'PYMODULE'),
@@ -1903,34 +2913,95 @@
   ('pydoc_data.topics',
    'C:\\Users\\LUANVITOR\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\pydoc_data\\topics.py',
    'PYMODULE'),
+  ('pythoncom',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\pythoncom.py',
+   'PYMODULE'),
+  ('pywin',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\Pythonwin\\pywin\\__init__.py',
+   'PYMODULE'),
+  ('pywin.dialogs',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\Pythonwin\\pywin\\dialogs\\__init__.py',
+   'PYMODULE'),
+  ('pywin.dialogs.list',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\Pythonwin\\pywin\\dialogs\\list.py',
+   'PYMODULE'),
+  ('pywin.dialogs.status',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\Pythonwin\\pywin\\dialogs\\status.py',
+   'PYMODULE'),
+  ('pywin.mfc',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\Pythonwin\\pywin\\mfc\\__init__.py',
+   'PYMODULE'),
+  ('pywin.mfc.dialog',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\Pythonwin\\pywin\\mfc\\dialog.py',
+   'PYMODULE'),
+  ('pywin.mfc.object',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\Pythonwin\\pywin\\mfc\\object.py',
+   'PYMODULE'),
+  ('pywin.mfc.thread',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\Pythonwin\\pywin\\mfc\\thread.py',
+   'PYMODULE'),
+  ('pywin.mfc.window',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\Pythonwin\\pywin\\mfc\\window.py',
+   'PYMODULE'),
+  ('pywin32_system32', '-', 'PYMODULE'),
+  ('pywintypes',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\win32\\lib\\pywintypes.py',
+   'PYMODULE'),
   ('qt_ui', '-', 'PYMODULE'),
+  ('qt_ui.IAutomacaoColeta',
+   'C:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. Works\\LE_Helper\\src\\qt_ui\\IAutomacaoColeta.py',
+   'PYMODULE'),
+  ('qt_ui.IMesclaPlanilhas',
+   'C:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. Works\\LE_Helper\\src\\qt_ui\\IMesclaPlanilhas.py',
+   'PYMODULE'),
+  ('qt_ui.IOrganizacaoPastas',
+   'C:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. Works\\LE_Helper\\src\\qt_ui\\IOrganizacaoPastas.py',
+   'PYMODULE'),
+  ('qt_ui.IOrganizacaoSicoob',
+   'C:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. Works\\LE_Helper\\src\\qt_ui\\IOrganizacaoSicoob.py',
+   'PYMODULE'),
+  ('qt_ui.IPreenchimentoContrato',
+   'C:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\src\\qt_ui\\IPreenchimentoContrato.py',
+   'PYMODULE'),
+  ('qt_ui.IProcessamentoAgitel',
+   'C:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. Works\\LE_Helper\\src\\qt_ui\\IProcessamentoAgitel.py',
+   'PYMODULE'),
+  ('qt_ui.ISubstituicaoSimples',
+   'C:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. Works\\LE_Helper\\src\\qt_ui\\ISubstituicaoSimples.py',
+   'PYMODULE'),
   ('qt_ui.homeScreen',
    'C:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
    'Trabalho\\Geral\\00. Works\\LE_Helper\\src\\qt_ui\\homeScreen.py',
-   'PYMODULE'),
-  ('qt_ui.iAutomacaoColeta',
-   'C:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
-   'Trabalho\\Geral\\00. Works\\LE_Helper\\src\\qt_ui\\iAutomacaoColeta.py',
-   'PYMODULE'),
-  ('qt_ui.iMesclaPlanilhas',
-   'C:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
-   'Trabalho\\Geral\\00. Works\\LE_Helper\\src\\qt_ui\\iMesclaPlanilhas.py',
-   'PYMODULE'),
-  ('qt_ui.iOrganizacaoPastas',
-   'C:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
-   'Trabalho\\Geral\\00. Works\\LE_Helper\\src\\qt_ui\\iOrganizacaoPastas.py',
-   'PYMODULE'),
-  ('qt_ui.iOrganizacaoSicoob',
-   'C:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
-   'Trabalho\\Geral\\00. Works\\LE_Helper\\src\\qt_ui\\iOrganizacaoSicoob.py',
-   'PYMODULE'),
-  ('qt_ui.iProcessamentoAgitel',
-   'C:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
-   'Trabalho\\Geral\\00. Works\\LE_Helper\\src\\qt_ui\\iProcessamentoAgitel.py',
-   'PYMODULE'),
-  ('qt_ui.iSubstituicaoSimples',
-   'C:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
-   'Trabalho\\Geral\\00. Works\\LE_Helper\\src\\qt_ui\\iSubstituicaoSimples.py',
    'PYMODULE'),
   ('queue',
    'C:\\Users\\LUANVITOR\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\queue.py',
@@ -2549,6 +3620,11 @@
   ('services.OrganizacaoSicoob',
    'C:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
    'Trabalho\\Geral\\00. Works\\LE_Helper\\src\\services\\OrganizacaoSicoob.py',
+   'PYMODULE'),
+  ('services.PreenchimentoContrato',
+   'C:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\src\\services\\PreenchimentoContrato.py',
    'PYMODULE'),
   ('services.ProcessamentoAgitel',
    'C:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
@@ -3407,6 +4483,71 @@
   ('tomllib._types',
    'C:\\Users\\LUANVITOR\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\tomllib\\_types.py',
    'PYMODULE'),
+  ('tqdm',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\tqdm\\__init__.py',
+   'PYMODULE'),
+  ('tqdm._dist_ver',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\tqdm\\_dist_ver.py',
+   'PYMODULE'),
+  ('tqdm._monitor',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\tqdm\\_monitor.py',
+   'PYMODULE'),
+  ('tqdm._tqdm_pandas',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\tqdm\\_tqdm_pandas.py',
+   'PYMODULE'),
+  ('tqdm.asyncio',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\tqdm\\asyncio.py',
+   'PYMODULE'),
+  ('tqdm.auto',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\tqdm\\auto.py',
+   'PYMODULE'),
+  ('tqdm.autonotebook',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\tqdm\\autonotebook.py',
+   'PYMODULE'),
+  ('tqdm.cli',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\tqdm\\cli.py',
+   'PYMODULE'),
+  ('tqdm.gui',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\tqdm\\gui.py',
+   'PYMODULE'),
+  ('tqdm.notebook',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\tqdm\\notebook.py',
+   'PYMODULE'),
+  ('tqdm.std',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\tqdm\\std.py',
+   'PYMODULE'),
+  ('tqdm.utils',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\tqdm\\utils.py',
+   'PYMODULE'),
+  ('tqdm.version',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\tqdm\\version.py',
+   'PYMODULE'),
   ('tracemalloc',
    'C:\\Users\\LUANVITOR\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\tracemalloc.py',
    'PYMODULE'),
@@ -3671,6 +4812,61 @@
   ('uuid',
    'C:\\Users\\LUANVITOR\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\uuid.py',
    'PYMODULE'),
+  ('validate_docbr',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\validate_docbr\\__init__.py',
+   'PYMODULE'),
+  ('validate_docbr.BaseDoc',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\validate_docbr\\BaseDoc.py',
+   'PYMODULE'),
+  ('validate_docbr.CNH',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\validate_docbr\\CNH.py',
+   'PYMODULE'),
+  ('validate_docbr.CNPJ',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\validate_docbr\\CNPJ.py',
+   'PYMODULE'),
+  ('validate_docbr.CNS',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\validate_docbr\\CNS.py',
+   'PYMODULE'),
+  ('validate_docbr.CPF',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\validate_docbr\\CPF.py',
+   'PYMODULE'),
+  ('validate_docbr.Certidao',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\validate_docbr\\Certidao.py',
+   'PYMODULE'),
+  ('validate_docbr.PIS',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\validate_docbr\\PIS.py',
+   'PYMODULE'),
+  ('validate_docbr.RENAVAM',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\validate_docbr\\RENAVAM.py',
+   'PYMODULE'),
+  ('validate_docbr.TituloEleitoral',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\validate_docbr\\TituloEleitoral.py',
+   'PYMODULE'),
+  ('validate_docbr.generic',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\validate_docbr\\generic.py',
+   'PYMODULE'),
   ('webbrowser',
    'C:\\Users\\LUANVITOR\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\webbrowser.py',
    'PYMODULE'),
@@ -3823,6 +5019,106 @@
    'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
    'Trabalho\\Geral\\00. '
    'Works\\LE_Helper\\.venv\\Lib\\site-packages\\websocket\\_utils.py',
+   'PYMODULE'),
+  ('win32com',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\win32com\\__init__.py',
+   'PYMODULE'),
+  ('win32com.client',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\win32com\\client\\__init__.py',
+   'PYMODULE'),
+  ('win32com.client.CLSIDToClass',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\win32com\\client\\CLSIDToClass.py',
+   'PYMODULE'),
+  ('win32com.client.build',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\win32com\\client\\build.py',
+   'PYMODULE'),
+  ('win32com.client.dynamic',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\win32com\\client\\dynamic.py',
+   'PYMODULE'),
+  ('win32com.client.gencache',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\win32com\\client\\gencache.py',
+   'PYMODULE'),
+  ('win32com.client.genpy',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\win32com\\client\\genpy.py',
+   'PYMODULE'),
+  ('win32com.client.makepy',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\win32com\\client\\makepy.py',
+   'PYMODULE'),
+  ('win32com.client.selecttlb',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\win32com\\client\\selecttlb.py',
+   'PYMODULE'),
+  ('win32com.client.util',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\win32com\\client\\util.py',
+   'PYMODULE'),
+  ('win32com.server',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\win32com\\server\\__init__.py',
+   'PYMODULE'),
+  ('win32com.server.dispatcher',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\win32com\\server\\dispatcher.py',
+   'PYMODULE'),
+  ('win32com.server.exception',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\win32com\\server\\exception.py',
+   'PYMODULE'),
+  ('win32com.server.policy',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\win32com\\server\\policy.py',
+   'PYMODULE'),
+  ('win32com.server.util',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\win32com\\server\\util.py',
+   'PYMODULE'),
+  ('win32com.universal',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\win32com\\universal.py',
+   'PYMODULE'),
+  ('win32com.util',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\win32com\\util.py',
+   'PYMODULE'),
+  ('win32con',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\win32\\lib\\win32con.py',
+   'PYMODULE'),
+  ('win32traceutil',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\win32\\lib\\win32traceutil.py',
+   'PYMODULE'),
+  ('winerror',
+   'c:\\Users\\LUANVITOR\\OneDrive - Welington Henrique Baggio\\Área de '
+   'Trabalho\\Geral\\00. '
+   'Works\\LE_Helper\\.venv\\Lib\\site-packages\\win32\\lib\\winerror.py',
    'PYMODULE'),
   ('xml',
    'C:\\Users\\LUANVITOR\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\xml\\__init__.py',

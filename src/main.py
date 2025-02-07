@@ -25,10 +25,7 @@ from qt_ui.IPreenchimentoContrato import PainelPreenchimentoContrato
 from utils.windowManager import ResizableWindow
 from utils.themeManager import GerenTema
 
-### Corrigir bug dos retangulos perderem elementos no X ao redimensionar antes de trocar tema
 ## Adicionar tratamento de faturas vencidas na classe de automação em selenium
-# Corrigir bug onde ele ocorre quando é identificado mais que uma box /span contendo "Pagar boleto", 
-# quando ele tenta acessar ao final do loop de acordo com o índice, porém antes de retornar para billings
 
 class AnimatedButton(QPushButton):
     def __init__(self, parent=None):
