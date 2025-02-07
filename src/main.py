@@ -208,7 +208,7 @@ class MainApp(ResizableWindow):
         self.stacked_content.addWidget(self.painel_mesclagem)
         self.stacked_content.addWidget(self.substituicao_simples)
         self.stacked_content.addWidget(self.organizador_sicoob)
-        self.stacked_content.addWidget(self.preenchimento_contrato)
+        #self.stacked_content.addWidget(self.preenchimento_contrato)
 
         self.layout.addWidget(self.central_content, stretch=1)
 
