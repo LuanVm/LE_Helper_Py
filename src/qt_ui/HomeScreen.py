@@ -134,6 +134,7 @@ class HomeScreen(QWidget):
                     font-family: 'Segoe UI Black', Roboto, Helvetica, Arial, sans-serif;
                     font-size: 12px;
                     font-weight: 500;
+                    font-weight: bold;
                     margin: 0;
                     padding: 0;
                 }
@@ -335,9 +336,9 @@ class HomeScreen(QWidget):
             with open(messages_file, encoding="utf-8") as f:
                 self.messages = [line.strip().strip('",') for line in f if line.strip()]
         self.message_label = QLabel(self)
-        self.message_label.setFixedWidth(400)
+        self.message_label.setFixedWidth(420)
         self.message_label.setWordWrap(True)
-        writing_font = QFont("Script MT", 14)
+        writing_font = QFont("Script MT", 12)
         self.message_label.setFont(writing_font)
         self.message_label.setStyleSheet("color: #8C8C8C;")
         self.message_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom)

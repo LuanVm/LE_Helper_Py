@@ -139,11 +139,30 @@ class PainelAutomacaoColeta(QWidget):
     def carregar_planilha(self, caminho):
         """Carrega e processa o arquivo Excel selecionado"""
         try:
-            self.planilha = load_workbook(caminho).active
+            wb = load_workbook(caminho)
+            self.planilha = wb.active
             self.caminho_dados = caminho
             self.campo_planilha.setText(caminho)
             self.salvar_configuracoes()
 
+            # Definindo o layout esperado
+            layout_esperado = [
+                "FORNECEDOR", "REFERÊNCIA", "CLIENTE", "OPERADORA",
+                "IDENTIFICAÇÃO", "CÓDIGO", "PA", "INDENTIFICAÇÃO INTERNA",
+                "LOGIN", "SENHA", "VENCIMENTO", "STATUS", "NOMENCLATURA"
+            ]
+            # Obtendo os cabeçalhos da primeira linha da planilha
+            cabecalhos = [cell.value for cell in next(self.planilha.iter_rows(min_row=1, max_row=1))]
+
+            # Verificando se os cabeçalhos iniciais correspondem ao layout esperado
+            if cabecalhos[:len(layout_esperado)] != layout_esperado:
+                mensagem_layout = (
+                    "A planilha não segue os padrões de layout. "
+                    "O layout esperado é: " + ", ".join(layout_esperado)
+                )
+                raise ValueError(mensagem_layout)
+
+            # Caso o layout esteja correto, prossegue com o carregamento das operadoras
             operadoras = set()
             for linha in self.planilha.iter_rows(min_row=2, values_only=True):
                 if linha[3]:

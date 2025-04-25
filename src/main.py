@@ -12,7 +12,7 @@ from services.ProcessamentoAgitel import ProcessadorAgitel
 from services.AutomacaoColeta import Blume
 
 # UI/Interface
-from qt_ui.homeScreen import HomeScreen
+from qt_ui.HomeScreen import HomeScreen
 from qt_ui.IAutomacaoColeta import PainelAutomacaoColeta
 from qt_ui.IMesclaPlanilhas import PainelMesclaPlanilha
 from qt_ui.IOrganizacaoPastas import PainelOrganizacaoPastas
@@ -82,6 +82,28 @@ class MainApp(ResizableWindow):
         self.setAttribute(Qt.WidgetAttribute.WA_Hover)
         self.central_widget.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
         QApplication.processEvents()
+        
+    def on_combo_text_changed(self, text):
+        index = self.function_groupsping.get(text, 0)
+        self.stacked_content.setCurrentIndex(index)
+        if index == 0:
+            # Aba Home: desabilita os componentes
+            self.funcionalidades_combo.setHidden(True)
+            self.button_home.setHidden(True)
+        else:
+            # Habilita quando não estiver na aba Home
+            self.funcionalidades_combo.setHidden(False)
+            self.button_home.setHidden(False)
+        self._refresh_layout()
+
+    def mostrar_home(self):
+        self.stacked_content.setCurrentIndex(0)
+        self.funcionalidades_combo.clear()
+        self.funcionalidades_combo.addItem("Home")
+        self.funcionalidades_combo.setCurrentIndex(0)
+        # Ao mostrar a Home, desabilita a combobox e o ícone home
+        self.funcionalidades_combo.setHidden(True)
+        self.button_home.setHidden(True)
 
     def _set_window_icon(self):
         caminho_base = Path(__file__).resolve().parent / "resources" / "icons"
@@ -208,7 +230,7 @@ class MainApp(ResizableWindow):
         self.stacked_content.addWidget(self.painel_mesclagem)
         self.stacked_content.addWidget(self.substituicao_simples)
         self.stacked_content.addWidget(self.organizador_sicoob)
-        #self.stacked_content.addWidget(self.preenchimento_contrato)
+        self.stacked_content.addWidget(self.preenchimento_contrato)
 
         self.layout.addWidget(self.central_content, stretch=1)
 
@@ -237,11 +259,6 @@ class MainApp(ResizableWindow):
         self.funcionalidades_combo.currentTextChanged.connect(self.on_combo_text_changed)
         self.home_screen.boxes_clicked.connect(self.on_boxes_clicked)
 
-    def on_combo_text_changed(self, text):
-        index = self.function_groupsping.get(text, 0)
-        self.stacked_content.setCurrentIndex(index)
-        self._refresh_layout()
-
     def on_boxes_clicked(self, index):
         function_groups = {
             0: ["Automação da Coleta"],
@@ -255,12 +272,6 @@ class MainApp(ResizableWindow):
             self.funcionalidades_combo.addItems(function_groups[index])
         else:
             self.funcionalidades_combo.addItem("Home")
-
-    def mostrar_home(self):
-        self.stacked_content.setCurrentIndex(0)
-        self.funcionalidades_combo.clear()
-        self.funcionalidades_combo.addItem("Home")
-        self.funcionalidades_combo.setCurrentIndex(0)
 
     def changeEvent(self, event):
         if event.type() == QEvent.Type.WindowStateChange:
@@ -301,5 +312,6 @@ class MainApp(ResizableWindow):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     main_window = MainApp()
+    main_window.mostrar_home()
     main_window.show()
     sys.exit(app.exec())

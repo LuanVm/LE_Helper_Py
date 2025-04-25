@@ -6,7 +6,6 @@ from PyQt6.QtWidgets import (
     QFormLayout, QFileDialog, QTabWidget, QScrollArea,
     QHBoxLayout, QSizePolicy
 )
-from PyQt6.QtGui import QIcon, QFont, QColor
 from services.PreenchimentoContrato import ContratoWorker
 from utils.sheetStyles import (
     estilo_label_light, estilo_label_dark,
