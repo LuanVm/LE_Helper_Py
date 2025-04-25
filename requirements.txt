@@ -3,3 +3,6 @@ PyPDF2
 PyQt6
 selenium
 webdriver_manager
+validate-docbr
+docx2pdf
+docx

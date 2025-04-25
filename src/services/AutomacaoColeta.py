@@ -79,7 +79,8 @@ class Blume:
             opcoes = webdriver.ChromeOptions()
             opcoes.add_argument("--disable-extensions")
             opcoes.add_argument("--disable-popup-blocking")
-            #opcoes.add_argument("--headless")
+            opcoes.add_argument("--window-size=600,1000")
+            # opcoes.add_argument("--headless")
             self.parent.log_mensagem("Abrindo navegador...", area="tecnico")
             driver = webdriver.Chrome(
                 service=Service(ChromeDriverManager().install()),
@@ -172,6 +173,27 @@ class Blume:
                     return
                 except:
                     pass
+
+                try:
+
+                    botao_escolher_forma = wait.until(
+                        EC.presence_of_element_located((By.XPATH, "//span[text()='Escolher forma de pagamento']"))
+                    )
+                    time.sleep(1)
+
+                    driver.execute_script("arguments[0].click();", botao_escolher_forma)
+                    botao_pagamento = wait.until(
+                        EC.presence_of_element_located((By.XPATH, "//p[text()='Pagamento Boleto']"))
+                    )
+                    time.sleep(1)
+                    driver.execute_script("arguments[0].click();", botao_pagamento)
+                    botao_baixar = wait.until(
+                        EC.presence_of_element_located((By.XPATH, "//p[text()='Baixar boleto']"))
+                    )
+                    driver.execute_script("arguments[0].click();", botao_baixar)
+                except Exception as erro:
+                    self.parent.log_mensagem(f"Erro ao buscar botões de pagamento: {erro}", area="tecnico")
+                    break
 
                 try:
                     botoes_boleto = wait.until(
