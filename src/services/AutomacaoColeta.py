@@ -79,7 +79,7 @@ class Blume:
             opcoes = webdriver.ChromeOptions()
             opcoes.add_argument("--disable-extensions")
             opcoes.add_argument("--disable-popup-blocking")
-            opcoes.add_argument("--window-size=600,1000")
+            opcoes.add_argument("--window-size=650,1080")
             # opcoes.add_argument("--headless")
             self.parent.log_mensagem("Abrindo navegador...", area="tecnico")
             driver = webdriver.Chrome(
@@ -175,25 +175,24 @@ class Blume:
                     pass
 
                 try:
-
                     botao_escolher_forma = wait.until(
                         EC.presence_of_element_located((By.XPATH, "//span[text()='Escolher forma de pagamento']"))
                     )
-                    time.sleep(1)
-
                     driver.execute_script("arguments[0].click();", botao_escolher_forma)
+                    time.sleep(1)
                     botao_pagamento = wait.until(
                         EC.presence_of_element_located((By.XPATH, "//p[text()='Pagamento Boleto']"))
                     )
-                    time.sleep(1)
                     driver.execute_script("arguments[0].click();", botao_pagamento)
+                    time.sleep(1)
                     botao_baixar = wait.until(
                         EC.presence_of_element_located((By.XPATH, "//p[text()='Baixar boleto']"))
                     )
                     driver.execute_script("arguments[0].click();", botao_baixar)
+                    time.sleep(1)
+                    self.baixar_boleto(wait, dados_usuario, pendencia=True)
                 except Exception as erro:
                     self.parent.log_mensagem(f"Erro ao buscar botões de pagamento: {erro}", area="tecnico")
-                    break
 
                 try:
                     botoes_boleto = wait.until(
@@ -236,23 +235,22 @@ class Blume:
             self.parent.log_mensagem(f"Erro geral no processamento: {erro}", area="tecnico")
             raise
 
-    def baixar_boleto(self, wait, dados_usuario, indice):
-        """Realiza o download e processamento do boleto"""
+    def baixar_boleto(self, wait, dados_usuario, indice=None, pendencia=False):
+        """Realiza o download e processamento do boleto, considerando pendências se necessário."""
         try:
-            botao_download = wait.until(
-                EC.presence_of_element_located((By.XPATH, "//p[text()='Baixar boleto']"))
-            )
-            botao_download.click()
-            # Aguarda alguns segundos para que o download tenha tempo de iniciar
-            time.sleep(3)
+            if not pendencia:
+                botao_download = wait.until(
+                    EC.presence_of_element_located((By.XPATH, "//p[text()='Baixar boleto']"))
+                )
+                botao_download.click()
+                time.sleep(3)
             caminho_download = os.path.join(os.path.expanduser('~'), 'Downloads')
             arquivo = self.aguardar_download(caminho_download)
             if arquivo:
                 contrato = self.extrair_contrato_pdf(arquivo)
                 if contrato:
-                    self.processar_arquivo_baixado(contrato, arquivo, dados_usuario)
+                    self.processar_arquivo_baixado(contrato, arquivo, dados_usuario, pendencia)
                 else:
-                    # Se o contrato (boleto) não for encontrado, move o arquivo para a pasta de boletos não encontrados.
                     self.mover_arquivo_nao_encontrado(arquivo)
         except Exception as erro:
             self.parent.log_mensagem(f"Erro no download: {erro}", area="tecnico")
@@ -311,24 +309,29 @@ class Blume:
             self.parent.log_mensagem(f"Erro na leitura do PDF: {erro}", area="tecnico")
             return None
 
-    def processar_arquivo_baixado(self, contrato, arquivo, dados_usuario):
-        """Processa o arquivo baixado e atualiza a planilha"""
+    def processar_arquivo_baixado(self, contrato, arquivo, dados_usuario, pendencia=False):
+        """Processa o arquivo baixado, movendo para a pasta de pendências se necessário."""
         contrato = contrato.lstrip('0')
-        # Verifica se o contrato já foi coletado (linha já marcada como 'COLETADO IA')
         for linha in self.planilha.iter_rows(min_row=2, values_only=True):
             if str(linha[4]).lstrip('0') == contrato and linha[11] == 'COLETADO IA':
-                self.parent.log_mensagem(f"O contrato {contrato} já havia sido baixado.", area="tecnico")
-                os.remove(arquivo)  # Remove o arquivo duplicado
+                self.parent.log_mensagem(f"Contrato {contrato} já baixado.", area="tecnico")
+                os.remove(arquivo)
                 return
-        # Caso contrário, procede com o processamento normal
         if self.verificar_contrato_planilha(contrato):
             nomenclatura = self.obter_nomenclatura(contrato)
             nomenclatura = re.sub(r'[<>:"/\\|?*]', '', str(nomenclatura))
-            destino = os.path.join(self.parent.pasta_salvamento, f"{nomenclatura}.pdf")
-            self.parent.log_mensagem(f"Movendo arquivo para: {destino}", area="tecnico")
+            if pendencia:
+                pasta_destino = os.path.join(self.parent.pasta_salvamento, "pendência")
+                os.makedirs(pasta_destino, exist_ok=True)
+                nomenclatura += "_pendencia"
+                destino = os.path.join(pasta_destino, f"{nomenclatura}.pdf")
+                status = 'PENDENCIA'
+            else:
+                destino = os.path.join(self.parent.pasta_salvamento, f"{nomenclatura}.pdf")
+                status = 'COLETADO IA'
             shutil.move(arquivo, destino)
-            self.parent.log_mensagem(nomenclatura, area="faturas")
-            self.atualizar_status_planilha(contrato, 'COLETADO IA')
+            self.parent.log_mensagem(f"Arquivo movido: {destino}", area="tecnico")
+            self.atualizar_status_planilha(contrato, status)
         else:
             self.mover_arquivo_nao_encontrado(arquivo)
 
@@ -369,16 +372,12 @@ class Blume:
             self.mutex.unlock()
 
     def marcar_pendentes_indisponiveis(self, login):
-        """
-        Após o processamento dos boletos para o usuário, percorre as linhas da planilha
-        que pertencem ao login informado e marca como "INDISPONIVEL" aquelas que ainda não foram
-        atualizadas para "COLETADO IA".
-        """
+        """Marca linhas não processadas como 'PENDENCIA' para o login especificado."""
         self.mutex.lock()
         try:
             for linha in self.planilha.iter_rows(min_row=2, values_only=False):
-                if str(linha[8].value) == login and linha[11].value not in ['COLETADO IA', 'INDISPONIVEL']:
-                    linha[11].value = 'INDISPONIVEL'
+                if str(linha[8].value) == login and linha[11].value not in ['COLETADO IA', 'PENDENCIA']:
+                    linha[11].value = 'PENDENCIA'
             self.planilha.parent.save(self.caminho_dados)
         finally:
             self.mutex.unlock()
