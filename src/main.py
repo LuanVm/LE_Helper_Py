@@ -9,7 +9,6 @@ from PyQt6.QtGui import QPixmap, QIcon, QEnterEvent
 
 # Business/Logic
 from services.ProcessamentoAgitel import ProcessadorAgitel
-from services.AutomacaoColeta import Blume
 
 # UI/Interface
 from qt_ui.HomeScreen import HomeScreen
@@ -25,7 +24,6 @@ from qt_ui.IPreenchimentoContrato import PainelPreenchimentoContrato
 from utils.windowManager import ResizableWindow
 from utils.themeManager import GerenTema
 
-## Adicionar tratamento de faturas vencidas na classe de automação em selenium
 
 class AnimatedButton(QPushButton):
     def __init__(self, parent=None):
@@ -37,7 +35,6 @@ class AnimatedButton(QPushButton):
         self.anim.setDuration(200)
         self.anim.setEasingCurve(QEasingCurve.Type.OutQuad)
         self.setMouseTracking(True)
-        #self.blume = Blume(parent=self, caminho_dados)
 
     def enterEvent(self, event: QEnterEvent):
         self.anim.setEndValue(self._hover_icon_size)
@@ -52,19 +49,24 @@ class AnimatedButton(QPushButton):
 
 class MainApp(ResizableWindow):
     def __init__(self):
-        super().__init__()
+        # Cria título primeiro, pois será necessário para o super().__init__()
+        temp_widget = QWidget()
+        temp_widget.setFixedHeight(30)
+        self.barra_titulo = temp_widget
+
+        super().__init__(title_bar=self.barra_titulo)
+
         self.settings_path = "config.ini"
         self._initialize_ui()
         self._setup_connections()
         self._finalize_ui_setup()
-        self._title_bar = self.barra_titulo
 
     def _initialize_ui(self):
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         self._set_window_icon()
 
-        self.function_groupsping = {
+        self.function_groups = {
             "Home": 0,
             "Automação da Coleta": 1,
             "Organização de Pastas": 2,
@@ -82,18 +84,12 @@ class MainApp(ResizableWindow):
         self.setAttribute(Qt.WidgetAttribute.WA_Hover)
         self.central_widget.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
         QApplication.processEvents()
-        
+
     def on_combo_text_changed(self, text):
-        index = self.function_groupsping.get(text, 0)
-        self.stacked_content.setCurrentIndex(index)
-        if index == 0:
-            # Aba Home: desabilita os componentes
-            self.funcionalidades_combo.setHidden(True)
-            self.button_home.setHidden(True)
-        else:
-            # Habilita quando não estiver na aba Home
-            self.funcionalidades_combo.setHidden(False)
-            self.button_home.setHidden(False)
+        idx = self.function_groups.get(text, 0)
+        self.stacked_content.setCurrentIndex(idx)
+        self.funcionalidades_combo.setHidden(idx == 0)
+        self.button_home.setHidden(idx == 0)
         self._refresh_layout()
 
     def mostrar_home(self):
@@ -101,15 +97,13 @@ class MainApp(ResizableWindow):
         self.funcionalidades_combo.clear()
         self.funcionalidades_combo.addItem("Home")
         self.funcionalidades_combo.setCurrentIndex(0)
-        # Ao mostrar a Home, desabilita a combobox e o ícone home
         self.funcionalidades_combo.setHidden(True)
         self.button_home.setHidden(True)
 
     def _set_window_icon(self):
-        caminho_base = Path(__file__).resolve().parent / "resources" / "icons"
-        caminho_icone = caminho_base / "logo.ico"
-        if caminho_icone.exists():
-            self.setWindowIcon(QIcon(str(caminho_icone)))
+        icon_path = Path(__file__).resolve().parent / "resources" / "icons" / "logo.ico"
+        if icon_path.exists():
+            self.setWindowIcon(QIcon(str(icon_path)))
 
     def _configure_ui_components(self):
         self.central_widget = QWidget(self)
@@ -124,68 +118,57 @@ class MainApp(ResizableWindow):
 
     def _setup_title_bar(self):
         self.barra_titulo = QWidget(self.central_widget)
-        self.barra_titulo.setObjectName("barra_titulo")
         self.barra_titulo.setFixedHeight(30)
-
         layout_titulo = QHBoxLayout(self.barra_titulo)
         layout_titulo.setContentsMargins(5, 0, 5, 0)
         layout_titulo.setSpacing(5)
 
-        left_section = QHBoxLayout()
-        left_section.setContentsMargins(0, 0, 0, 0)
-        left_section.setSpacing(5)
-        self._add_app_icon(left_section)
+        left = QHBoxLayout()
+        left.setSpacing(5)
+        self._add_app_icon(left)
 
         self.funcionalidades_combo = QComboBox(self.barra_titulo)
         self.funcionalidades_combo.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.funcionalidades_combo.setFixedWidth(200)
-        self.funcionalidades_combo.addItems(["Home"])
-        left_section.addWidget(self.funcionalidades_combo)
+        self.funcionalidades_combo.addItem("Home")
+        left.addWidget(self.funcionalidades_combo)
 
         self.button_home = AnimatedButton(self.barra_titulo)
-        caminho_icone = Path(__file__).resolve().parent.parent / "resources" / "ui" / "home_light.png"
-        self.button_home.setIcon(QIcon(str(caminho_icone)))
+        home_icon = Path(__file__).resolve().parent.parent / "resources" / "ui" / "home_light.png"
+        if home_icon.exists():
+            self.button_home.setIcon(QIcon(str(home_icon)))
         self.button_home.setFixedSize(QSize(20, 20))
         self.button_home.clicked.connect(self.mostrar_home)
-        left_section.addWidget(self.button_home)
+        left.addWidget(self.button_home)
 
-        layout_titulo.addLayout(left_section)
+        layout_titulo.addLayout(left)
         layout_titulo.addStretch()
         self._add_control_buttons(layout_titulo)
 
         self.layout.addWidget(self.barra_titulo)
 
     def _add_app_icon(self, layout):
-        caminho_base = Path(__file__).resolve().parent / "resources" / "icons"
-        caminho_icone = caminho_base / "logo.ico"
-
-        icone_titulo = QLabel()
-        if caminho_icone.exists():
-            icone_titulo.setPixmap(
-                QPixmap(str(caminho_icone)).scaled(
+        icon_path = Path(__file__).resolve().parent / "resources" / "icons" / "logo.ico"
+        pix = QLabel()
+        if icon_path.exists():
+            pix.setPixmap(
+                QPixmap(str(icon_path)).scaled(
                     24, 24,
                     Qt.AspectRatioMode.IgnoreAspectRatio,
                     Qt.TransformationMode.SmoothTransformation
                 )
             )
-        layout.addWidget(icone_titulo)
+        layout.addWidget(pix)
 
     def _add_control_buttons(self, layout):
-        self.button_theme = AnimatedButton(self.barra_titulo)
-        self.button_theme.setFixedSize(QSize(20, 20))
-
-        self.button_minimize = AnimatedButton(self.barra_titulo)
-        self.button_minimize.setFixedSize(QSize(20, 20))
+        self.button_theme = AnimatedButton(self.barra_titulo); self.button_theme.setFixedSize(QSize(20, 20))
+        self.button_minimize = AnimatedButton(self.barra_titulo); self.button_minimize.setFixedSize(QSize(20, 20))
         self.button_minimize.clicked.connect(self.showMinimized)
-
-        self.button_exit = AnimatedButton(self.barra_titulo)
-        self.button_exit.setFixedSize(QSize(20, 20))
-        #self.button_exit.clicked.connect(self.blume.fechar_navegadores)
+        self.button_exit = AnimatedButton(self.barra_titulo); self.button_exit.setFixedSize(QSize(20, 20))
         self.button_exit.clicked.connect(self.close)
 
-        layout.addWidget(self.button_theme)
-        layout.addWidget(self.button_minimize)
-        layout.addWidget(self.button_exit)
+        for btn in (self.button_theme, self.button_minimize, self.button_exit):
+            layout.addWidget(btn)
 
     def _setup_theme_manager(self):
         self.theme_manager = GerenTema(
@@ -208,12 +191,12 @@ class MainApp(ResizableWindow):
     def _setup_content_panes(self):
         self.central_content = QWidget(self.central_widget)
         self.content_layout = QVBoxLayout(self.central_content)
-
         self.stacked_content = QStackedWidget(self.central_content)
         self.content_layout.addWidget(self.stacked_content)
 
+        # Instanciação dos painéis (passando self onde for usado parent)
         self.home_screen = HomeScreen()
-        self.automacao_coleta = PainelAutomacaoColeta()
+        self.automacao_coleta = PainelAutomacaoColeta(self)
         self.organizacao_pastas = PainelOrganizacaoPastas()
         self.processamento_agitel = PainelProcessamentoAgitel()
         self.painel_mesclagem = PainelMesclaPlanilha()
@@ -221,37 +204,34 @@ class MainApp(ResizableWindow):
         self.organizador_sicoob = PainelOrganizacaoSicoob()
         self.preenchimento_contrato = PainelPreenchimentoContrato()
 
+        # Sinal de início do Agitel
         self.processamento_agitel.processStarted.connect(self._iniciar_processamento_agitel)
 
-        self.stacked_content.addWidget(self.home_screen)
-        self.stacked_content.addWidget(self.automacao_coleta)
-        self.stacked_content.addWidget(self.organizacao_pastas)
-        self.stacked_content.addWidget(self.processamento_agitel)
-        self.stacked_content.addWidget(self.painel_mesclagem)
-        self.stacked_content.addWidget(self.substituicao_simples)
-        self.stacked_content.addWidget(self.organizador_sicoob)
-        self.stacked_content.addWidget(self.preenchimento_contrato)
+        for widget in (
+            self.home_screen,
+            self.automacao_coleta,
+            self.organizacao_pastas,
+            self.processamento_agitel,
+            self.painel_mesclagem,
+            self.substituicao_simples,
+            self.organizador_sicoob,
+            self.preenchimento_contrato
+        ):
+            self.stacked_content.addWidget(widget)
 
         self.layout.addWidget(self.central_content, stretch=1)
 
     def _iniciar_processamento_agitel(self):
         file_path = self.processamento_agitel.get_file_path()
         equalize = self.processamento_agitel.get_equalize_option()
-
         if not file_path:
             QMessageBox.warning(self, "Aviso", "Selecione um arquivo Excel.")
             return
-
-        self.controller_agitel = ProcessadorAgitel(
-            file_path=file_path,
-            equalize=equalize
-        )
-
+        self.controller_agitel = ProcessadorAgitel(file_path=file_path, equalize=equalize)
         self.controller_agitel.progressUpdated.connect(self.processamento_agitel.update_progress)
         self.controller_agitel.processFinished.connect(self.processamento_agitel.on_process_finished)
         self.controller_agitel.errorOccurred.connect(self.processamento_agitel.show_error)
         self.controller_agitel.logUpdated.connect(self.processamento_agitel.append_log)
-
         self.controller_agitel.start()
         self.processamento_agitel.set_processing_state(True)
 
@@ -260,18 +240,15 @@ class MainApp(ResizableWindow):
         self.home_screen.boxes_clicked.connect(self.on_boxes_clicked)
 
     def on_boxes_clicked(self, index):
-        function_groups = {
+        mapping = {
             0: ["Automação da Coleta"],
-            1: ["Organização de Pastas", "Processamento Agitel",
-                "Mesclagem de Planilhas", "Substituição Simples"],
+            1: ["Organização de Pastas", "Processamento Agitel", "Mesclagem de Planilhas", "Substituição Simples"],
             2: ["Organizador (NF) Sicoob"],
             3: ["Preenchimento de contrato"]
         }
+        items = mapping.get(index, ["Home"])
         self.funcionalidades_combo.clear()
-        if index in function_groups:
-            self.funcionalidades_combo.addItems(function_groups[index])
-        else:
-            self.funcionalidades_combo.addItem("Home")
+        self.funcionalidades_combo.addItems(items)
 
     def changeEvent(self, event):
         if event.type() == QEvent.Type.WindowStateChange:
@@ -288,24 +265,23 @@ class MainApp(ResizableWindow):
             print(f"Erro ao atualizar layout: {e}")
 
     def _finalize_ui_setup(self):
-        self.theme_manager.register_widget(self.automacao_coleta)
-        self.theme_manager.register_widget(self.processamento_agitel)
-        self.theme_manager.register_widget(self.organizacao_pastas)
-        self.theme_manager.register_widget(self.painel_mesclagem)
-        self.theme_manager.register_widget(self.organizador_sicoob)
-        self.theme_manager.register_widget(self.preenchimento_contrato)
-        self.theme_manager.register_widget(self.home_screen)
+        for w in (
+            self.automacao_coleta,
+            self.processamento_agitel,
+            self.organizacao_pastas,
+            self.painel_mesclagem,
+            self.organizador_sicoob,
+            self.preenchimento_contrato,
+            self.home_screen
+        ):
+            self.theme_manager.register_widget(w)
         self.theme_manager.update_icons()
         self.theme_manager.aplicar_tema()
         self.button_theme.clicked.connect(self.theme_manager.alternar_modo)
 
     def closeEvent(self, event):
-        if hasattr(self.automacao_coleta, 'automator') and hasattr(self.automacao_coleta.automator, 'drivers'):
-            for driver in self.automacao_coleta.automator.drivers:
-                try:
-                    driver.quit()
-                except Exception as e:
-                    print(f"Erro ao fechar navegador: {e}")
+        # Para a automação caso esteja rodando
+        self.automacao_coleta.parar_automacao()
         event.accept()
 
 
