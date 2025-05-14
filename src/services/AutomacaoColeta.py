@@ -2,6 +2,8 @@ import os
 import time
 import shutil
 import re
+from pathlib import Path
+from datetime import datetime, timedelta
 from openpyxl import load_workbook
 from PyQt6.QtCore import QRunnable, QMutex
 from selenium import webdriver
@@ -13,8 +15,6 @@ from webdriver_manager.chrome import ChromeDriverManager
 from PyPDF2 import PdfReader
 
 class TarefaAutomacao(QRunnable):
-    """Classe que executa a automação em uma thread separada"""
-    
     def __init__(self, automator, dados_usuario, funcao_log):
         super().__init__()
         self.automator = automator
@@ -22,27 +22,21 @@ class TarefaAutomacao(QRunnable):
         self.funcao_log = funcao_log
 
     def run(self):
-        """Método principal que inicia o processo de automação"""
         try:
             self.funcao_log("Iniciando automação...", area="tecnico")
             if hasattr(self.automator, 'flag_parar') and self.automator.flag_parar:
                 self.funcao_log("Automação cancelada antes de iniciar", area="tecnico")
                 return
-            
             self.automator.executar_automacao(self.dados_usuario)
             self.funcao_log("Automação concluída!", area="tecnico")
-            
         except Exception as erro:
             self.funcao_log(f"Erro durante a automação: {str(erro)}", area="tecnico")
 
 class PararAutomacao:
-    """Classe responsável por interromper a automação em execução"""
-    
     def __init__(self, automator):
         self.automator = automator
 
     def parar(self):
-        """Para a automação e fecha todos os navegadores"""
         if hasattr(self.automator, 'flag_parar'):
             self.automator.flag_parar = True
             self.automator.parent.log_mensagem("Parando automação...", area="tecnico", cor="red")
@@ -51,7 +45,6 @@ class PararAutomacao:
             self.automator.parent.log_mensagem("Nenhuma automação em execução", area="tecnico")
 
     def fechar_navegadores(self):
-        """Fecha todas as instâncias do navegador abertas"""
         if hasattr(self.automator, 'drivers') and self.automator.drivers:
             self.automator.parent.log_mensagem("Fechando navegadores...", area="tecnico")
             for driver in self.automator.drivers:
@@ -67,20 +60,29 @@ class Blume:
     def __init__(self, parent, caminho_dados):
         self.parent = parent
         self.caminho_dados = caminho_dados
-        # Ao carregar a planilha com data_only=True, obtemos os valores já calculados
+        self.diretorio_download = os.path.join(os.path.expanduser('~'), 'Downloads')  # ✅ aqui
         self.planilha = load_workbook(caminho_dados, data_only=True).active
         self.mutex = QMutex()
         self.flag_parar = False
         self.drivers = []
 
     def inicializar_navegador(self):
-        """Configura e inicia uma nova instância do navegador Chrome"""
         try:
             opcoes = webdriver.ChromeOptions()
             opcoes.add_argument("--disable-extensions")
             opcoes.add_argument("--disable-popup-blocking")
-            opcoes.add_argument("--window-size=650,1080")
-            # opcoes.add_argument("--headless")
+            opcoes.add_argument("--window-size=600,1000")
+            #opcoes.add_argument("--headless")
+            
+            # Forçar o download de PDFs diretamente:
+            opcoes.add_experimental_option("prefs", {
+                "download.default_directory": os.path.join(os.path.expanduser('~'), 'Downloads'),
+                "download.default_directory": self.diretorio_download,
+                "download.prompt_for_download": False,
+                "directory_upgrade": True,
+                "plugins.always_open_pdf_externally": True
+            })
+
             self.parent.log_mensagem("Abrindo navegador...", area="tecnico")
             driver = webdriver.Chrome(
                 service=Service(ChromeDriverManager().install()),
@@ -93,12 +95,12 @@ class Blume:
             raise
 
     def executar_automacao(self, dados_usuario):
-        """Fluxo principal de execução da automação"""
         self.parent.log_mensagem("Iniciando coleta para Blume...", area="tecnico")
-
         if self.verificar_coleta_completa():
             self.parent.log_mensagem("Todas faturas já foram coletadas!", area="tecnico")
             return
+
+        logins_indisponiveis_loop_atual = set()
 
         for usuario in dados_usuario:
             if self.flag_parar:
@@ -106,8 +108,10 @@ class Blume:
                 self.fechar_navegadores()
                 return
 
-            # Se o STATUS já estiver como "COLETADO IA" ou "INDISPONIVEL", pula a execução.
-            if usuario['STATUS'] in ['COLETADO IA', 'INDISPONIVEL']:
+            if usuario['STATUS'] == 'COLETADO IA':
+                continue
+
+            if usuario['STATUS'] == 'INDISPONIVEL' and usuario['LOGIN'] in logins_indisponiveis_loop_atual:
                 continue
 
             driver = None
@@ -117,10 +121,10 @@ class Blume:
                 driver.get("https://portal.blumetelecom.com.br")
                 self.fazer_login(driver, wait, usuario)
                 self.processar_boletos(driver, wait, usuario)
-                # Após processar boletos, marca os boletos pendentes do login como INDISPONIVEL
                 self.marcar_pendentes_indisponiveis(usuario['LOGIN'])
             except Exception as erro:
                 self.parent.log_mensagem(f"Erro no processamento: {str(erro)}", area="tecnico")
+                logins_indisponiveis_loop_atual.add(usuario['LOGIN'])
             finally:
                 if driver:
                     driver.quit()
@@ -128,22 +132,31 @@ class Blume:
                         self.drivers.remove(driver)
 
     def fazer_login(self, driver, wait, dados_usuario):
-        """Realiza o login no portal da Blume"""
         try:
             self.parent.log_mensagem(f"Realizando login no acesso: {dados_usuario['LOGIN']}", area="tecnico")
+            time.sleep(1)
             wait.until(lambda driver: driver.execute_script("return document.readyState") == "complete")
+
+            time.sleep(1)
             campo_email = wait.until(EC.presence_of_element_located((By.ID, "loginUsername")))
             driver.execute_script("arguments[0].scrollIntoView(true);", campo_email)
             campo_email.send_keys(dados_usuario['LOGIN'])
+
+            time.sleep(1)
             campo_senha = wait.until(EC.element_to_be_clickable((By.NAME, "password")))
             driver.execute_script("arguments[0].scrollIntoView(true);", campo_senha)
             campo_senha.clear()
             campo_senha.send_keys(dados_usuario['SENHA'])
+
             time.sleep(1)
             botao_login = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "MuiButton-label")))
             driver.execute_script("arguments[0].scrollIntoView(true);", botao_login)
             botao_login.click()
+
+            time.sleep(1)
+            WebDriverWait(driver, 15).until(EC.url_contains("portal"))
             time.sleep(2)
+
             driver.get("https://portal.blumetelecom.com.br/billings")
             self.parent.log_mensagem("Login realizado com sucesso!", area="tecnico")
         except Exception as erro:
@@ -151,187 +164,221 @@ class Blume:
             raise
 
     def processar_boletos(self, driver, wait, dados_usuario):
-        """
-        Processa os boletos disponíveis no portal.
-        Ao entrar na página de billings, identifica quantos textos "Pagar boleto" existem,
-        numera-os (ex.: Pagar boleto - 01, Pagar boleto - 02, etc.) e processa cada um sequencialmente.
-        """
         try:
-            ids_processados = set()
-            while True:
-                driver.get("https://portal.blumetelecom.com.br/billings")
-                # Verifica se há mensagem informando que não há faturas em aberto.
-                try:
-                    wait.until(
-                        EC.presence_of_element_located(
-                            (By.XPATH, "//h5[contains(text(), 'Você não possui faturas em aberto')]")
-                        )
-                    )
-                    self.parent.log_mensagem("Nenhuma fatura disponível", area="tecnico")
-                    # Atualiza o status do login para INDISPONIVEL para evitar reprocessamento.
-                    self.atualizar_status_planilha(dados_usuario['LOGIN'], 'INDISPONIVEL')
-                    return
-                except:
-                    pass
+            driver.get("https://portal.blumetelecom.com.br/billings")
+            time.sleep(1)
 
-                try:
-                    botao_escolher_forma = wait.until(
-                        EC.presence_of_element_located((By.XPATH, "//span[text()='Escolher forma de pagamento']"))
-                    )
-                    driver.execute_script("arguments[0].click();", botao_escolher_forma)
-                    time.sleep(1)
-                    botao_pagamento = wait.until(
-                        EC.presence_of_element_located((By.XPATH, "//p[text()='Pagamento Boleto']"))
-                    )
-                    driver.execute_script("arguments[0].click();", botao_pagamento)
-                    time.sleep(1)
-                    botao_baixar = wait.until(
-                        EC.presence_of_element_located((By.XPATH, "//p[text()='Baixar boleto']"))
-                    )
-                    driver.execute_script("arguments[0].click();", botao_baixar)
-                    time.sleep(1)
-                    self.baixar_boleto(wait, dados_usuario, pendencia=True)
-                except Exception as erro:
-                    self.parent.log_mensagem(f"Erro ao buscar botões de pagamento: {erro}", area="tecnico")
+            try:
+                wait.until(EC.presence_of_element_located(
+                    (By.XPATH, "//h5[contains(text(), 'Você não possui faturas em aberto')]")
+                ))
+                self.parent.log_mensagem("Nenhuma fatura disponível", area="tecnico")
+                self.atualizar_status_planilha(dados_usuario['LOGIN'], 'INDISPONIVEL')
+                return
+            except:
+                pass  # Continua o processamento
 
-                try:
-                    botoes_boleto = wait.until(
-                        EC.presence_of_all_elements_located((By.XPATH, "//span[text()='Pagar boleto']"))
-                    )
-                except Exception as erro:
-                    self.parent.log_mensagem(f"Erro ao buscar boletos: {erro}", area="tecnico")
-                    break
+            botoes_pagamento = wait.until(EC.presence_of_all_elements_located(
+                (By.XPATH, "//span[text()='Escolher forma de pagamento']")
+            ))
+            total_botoes = len(botoes_pagamento)
+            self.parent.log_mensagem(f"Foram encontrados {total_botoes} boleto(s) para processar", area="tecnico")
 
-                # Registra quantos "Pagar boleto" foram encontrados
-                total_botoes = len(botoes_boleto)
-                self.parent.log_mensagem(f"Foram encontrados {total_botoes} boleto(s) para processar", area="tecnico")
-                
-                for indice, botao in enumerate(botoes_boleto):
-                    id_boleto = f"botao-{indice}"
-                    if id_boleto in ids_processados:
+            for indice in range(total_botoes):
+                try:
+                    botoes_pagamento = wait.until(EC.presence_of_all_elements_located(
+                        (By.XPATH, "//span[text()='Escolher forma de pagamento']")
+                    ))
+                    botao = botoes_pagamento[indice]
+
+                    self.parent.log_mensagem(f"Processando boleto {indice + 1}", area="tecnico")
+                    driver.execute_script("arguments[0].click();", botao)
+                    time.sleep(1)
+
+                    botao_pagamento_boleto = wait.until(EC.element_to_be_clickable(
+                        (By.XPATH, "//p[text()='Pagamento Boleto']")))
+                    driver.execute_script("arguments[0].click();", botao_pagamento_boleto)
+                    time.sleep(1)
+
+                    botao_baixar_boleto = wait.until(EC.element_to_be_clickable(
+                        (By.XPATH, "//p[text()='Baixar boleto']")))
+                    driver.execute_script("arguments[0].click();", botao_baixar_boleto)
+
+                    self.parent.log_mensagem("Aguardando finalização do download (10 segundos)...", area="tecnico")
+                    time.sleep(10)
+
+                    tempo_limite = datetime.now() - timedelta(seconds=15)
+                    arquivos_pdf = list(Path(self.diretorio_download).glob("*.pdf"))
+                    arquivos_pdf = [f for f in arquivos_pdf if datetime.fromtimestamp(f.stat().st_mtime) > tempo_limite]
+
+                    if not arquivos_pdf:
+                        self.parent.log_mensagem("Nenhum PDF recente encontrado após o download.", area="tecnico")
                         continue
 
-                    # Loga qual botão está sendo processado (ex.: Pagar boleto - 01)
-                    self.parent.log_mensagem(f"Processando Pagar boleto - {indice + 1}", area="tecnico")
-                    try:
-                        # Clique via JavaScript para agilizar a interação
-                        driver.execute_script("arguments[0].click();", botao)
-                        self.baixar_boleto(wait, dados_usuario, indice + 1)
-                        ids_processados.add(id_boleto)
-                        # Aguarda de forma dinâmica a finalização do download
-                        WebDriverWait(driver, 10).until(
-                            lambda d: not any(
-                                f.lower().endswith(".crdownload")
-                                for f in os.listdir(os.path.join(os.path.expanduser('~'), 'Downloads'))
-                            )
-                        )
-                        # Após processar o boleto, retorna para a página de billings
-                        driver.get("https://portal.blumetelecom.com.br/billings")
-                    except Exception as erro:
-                        self.parent.log_mensagem(f"Erro ao processar boleto {indice + 1}: {erro}", area="tecnico")
-                if len(ids_processados) >= total_botoes:
-                    break
+                    ultimo_pdf = max(arquivos_pdf, key=lambda f: f.stat().st_mtime)
+                    caminho_pdf = str(ultimo_pdf)
+                    contrato = self.extrair_contrato_pdf(caminho_pdf)
+
+                    if self.verificar_pendencia_pdf(caminho_pdf):
+                        if contrato:
+                            nomenclatura = self.obter_nomenclatura(contrato)
+                        else:
+                            nomenclatura = dados_usuario['LOGIN']  # Nome com CNPJ
+
+                        nomenclatura = re.sub(r'[<>:"/\\|?*]', '', str(nomenclatura))
+                        nome_arquivo = f"{nomenclatura} - PENDENCIA.pdf"
+                        destino = os.path.join(self.parent.pasta_salvamento, "Pendencias")
+                        os.makedirs(destino, exist_ok=True)
+                        destino_final = os.path.join(destino, nome_arquivo)
+                        shutil.move(caminho_pdf, destino_final)
+                        self.parent.log_mensagem(f"Arquivo movido para pendências: {destino_final}", area="tecnico")
+                    elif contrato:
+                        self.processar_arquivo_baixado(contrato, caminho_pdf, dados_usuario)
+                        self.atualizar_status_planilha(contrato, 'COLETADO IA')
+                    else:
+                        # Caso não encontrou o contrato e também não é pendência
+                        pasta_erro = os.path.join(self.parent.pasta_salvamento, "Boletos não encontrados")
+                        os.makedirs(pasta_erro, exist_ok=True)
+                        nome_arquivo = f"{dados_usuario['LOGIN']}.pdf"
+                        destino = os.path.join(pasta_erro, nome_arquivo)
+                        shutil.move(caminho_pdf, destino)
+                        self.parent.log_mensagem(f"Arquivo movido para: {destino}", area="tecnico")
+
+                    driver.get("https://portal.blumetelecom.com.br/billings")
+                    time.sleep(2)
+
+                except Exception as erro:
+                    self.parent.log_mensagem(f"Erro ao processar boleto {indice + 1}: {erro}", area="tecnico")
+
         except Exception as erro:
             self.parent.log_mensagem(f"Erro geral no processamento: {erro}", area="tecnico")
             raise
 
-    def baixar_boleto(self, wait, dados_usuario, indice=None, pendencia=False):
-        """Realiza o download e processamento do boleto, considerando pendências se necessário."""
+    def verificar_pendencia_pdf(self, caminho_pdf):
+        """
+        Verifica se a fatura é uma pendência com base na data de vencimento explícita.
+        Busca especificamente pela string 'Data de Vencimento' seguida de uma data.
+        """
         try:
-            if not pendencia:
-                botao_download = wait.until(
-                    EC.presence_of_element_located((By.XPATH, "//p[text()='Baixar boleto']"))
-                )
-                botao_download.click()
-                time.sleep(3)
+            with open(caminho_pdf, "rb") as f:
+                leitor = PdfReader(f)
+                texto = "".join(p.extract_text() or "" for p in leitor.pages)
+
+            # Buscar por data explicitamente associada à 'Data de Vencimento'
+            padrao = re.compile(r"(\d{2}/\d{2}/\d{4})\s*Data de Vencimento", re.IGNORECASE)
+            match = padrao.search(texto)
+            if match:
+                data_vencimento = datetime.strptime(match.group(1), "%d/%m/%Y").date()
+                hoje = datetime.now().date()
+                return data_vencimento < hoje
+
+            # Fallback opcional: tentar pegar a primeira data visível (pode ser perigoso)
+            self.parent.log_mensagem("Data de vencimento não localizada explicitamente.", area="tecnico")
+            return False
+        except Exception as erro:
+            self.parent.log_mensagem(f"Erro ao verificar pendência no PDF: {erro}", area="tecnico")
+            return False
+
+    def processar_boleto_baixado(self, caminho_pdf, dados_usuario):
+        """Processa o PDF baixado após confirmação de download concluído"""
+        try:
+            contrato = self.extrair_contrato_pdf(caminho_pdf)
+            if contrato:
+                self.processar_arquivo_baixado(contrato, caminho_pdf, dados_usuario)
+            else:
+                self.mover_arquivo_nao_encontrado(caminho_pdf)
+        except Exception as erro:
+            self.parent.log_mensagem(f"Erro ao processar PDF: {erro}", area="tecnico")
+
+    def baixar_boleto(self, wait, dados_usuario, indice):
+        """Realiza o download e processamento do boleto com verificação baseada em novo arquivo detectado."""
+        try:
+            time.sleep(1)
+            botao_download = wait.until(
+                EC.presence_of_element_located((By.XPATH, "//p[text()='Baixar boleto']"))
+            )
+            botao_download.click()
+            time.sleep(5)
+            
+            self.parent.log_mensagem("Aguardando novo arquivo na pasta de download...", area="tecnico")
             caminho_download = os.path.join(os.path.expanduser('~'), 'Downloads')
             arquivo = self.aguardar_download(caminho_download)
+
             if arquivo:
+                self.parent.log_mensagem(f"Arquivo baixado: {os.path.basename(arquivo)}", area="tecnico")
                 contrato = self.extrair_contrato_pdf(arquivo)
                 if contrato:
-                    self.processar_arquivo_baixado(contrato, arquivo, dados_usuario, pendencia)
+                    self.processar_arquivo_baixado(contrato, arquivo, dados_usuario)
                 else:
                     self.mover_arquivo_nao_encontrado(arquivo)
+            else:
+                self.parent.log_mensagem("Falha ao identificar novo arquivo PDF baixado.", area="tecnico")
         except Exception as erro:
             self.parent.log_mensagem(f"Erro no download: {erro}", area="tecnico")
 
-    def aguardar_download(self, pasta):
-        """Aguarda a conclusão do download do arquivo e retorna o caminho do arquivo mais recente."""
-        def nome_valido(nome):
-            return re.fullmatch(r"[A-Za-z0-9]+\.(pdf|PDF)", nome) is not None
+    def aguardar_download(download_dir, timeout=60, tempo_estabilizacao=2):
+        """
+        Aguarda a conclusão de downloads na pasta especificada.
+        Um download é considerado concluído quando não existem arquivos com a extensão '.crdownload'.
+        """
+        limite = datetime.now() + timedelta(seconds=timeout)
 
-        tempo_limite = 60
-        while tempo_limite > 0:
-            arquivos = [f for f in os.listdir(pasta) if f.lower().endswith(".pdf")]
-            arquivos_validos = [f for f in arquivos if nome_valido(f)]
-            if arquivos_validos:
-                arquivo_recente = os.path.join(
-                    pasta,
-                    max(arquivos_validos, key=lambda f: os.path.getmtime(os.path.join(pasta, f)))
-                )
-                if not arquivo_recente.lower().endswith(".crdownload"):
-                    return arquivo_recente
-            if arquivos and not arquivos_validos:
-                arquivo_recente = os.path.join(
-                    pasta,
-                    max(arquivos, key=lambda f: os.path.getmtime(os.path.join(pasta, f)))
-                )
-                if not arquivo_recente.lower().endswith(".crdownload"):
-                    return arquivo_recente
+        while datetime.now() < limite:
             time.sleep(1)
-            tempo_limite -= 1
+            arquivos = list(Path(download_dir).glob("*.crdownload"))
+            if not arquivos:
+                # Verifica se os arquivos estão estáveis
+                arquivos_pdf = list(Path(download_dir).glob("*.pdf"))
+                for arquivo in arquivos_pdf:
+                    tamanho_anterior = arquivo.stat().st_size
+                    time.sleep(tempo_estabilizacao)
+                    tamanho_atual = arquivo.stat().st_size
+                    if tamanho_anterior == tamanho_atual:
+                        return str(arquivo)
+            time.sleep(1)
+
         return None
 
     def extrair_contrato_pdf(self, caminho_pdf):
         """Extrai o número do contrato de um arquivo PDF"""
         try:
-            # Abre o arquivo em modo binário
+            time.sleep(1)
             with open(caminho_pdf, "rb") as f:
                 leitor = PdfReader(f)
                 texto = "".join(pagina.extract_text() or "" for pagina in leitor.pages)
-            
-            # Padrão que procura:
-            # - A palavra "Contrato"
-            # - O valor da fatura no formato "R$ xx,xx"
-            # - Seguido pelo número do contrato com 2 a 7 dígitos, removendo zeros à esquerda
+
             padrao = re.compile(
                 r'Contrato\s*R\$\s*\d{1,4}(?:[.,]\d{3})*[.,]\d{2}\s*0*(\d{1,7})',
                 re.IGNORECASE
             )
             match = padrao.search(texto)
             if match:
-                # Converte para int para remover os zeros à esquerda e volta para str
                 contrato = str(int(match.group(1)))
                 return contrato
-            
+
             return None
         except Exception as erro:
             self.parent.log_mensagem(f"Erro na leitura do PDF: {erro}", area="tecnico")
             return None
 
-    def processar_arquivo_baixado(self, contrato, arquivo, dados_usuario, pendencia=False):
-        """Processa o arquivo baixado, movendo para a pasta de pendências se necessário."""
+    def processar_arquivo_baixado(self, contrato, arquivo, dados_usuario):
+        """Processa o arquivo baixado e atualiza a planilha"""
         contrato = contrato.lstrip('0')
+        # Verifica se o contrato já foi coletado (linha já marcada como 'COLETADO IA')
         for linha in self.planilha.iter_rows(min_row=2, values_only=True):
             if str(linha[4]).lstrip('0') == contrato and linha[11] == 'COLETADO IA':
-                self.parent.log_mensagem(f"Contrato {contrato} já baixado.", area="tecnico")
-                os.remove(arquivo)
+                self.parent.log_mensagem(f"O contrato {contrato} já havia sido baixado.", area="tecnico")
+                os.remove(arquivo)  # Remove o arquivo duplicado
                 return
+        # Caso contrário, procede com o processamento normal
         if self.verificar_contrato_planilha(contrato):
             nomenclatura = self.obter_nomenclatura(contrato)
             nomenclatura = re.sub(r'[<>:"/\\|?*]', '', str(nomenclatura))
-            if pendencia:
-                pasta_destino = os.path.join(self.parent.pasta_salvamento, "pendência")
-                os.makedirs(pasta_destino, exist_ok=True)
-                nomenclatura += "_pendencia"
-                destino = os.path.join(pasta_destino, f"{nomenclatura}.pdf")
-                status = 'PENDENCIA'
-            else:
-                destino = os.path.join(self.parent.pasta_salvamento, f"{nomenclatura}.pdf")
-                status = 'COLETADO IA'
+            destino = os.path.join(self.parent.pasta_salvamento, f"{nomenclatura}.pdf")
+            self.parent.log_mensagem(f"Movendo arquivo para: {destino}", area="tecnico")
             shutil.move(arquivo, destino)
-            self.parent.log_mensagem(f"Arquivo movido: {destino}", area="tecnico")
-            self.atualizar_status_planilha(contrato, status)
+            self.parent.log_mensagem(nomenclatura, area="faturas")
+            self.atualizar_status_planilha(contrato, 'COLETADO IA')
         else:
             self.mover_arquivo_nao_encontrado(arquivo)
 
@@ -372,12 +419,16 @@ class Blume:
             self.mutex.unlock()
 
     def marcar_pendentes_indisponiveis(self, login):
-        """Marca linhas não processadas como 'PENDENCIA' para o login especificado."""
+        """
+        Após o processamento dos boletos para o usuário, percorre as linhas da planilha
+        que pertencem ao login informado e marca como "INDISPONIVEL" aquelas que ainda não foram
+        atualizadas para "COLETADO IA".
+        """
         self.mutex.lock()
         try:
             for linha in self.planilha.iter_rows(min_row=2, values_only=False):
-                if str(linha[8].value) == login and linha[11].value not in ['COLETADO IA', 'PENDENCIA']:
-                    linha[11].value = 'PENDENCIA'
+                if str(linha[8].value) == login and linha[11].value not in ['COLETADO IA', 'INDISPONIVEL']:
+                    linha[11].value = 'INDISPONIVEL'
             self.planilha.parent.save(self.caminho_dados)
         finally:
             self.mutex.unlock()
@@ -385,10 +436,11 @@ class Blume:
     def verificar_coleta_completa(self):
         """
         Verifica se todas as faturas foram coletadas.
-        Considera processadas as linhas que estão com status 'COLETADO IA' ou 'INDISPONIVEL'.
+        Considera processadas apenas as linhas com status 'COLETADO IA'.
+        Faturas com status 'INDISPONIVEL' devem ser reavaliadas futuramente.
         """
         for linha in self.planilha.iter_rows(min_row=2, values_only=True):
-            if linha[11] not in ['COLETADO IA', 'INDISPONIVEL']:
+            if linha[11] != 'COLETADO IA':
                 return False
         return True
 
