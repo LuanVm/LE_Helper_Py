@@ -6,3 +6,4 @@ webdriver_manager
 validate-docbr
 docx2pdf
 docx
+pyinstaller
