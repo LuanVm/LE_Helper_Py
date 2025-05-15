@@ -195,7 +195,7 @@ class Blume:
                     driver.execute_script("arguments[0].click();", botao_baixar_boleto)
 
                     self.parent.log_mensagem("Aguardando finalização do download (10 segundos)...", area="tecnico")
-                    time.sleep(10)
+                    time.sleep(11)
 
                     tempo_limite = datetime.now() - timedelta(seconds=15)
                     arquivos_pdf = list(Path(self.diretorio_download).glob("*.pdf"))
