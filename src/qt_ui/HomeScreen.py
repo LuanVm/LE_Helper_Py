@@ -338,7 +338,7 @@ class HomeScreen(QWidget):
         self.message_label = QLabel(self)
         self.message_label.setFixedWidth(420)
         self.message_label.setWordWrap(True)
-        writing_font = QFont("Script MT", 12)
+        writing_font = QFont("Script MT", 10)
         self.message_label.setFont(writing_font)
         self.message_label.setStyleSheet("color: #8C8C8C;")
         self.message_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom)
