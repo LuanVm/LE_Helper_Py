@@ -85,27 +85,37 @@ class AgrupadorThread(QThread):
     def run(self):
         try:
             arquivos_processados = 0
-            total = sum(len(files) for _, _, files in os.walk(self.diretorio)) - len(os.listdir(self.diretorio))
 
+            todos_arquivos = []
+            for root, dirs, files in os.walk(self.diretorio):
+                if root != self.diretorio:
+                    for file in files:
+                        if file.lower() != 'desktop.ini':
+                            todos_arquivos.append((root, file))
+
+            total = len(todos_arquivos)
+            if total == 0:
+                self.mensagem.emit("Nenhum arquivo encontrado para mover.")
+                self.finalizado.emit(True)
+                return
+
+            for i, (root, file) in enumerate(todos_arquivos):
+                if self.isInterruptionRequested():
+                    break
+
+                caminho_origem = os.path.join(root, file)
+                caminho_destino = os.path.join(self.diretorio, file)
+
+                if os.path.exists(caminho_destino):
+                    caminho_destino = self.gerar_nome_unico(caminho_destino)
+
+                shutil.move(caminho_origem, caminho_destino)
+                self.historico.append((caminho_destino, caminho_origem))
+                arquivos_processados += 1
+                self.progresso.emit(int((arquivos_processados / total) * 100))
+
+            # Agora remova diretórios vazios após mover todos os arquivos
             for root, dirs, files in os.walk(self.diretorio, topdown=False):
-                for file in files:
-                    if self.isInterruptionRequested():
-                        break
-
-                    caminho_origem = os.path.join(root, file)
-                    if root == self.diretorio or os.path.basename(caminho_origem).lower() == 'desktop.ini':
-                        continue
-
-                    caminho_destino = os.path.join(self.diretorio, file)
-                    if os.path.exists(caminho_destino):
-                        caminho_destino = self.gerar_nome_unico(caminho_destino)
-
-                    shutil.move(caminho_origem, caminho_destino)
-                    self.historico.append((caminho_destino, caminho_origem))
-                    arquivos_processados += 1
-                    self.progresso.emit(int((arquivos_processados/total)*100))
-
-                # Remove pastas vazias
                 if root != self.diretorio and not os.listdir(root):
                     os.rmdir(root)
 
@@ -115,3 +125,11 @@ class AgrupadorThread(QThread):
         except Exception as e:
             self.error.emit(f"Erro no agrupamento: {str(e)}")
             self.finalizado.emit(False)
+
+    def gerar_nome_unico(self, caminho):
+        base, ext = os.path.splitext(caminho)
+        contador = 1
+        while os.path.exists(caminho):
+            caminho = f"{base}_{contador}{ext}"
+            contador += 1
+        return caminho
